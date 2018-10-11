@@ -9,6 +9,7 @@ export default function saveWebsiteToStorage(websiteInfo) {
     count: 1,
     time: 0,
   };
+
   if (websiteInfo.domain !== 'newtab' && websiteInfo.domain !== '') {
     // test if the local storage with the key 'websites' is empty
     if (localStorage.getItem(today) === null) {

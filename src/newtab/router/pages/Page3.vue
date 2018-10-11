@@ -1,6 +1,17 @@
 <template>
 <div class="container">
-  <div id="grid" class="grid"></div>
+  <div id="grid-container" class="grid-container" v-for="item in content" :key="item.date">
+    <h1>{{item.date}}</h1>
+    <div class="grid">
+      <div class="gridItem" v-for="website in item.websites" :key="website.domain"
+      :style="{ 'grid-column-start': website.grid_column_start,
+                'grid-column-end': website.grid_column_end,
+                'grid-row-start': website.grid_row_start,
+                'grid-row-end': website.grid_row_end}">
+      {{website.domain}} <br> {{Math.round(website.percent * 1000) / 10}}%  
+      </div>
+    </div>
+  </div>
 </div>
 </template>
 
@@ -9,7 +20,7 @@ export default {
   name: 'test-route',
   data: function() {
     return {
-      websites: JSON.parse(localStorage.getItem('10/10/2018')),
+      websites: [],
       count: 5,
       rows: [],
       columns: [],
@@ -25,28 +36,60 @@ export default {
       content: [],
     };
   },
-  mounted: function() {
-    this.websites = this.findTopWebsites(this.count, this.websites);
-    this.websites = this.getTopWebsitePercentage(this.websites);
+  created: function() {
+    let storageKeys = Object.keys(localStorage);
+    let content = [];
 
-    this.websites.forEach((website, index) => {
-      website = this.calculateColumnsRows(website, index);
-    });
+    for (let i = 0; i < storageKeys.length; i++) {
+      let key = storageKeys[i];
+      let websites = JSON.parse(localStorage.getItem(key));
 
-    this.websites.forEach(website => {
-      let div = document.createElement('div');
-      div.className = 'gridItem';
-      document.getElementById('grid').appendChild(div);
+      websites = this.findTopWebsites(this.count, websites);
+      websites = this.getTopWebsitePercentage(websites);
 
-      div.style.gridColumnStart = website.grid_column_start;
-      div.style.gridColumnEnd = website.grid_column_end;
-      div.style.gridRowStart = website.grid_row_start;
-      div.style.gridRowEnd = website.grid_row_end;
-      div.style.border = '1px solid black';
-    });
+      this.websites = websites;
+
+      for (let i = 0; i < websites.length; i++) {
+        // error in function (parameter checken)
+        websites[i] = this.calculateColumnsRows(websites[i], i);
+      }
+      let object = {
+        date: key,
+        websites: websites,
+      };
+      content.unshift(object);
+
+      // reset values
+      this.columns = [];
+      this.rows = [];
+      this.colum = false;
+      this.xLeft = 100;
+      this.yLeft = 100;
+      this.aLeft = 1000;
+    }
+    console.log(content);
+    this.content = content;
   },
 
   methods: {
+    getTodaysDate: function() {
+      let today = new Date();
+      let dd = today.getDate();
+      let mm = today.getMonth() + 1;
+      let yyyy = today.getFullYear();
+
+      if (dd < 10) {
+        dd = '0' + dd;
+      }
+
+      if (mm < 10) {
+        mm = '0' + mm;
+      }
+
+      today = dd + '/' + mm + '/' + yyyy;
+      return today;
+    },
+
     findTopWebsites: function(count, allWebsites) {
       let sortedWebsites = allWebsites;
       let topWebsites = [];
@@ -55,7 +98,7 @@ export default {
       sortedWebsites.sort(function(a, b) {
         if (a.time < b.time) {
           return 1;
-        } else if (a.time == b.time) {
+        } else if (a.time === b.time) {
           return 0;
         } else {
           return -1;
@@ -63,8 +106,12 @@ export default {
       });
 
       // get nth (count) highest times and save them in new array
-      for (let i = 0; i < count; i++) {
-        topWebsites.push(sortedWebsites[i]);
+      for (let i = 0; i < sortedWebsites.length; i++) {
+        if (i < count) {
+          topWebsites.push(sortedWebsites[i]);
+        } else {
+          break;
+        }
       }
       return topWebsites;
     },
@@ -105,7 +152,7 @@ export default {
           } else {
             site.grid_column_start = this.columns[this.columns.length - 1];
           }
-          if (index == this.websites.length - 1) {
+          if (index === this.websites.length - 1) {
             site.grid_column_end = 101;
           } else {
             site.grid_column_end = site.grid_column_start + xNeeded;
@@ -132,7 +179,7 @@ export default {
           } else {
             site.grid_row_start = this.rows[this.rows.length - 1];
           }
-          if (index == this.websites.length - 1) {
+          if (index === this.websites.length - 1) {
             site.grid_row_end = 101;
           } else {
             site.grid_row_end = site.grid_row_start + yNeeded;
@@ -161,14 +208,35 @@ export default {
 .container {
   display: flex;
   justify-content: center;
-}
-.grid {
+  flex-wrap: wrap;
   margin-top: 240px;
-  display: grid;
+}
+
+.grid-container {
+  display: flex;
+  flex-wrap: wrap;
   width: 60%;
-  height: 600px;
+  justify-content: center;
+  margin-bottom: 160px;
+
+  h1 {
+    flex: 0 0 100%;
+    font-size: 16px;
+    margin-bottom: 16px;
+  }
+}
+
+.grid {
+  display: grid;
+  width: 100%;
+  height: 500px;
   grid-template-columns: repeat(100, 1fr);
   grid-template-rows: repeat(100, 1fr);
-  border: 1px solid black;
+  border: 1px solid #e6e9ee;
+
+  .gridItem {
+    border: 1px solid #e6e9ee;
+    padding: 16px;
+  }
 }
 </style>
