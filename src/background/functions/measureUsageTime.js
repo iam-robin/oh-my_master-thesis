@@ -12,7 +12,8 @@ export default function measureUsageTime() {
   return usageTime;
 }
 
-chrome.windows.onFocusChanged.addListener(function(window) {
+// out of focus and idle doesn't work -> new function call returns usageTime!
+/* chrome.windows.onFocusChanged.addListener(function(window) {
   if (window === chrome.windows.WINDOW_ID_NONE) {
     // browser lost focus
     measureUsageTime();
@@ -24,3 +25,15 @@ chrome.windows.onFocusChanged.addListener(function(window) {
     console.log('browser get focus');
   }
 });
+
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  if (request.idle === 'true') {
+    measureUsageTime();
+    startTime = 0;
+    console.log(sender.tab ? 'idle message from content script:' + sender.tab.url : 'from the extension');
+  } else if (request.idle === 'false') {
+    startTime = 0;
+    measureUsageTime();
+    console.log(sender.tab ? 'active message from content script:' + sender.tab.url : 'from the extension');
+  }
+}); */

@@ -8,7 +8,9 @@
                 'grid-column-end': website.grid_column_end,
                 'grid-row-start': website.grid_row_start,
                 'grid-row-end': website.grid_row_end}">
-      {{website.domain}} <br> {{Math.round(website.percent * 1000) / 10}}%  
+      <div class="desc" v-if="website.percent > descriptionLimit">
+        {{website.domain}} <br> {{Math.round(website.percent * 1000) / 10}}%  
+      </div>
       </div>
     </div>
   </div>
@@ -20,6 +22,7 @@ export default {
   name: 'test-route',
   data: function() {
     return {
+      descriptionLimit: 0.04,
       websites: [],
       count: 5,
       rows: [],
