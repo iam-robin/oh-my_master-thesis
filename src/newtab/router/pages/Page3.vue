@@ -45,30 +45,32 @@ export default {
 
     for (let i = 0; i < storageKeys.length; i++) {
       let key = storageKeys[i];
-      let websites = JSON.parse(localStorage.getItem(key));
+      if (key !== 'limits') {
+        let websites = JSON.parse(localStorage.getItem(key));
 
-      websites = this.findTopWebsites(this.count, websites);
-      websites = this.getTopWebsitePercentage(websites);
+        websites = this.findTopWebsites(this.count, websites);
+        websites = this.getTopWebsitePercentage(websites);
 
-      this.websites = websites;
+        this.websites = websites;
 
-      for (let i = 0; i < websites.length; i++) {
-        // error in function (parameter checken)
-        websites[i] = this.calculateColumnsRows(websites[i], i);
+        for (let i = 0; i < websites.length; i++) {
+          // error in function (parameter checken)
+          websites[i] = this.calculateColumnsRows(websites[i], i);
+        }
+        let object = {
+          date: key,
+          websites: websites,
+        };
+        content.unshift(object);
+
+        // reset values
+        this.columns = [];
+        this.rows = [];
+        this.colum = false;
+        this.xLeft = 100;
+        this.yLeft = 100;
+        this.aLeft = 1000;
       }
-      let object = {
-        date: key,
-        websites: websites,
-      };
-      content.unshift(object);
-
-      // reset values
-      this.columns = [];
-      this.rows = [];
-      this.colum = false;
-      this.xLeft = 100;
-      this.yLeft = 100;
-      this.aLeft = 1000;
     }
     console.log(content);
     this.content = content;

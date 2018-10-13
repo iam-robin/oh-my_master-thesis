@@ -35,17 +35,19 @@ export default {
       // for each key in storage build object with key(date) value(websites)
       // and push it to content array
       let key = storageKeys[i];
-      let websites = JSON.parse(localStorage.getItem(key));
-      let sum = 0;
-      for (let i = 0; i < websites.length; i++) {
-        sum += websites[i].time;
+      if (key !== 'limits') {
+        let websites = JSON.parse(localStorage.getItem(key));
+        let sum = 0;
+        for (let i = 0; i < websites.length; i++) {
+          sum += websites[i].time;
+        }
+        let object = {
+          date: key,
+          websites: websites,
+          sum: sum,
+        };
+        content.unshift(object);
       }
-      let object = {
-        date: key,
-        websites: websites,
-        sum: sum,
-      };
-      content.unshift(object);
     }
     this.content = content;
   },

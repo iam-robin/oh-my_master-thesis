@@ -11,6 +11,9 @@
       <router-link to="/page3">
         03 Ratio
       </router-link>
+      <router-link to="/page4">
+        04 Limits
+      </router-link>
     </div>
 
     <router-view></router-view>
