@@ -13,7 +13,7 @@ export default function measureUsageTime() {
 }
 
 // out of focus and idle doesn't work -> new function call returns usageTime!
-/* chrome.windows.onFocusChanged.addListener(function(window) {
+chrome.windows.onFocusChanged.addListener(function(window) {
   if (window === chrome.windows.WINDOW_ID_NONE) {
     // browser lost focus
     measureUsageTime();
@@ -36,4 +36,4 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     measureUsageTime();
     console.log(sender.tab ? 'active message from content script:' + sender.tab.url : 'from the extension');
   }
-}); */
+});

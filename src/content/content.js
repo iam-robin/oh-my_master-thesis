@@ -1,5 +1,5 @@
-/* let timeout;
-let idleDuration = 500000;
+let timeout;
+let idleDuration = 300000;
 let isIdle = false;
 
 // detect if html video is playing
@@ -34,4 +34,4 @@ document.onmousemove = function() {
       });
     }
   }, idleDuration);
-}; */
+};
