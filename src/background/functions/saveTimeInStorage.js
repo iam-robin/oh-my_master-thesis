@@ -1,14 +1,14 @@
 import getTodaysDate from './getTodaysDate';
 
 // save website to local storage
-export default function saveTimeInStorage(websiteInfo, time) {
+export default function saveTimeInStorage(domain, time) {
   let today = getTodaysDate();
   let websites = JSON.parse(localStorage.getItem(today));
 
   for (let i = 0; i < websites.length; i++) {
     // wenn website im local storage der voherigen Website entspricht
     // Nutzungszeit dazu rechnen
-    if (websites[i].domain === websiteInfo.prevDomain) {
+    if (websites[i].domain === domain) {
       websites[i].time += time;
     }
   }
