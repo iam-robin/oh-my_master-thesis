@@ -1,5 +1,5 @@
 let timeout;
-let idleDuration = 300000;
+let idleDuration = 5000; // in ms
 let isIdle = false;
 
 // detect if html video is playing

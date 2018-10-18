@@ -1,4 +1,3 @@
-// import measureUsageTime from './functions/measureUsageTime';
 import getTabInfo from './functions/getTabInfo';
 import saveWebsiteToStorage from './functions/saveWebsiteToStorage';
 import saveTimeInStorage from './functions/saveTimeInStorage';
@@ -53,6 +52,21 @@ chrome.windows.onFocusChanged.addListener(function(window) {
     // browser get focus
     // restart usageTime tracker
     console.log('browser get focus');
+    measureUsageTime();
+  }
+});
+
+// get message from content script
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  if (request.idle === 'true') {
+    // get current usageTime and save it to storage
+    console.log(sender.tab ? 'idle:' + sender.tab.url : 'from the extension');
+    let time = measureUsageTime();
+    saveTimeInStorage(websiteInfo.domain, time);
+    startTime = 0;
+  } else if (request.idle === 'false') {
+    // restart usageTime tracker
+    console.log(sender.tab ? 'active:' + sender.tab.url : 'from the extension');
     measureUsageTime();
   }
 });
