@@ -2,6 +2,7 @@ import measureUsageTime from './functions/measureUsageTime';
 import getTabInfo from './functions/getTabInfo';
 import saveWebsiteToStorage from './functions/saveWebsiteToStorage';
 import saveTimeInStorage from './functions/saveTimeInStorage';
+import sendLimitToContent from './functions/sendLimitToContent';
 
 // ================================================================================
 // EVENTS
@@ -14,6 +15,7 @@ chrome.tabs.onActivated.addListener(function(tabId, changeInfo, tab) {
     let time = measureUsageTime();
     saveWebsiteToStorage(result);
     saveTimeInStorage(result, time);
+    sendLimitToContent(result);
   });
 });
 
@@ -26,6 +28,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
       let time = measureUsageTime();
       saveWebsiteToStorage(result);
       saveTimeInStorage(result, time);
+      sendLimitToContent(result);
     });
   }
 });

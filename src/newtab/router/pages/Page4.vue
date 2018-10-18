@@ -7,7 +7,8 @@
       <span class="line"></span>
       <span>{{ limit.timeLimit }}min</span>
       <span v-if="limit.percentageLimit <= 100" class="percentage">({{ round(limit.percentageLimit, 2) }}%)</span>
-      <span v-else class="limit-reached">(100%)</span>
+      <span v-if="limit.percentageLimit > 100" class="limit-reached">(100%)</span>
+      <span v-if="!limit.percentageLimit" class="percentage">(0%)</span>
     </li>
   </ul>
 </div>

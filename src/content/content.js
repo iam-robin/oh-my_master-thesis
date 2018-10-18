@@ -11,7 +11,6 @@ Object.defineProperty(HTMLMediaElement.prototype, 'playing', {
 
 // check if browser is in focus -> start timout
 // have to listen to mousemove + scroll + click event!
-
 document.onmousemove = function() {
   if (isIdle) {
     isIdle = false;
@@ -35,3 +34,35 @@ document.onmousemove = function() {
     }
   }, idleDuration);
 };
+
+// get limit reached message from background.js
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  if (request.limitReached === 'true') {
+    let body = document.getElementsByTagName('body')[0];
+
+    // overlay
+    let overlay = document.createElement('div');
+    overlay.className = 'overlay';
+    body.appendChild(overlay);
+    Object.assign(overlay.style, {
+      position: 'fixed',
+      top: '0',
+      left: '0',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: '100vh',
+      width: '100vw',
+      backgroundColor: '#EF5777',
+      zIndex: '99999',
+    });
+
+    // headline
+    let headline = document.createElement('h1');
+    headline.innerHTML = 'Zeitlimit erreicht';
+    overlay.appendChild(headline);
+    Object.assign(overlay.style, {
+      color: '#fff',
+    });
+  }
+});
