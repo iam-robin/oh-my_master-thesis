@@ -1,6 +1,14 @@
+// ================================================================================
+// VARIABLES
+// ================================================================================
+
 let timeout;
-let idleDuration = 5000; // in ms
+let idleDuration = 120000; // in ms
 let isIdle = false;
+
+// ================================================================================
+// EVENTS
+// ================================================================================
 
 // detect if html video is playing
 Object.defineProperty(HTMLMediaElement.prototype, 'playing', {
@@ -10,7 +18,6 @@ Object.defineProperty(HTMLMediaElement.prototype, 'playing', {
 });
 
 // check if browser is in focus -> start timout
-// have to listen to mousemove + scroll + click event!
 document.onmousemove = function() {
   if (isIdle) {
     isIdle = false;
@@ -51,7 +58,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      height: '100vh',
+      height: '10vh',
       width: '100vw',
       backgroundColor: '#EF5777',
       zIndex: '99999',
