@@ -19,8 +19,8 @@
       </header>
       <main>
         <h2 class="date">{{date}}</h2>
-        <h1 class="sum" v-if="activeMode === 'time'">{{formatMS(content[0].timeSum)}}</h1>
-        <h1 class="sum" v-if="activeMode === 'views'">{{content[0].viewSum}} site views</h1>
+        <h1 class="sum" v-if="activeMode === 'time'">{{formatMS(data[0].timeSum)}}</h1>
+        <h1 class="sum" v-if="activeMode === 'views'">{{data[0].viewSum}} site views</h1>
       </main>
       <footer>
         <ul class="mode">
@@ -30,7 +30,7 @@
       </footer>
     </div>
     <div class="content-container">
-      <router-view :mode="activeMode"></router-view>
+      <router-view :mode="activeMode" :data='data'></router-view>
     </div>
   </div>
 </template>
@@ -42,12 +42,12 @@ export default {
     return {
       activeMode: 'time',
       date: null,
-      content: [],
+      data: [],
     };
   },
   created: function() {
     this.date = this.getTodaysDate();
-    this.getContent();
+    this.getData();
   },
 
   methods: {
@@ -90,12 +90,12 @@ export default {
       }
     },
 
-    getContent: function() {
+    getData: function() {
       let storageKeys = Object.keys(localStorage);
-      let content = [];
+      let data = [];
       for (let i = 0; i < storageKeys.length; i++) {
         // for each key in storage build object with key(date) value(websites)
-        // and push it to content array
+        // and push it to data array
         let key = storageKeys[i];
         if (key !== 'limits') {
           let websites = JSON.parse(localStorage.getItem(key));
@@ -111,11 +111,10 @@ export default {
             timeSum: timeSum,
             viewSum: viewSum,
           };
-          content.unshift(object);
+          data.unshift(object);
         }
       }
-      this.content = content;
-      console.log(this.content);
+      this.data = data;
     },
 
     getMode: function(menuItem) {

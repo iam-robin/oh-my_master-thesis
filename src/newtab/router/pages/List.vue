@@ -1,21 +1,33 @@
 <template>
 <div class="container">
-  <h1>{{mode}}</h1>
-  <div v-for="item in content" :key="item.date" class="date-container">
+  <div v-for="item in data" :key="item.date" class="date-container">
     <div class="listhead">
       <h1>{{item.date}}</h1>
-      <h2>{{formatMS(item.sum)}}</h2>
+      <h2>{{mode}}</h2>
     </div>
-    <ul>
+
+    <ul v-if="mode === 'time'">
       <li v-for="website in item.websites" :key="website.domain" 
       :style="{ 'order': website.time *-1 }">
         <img v-if="website.favicon != '' && website.favicon" :src="website.favicon" alt="favicon" class="favicon">
         <span v-else class="placeholder"></span>
         <span class="domain">{{ website.domain }}</span>
         <span class="line"></span>
-        <span class="count">{{ formatMS(website.time) }}</span>
+        <span class="count" v-if="mode === 'time'">{{ formatMS(website.time) }}</span>
       </li>
     </ul>
+
+    <ul v-if="mode === 'views'">
+      <li v-for="website in item.websites" :key="website.domain" 
+      :style="{ 'order': website.count *-1 }">
+        <img v-if="website.favicon != '' && website.favicon" :src="website.favicon" alt="favicon" class="favicon">
+        <span v-else class="placeholder"></span>
+        <span class="domain">{{ website.domain }}</span>
+        <span class="line"></span>
+        <span class="count" v-if="mode === 'views'">{{ website.count }}</span>
+      </li>
+    </ul>
+
 </div>
 </div>
 </template>
@@ -23,38 +35,12 @@
 <script>
 export default {
   name: 'test-route',
-  data: function() {
-    return {
-      // array with key (dates) and values (websites)
-      content: [],
-    };
-  },
+
   props: {
     mode: String,
+    data: Array,
   },
-  created: function() {
-    let storageKeys = Object.keys(localStorage);
-    let content = [];
-    for (let i = 0; i < storageKeys.length; i++) {
-      // for each key in storage build object with key(date) value(websites)
-      // and push it to content array
-      let key = storageKeys[i];
-      if (key !== 'limits') {
-        let websites = JSON.parse(localStorage.getItem(key));
-        let sum = 0;
-        for (let i = 0; i < websites.length; i++) {
-          sum += websites[i].time;
-        }
-        let object = {
-          date: key,
-          websites: websites,
-          sum: sum,
-        };
-        content.unshift(object);
-      }
-    }
-    this.content = content;
-  },
+
   methods: {
     formatMS: function(ms) {
       let seconds = parseInt((ms / 1000) % 60);
