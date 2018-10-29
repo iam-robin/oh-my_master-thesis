@@ -1,4 +1,3 @@
-import Page1 from './pages/Page1';
 import List from './pages/List';
 import Ratio from './pages/Ratio';
 import Limit from './pages/Limit';
