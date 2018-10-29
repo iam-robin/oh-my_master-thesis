@@ -1,5 +1,6 @@
 <template>
 <div class="container">
+  <h1>{{mode}}</h1>
   <div v-for="item in content" :key="item.date" class="date-container">
     <div class="listhead">
       <h1>{{item.date}}</h1>
@@ -27,6 +28,9 @@ export default {
       // array with key (dates) and values (websites)
       content: [],
     };
+  },
+  props: {
+    mode: String,
   },
   created: function() {
     let storageKeys = Object.keys(localStorage);
