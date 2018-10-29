@@ -11,11 +11,6 @@ export default [
     },
   },
   {
-    path: '/page1',
-    name: 'page1',
-    component: Page1,
-  },
-  {
     path: '/list',
     name: 'list',
     component: List,

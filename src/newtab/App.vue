@@ -3,9 +3,6 @@
     <div class="info-container">
       <header>
         <div class="menu">
-          <router-link to="/page1">
-            test
-          </router-link>
           <router-link to="/list">
             01 Dauer
           </router-link>
