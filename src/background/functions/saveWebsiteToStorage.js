@@ -1,8 +1,8 @@
-import getTodaysDate from './getTodaysDate';
+import moment from 'moment';
 
 // save website to local storage
 export default function saveWebsiteToStorage(websiteInfo) {
-  let today = getTodaysDate();
+  let today = moment().format('YYYY-MM-DD');
   let website = {
     domain: websiteInfo.domain,
     favicon: websiteInfo.favicon,

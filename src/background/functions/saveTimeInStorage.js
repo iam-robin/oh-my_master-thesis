@@ -1,8 +1,8 @@
-import getTodaysDate from './getTodaysDate';
+import moment from 'moment';
 
 // save website to local storage
 export default function saveTimeInStorage(domain, time) {
-  let today = getTodaysDate();
+  let today = moment().format('YYYY-MM-DD');
   let websites = JSON.parse(localStorage.getItem(today));
 
   for (let i = 0; i < websites.length; i++) {
@@ -12,6 +12,7 @@ export default function saveTimeInStorage(domain, time) {
       websites[i].time += time;
     }
   }
+
   // when time and counter is set, save websites in local storage
   localStorage.setItem(today, JSON.stringify(websites));
 }

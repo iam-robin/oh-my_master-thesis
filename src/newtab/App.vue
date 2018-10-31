@@ -33,6 +33,8 @@
 </template>
 
 <script>
+import moment from 'moment';
+
 export default {
   name: 'test-route',
   data: function() {
@@ -43,29 +45,11 @@ export default {
     };
   },
   created: function() {
-    this.date = this.getTodaysDate();
+    this.date = moment().format('YYYY-MM-DD');
     this.getData();
   },
 
   methods: {
-    getTodaysDate: function() {
-      let today = new Date();
-      let dd = today.getDate();
-      let mm = today.getMonth() + 1;
-      let yyyy = today.getFullYear();
-
-      if (dd < 10) {
-        dd = '0' + dd;
-      }
-
-      if (mm < 10) {
-        mm = '0' + mm;
-      }
-
-      today = dd + '/' + mm + '/' + yyyy;
-      return today;
-    },
-
     formatMS: function(ms) {
       let seconds = parseInt((ms / 1000) % 60);
       let minutes = parseInt((ms / (1000 * 60)) % 60);

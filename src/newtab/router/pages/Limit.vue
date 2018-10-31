@@ -15,6 +15,8 @@
 </template>
 
 <script>
+import moment from 'moment';
+
 export default {
   name: 'test-route',
   data: function() {
@@ -33,7 +35,7 @@ export default {
       this.getLimitPercentage();
     },
     getLimitPercentage() {
-      let today = this.getTodaysDate();
+      let today = moment().format('YYYY-MM-DD');
       let websites = JSON.parse(localStorage.getItem(today));
 
       for (let i = 0; i < websites.length; i++) {
@@ -47,23 +49,7 @@ export default {
         }
       }
     },
-    getTodaysDate: function() {
-      let today = new Date();
-      let dd = today.getDate();
-      let mm = today.getMonth() + 1;
-      let yyyy = today.getFullYear();
 
-      if (dd < 10) {
-        dd = '0' + dd;
-      }
-
-      if (mm < 10) {
-        mm = '0' + mm;
-      }
-
-      today = dd + '/' + mm + '/' + yyyy;
-      return today;
-    },
     round: function(value, decimals) {
       return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
     },
