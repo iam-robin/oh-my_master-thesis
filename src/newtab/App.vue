@@ -4,7 +4,7 @@
       <header>
         <div class="menu">
           <router-link to="/list">
-            01 Dauer
+            01 List
           </router-link>
           <router-link to="/ratio">
             02 Ratio
@@ -139,19 +139,17 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    background-color: #e5e5e5;
+    background-color: #fece60;
     height: 100vh;
     padding: 40px 80px;
     box-sizing: border-box;
 
     header {
       height: 40px;
-      background-color: tomato;
     }
 
     footer {
       height: 40px;
-      background-color: tomato;
 
       .mode {
         list-style: none;
@@ -175,7 +173,7 @@ body {
     display: inline-block;
     margin-left: 40%;
     width: 60%;
-    background-color: #fece60;
+    background-color: #e5e5e5;
     min-height: 100vh;
   }
 

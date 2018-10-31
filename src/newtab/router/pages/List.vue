@@ -125,12 +125,12 @@ export default {
         margin-right: 8px;
         height: 16px;
         border-radius: 100%;
-        background-color: #e6e9ee;
+        background-color: #fff;
       }
 
       .line {
         height: 1px;
-        background-color: #e6e9ee;
+        background-color: #fff;
         margin: 0 24px;
         flex-grow: 99;
       }

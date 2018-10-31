@@ -98,7 +98,7 @@ export default {
 
       .line {
         height: 1px;
-        background-color: #e6e9ee;
+        background-color: #fff;
         margin: 0 24px;
         flex-grow: 99;
       }
