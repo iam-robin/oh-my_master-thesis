@@ -167,8 +167,6 @@ export default {
         });
       }
 
-      console.log(sortedWebsites);
-
       // get nth (count) highest times and save them in new array
       for (let i = 0; i < sortedWebsites.length; i++) {
         if (i < websiteCount) {

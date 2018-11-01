@@ -1,8 +1,37 @@
 <template>
 <div class="container">
-  <div v-for="item in data" :key="item.date" class="date-container">
+  <div class="date-container">
+
+    <!--mode: time -->
+    <ul v-if="mode === 'time'">
+      <li v-for="website in data" :key="website.domain" 
+          :style="{ 'order': website.time *-1 }">
+        <img v-if="website.favicon != '' && website.favicon" :src="website.favicon" alt="favicon" class="favicon">
+        <span v-else class="placeholder"></span>
+        <span class="domain">{{ website.domain }}</span>
+        <span class="line"></span>
+        <span class="count">{{ formatMS(website.time) }}</span>
+      </li>
+    </ul>
+
+    <!--mode: views -->
+    <ul v-if="mode === 'views'">
+      <li v-for="website in data" :key="website.domain" 
+          :style="{ 'order': website.count *-1 }">
+        <img v-if="website.favicon != '' && website.favicon" :src="website.favicon" alt="favicon" class="favicon">
+        <span v-else class="placeholder"></span>
+        <span class="domain">{{ website.domain }}</span>
+        <span class="line"></span>
+        <span class="count">{{ website.count }}</span>
+      </li>
+    </ul>
+
+  </div>
+
+  
+  <!-- <div v-for="item in data" :key="item.date" class="date-container">
+
     <div class="listhead">
-      <h1>{{item.date}}</h1>
       <h2>{{mode}}</h2>
     </div>
 
@@ -28,7 +57,7 @@
       </li>
     </ul>
 
-</div>
+  </div> -->
 </div>
 </template>
 
@@ -36,10 +65,16 @@
 export default {
   name: 'test-route',
 
+  data: function() {
+    return {};
+  },
+
   props: {
     mode: String,
     data: Array,
   },
+
+  created: function() {},
 
   methods: {
     formatMS: function(ms) {
@@ -71,31 +106,9 @@ export default {
   margin-top: 240px;
 
   .date-container {
-    width: 40%;
+    width: 80%;
     margin: 0 auto;
     margin-bottom: 160px;
-
-    &:last-child {
-      margin-bottom: 80px;
-    }
-
-    .listhead {
-      display: flex;
-      align-items: bottom;
-      justify-content: space-between;
-      line-height: 16px;
-      margin-bottom: 16px;
-
-      h1 {
-        font-size: 16px;
-        margin: 0;
-      }
-
-      h2 {
-        margin: 0;
-        font-size: 12px;
-      }
-    }
   }
 
   ul {
@@ -103,7 +116,7 @@ export default {
     flex-wrap: wrap;
     padding: 0;
     margin: 0;
-    max-height: 500px;
+    max-height: 510px;
     align-content: flex-start;
     overflow: scroll;
 
