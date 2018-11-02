@@ -224,21 +224,47 @@ export default {
         let endOfMonth = cloneDeep(date).endOf('month');
         let completeMonth = []; // complete month in array
         let day = startOfMonth;
+        let monthData = [];
 
         while (day <= endOfMonth) {
           completeMonth.push(day.toDate());
           day = day.clone().add(1, 'd');
         }
+
+        // calculate the time and view some and get the data of the month
         for (let i = 0; i < completeMonth.length; i++) {
           let monthday = moment(completeMonth[i]).format('YYYY-MM-DD');
           for (let x = 0; x < entireData.length; x++) {
             if (entireData[x].date === monthday) {
               periodSum.time += entireData[x].timeSum;
               periodSum.views += entireData[x].viewSum;
-              this.relevantData.push(entireData[x]);
+              monthData.push(entireData[x]);
             }
           }
         }
+
+        // get the same domains and summarize their properties
+        // safe them into this.relevantData
+        this.relevantData = Array.from(
+          monthData.reduce((m, { websites }) => {
+            websites.forEach(o => {
+              var temp = m.get(o.domain);
+              if (!temp) {
+                m.set(o.domain, (temp = {}));
+              }
+              Object.entries(o).forEach(([k, v]) => {
+                if (k === 'website') return;
+                if (typeof v === 'number') {
+                  temp[k] = (temp[k] || 0) + v;
+                } else {
+                  temp[k] = v;
+                }
+              });
+            });
+            return m;
+          }, new Map()),
+          ([domain, time]) => Object.assign({ domain }, time)
+        );
         // safe the time and view sum for this period in data
         this.periodSum = periodSum;
       }
