@@ -28,46 +28,12 @@
 
   </div>
 
-  
-  <!-- <div v-for="item in data" :key="item.date" class="date-container">
-
-    <div class="listhead">
-      <h2>{{mode}}</h2>
-    </div>
-
-    <ul v-if="mode === 'time'">
-      <li v-for="website in item.websites" :key="website.domain" 
-      :style="{ 'order': website.time *-1 }">
-        <img v-if="website.favicon != '' && website.favicon" :src="website.favicon" alt="favicon" class="favicon">
-        <span v-else class="placeholder"></span>
-        <span class="domain">{{ website.domain }}</span>
-        <span class="line"></span>
-        <span class="count" v-if="mode === 'time'">{{ formatMS(website.time) }}</span>
-      </li>
-    </ul>
-
-    <ul v-if="mode === 'views'">
-      <li v-for="website in item.websites" :key="website.domain" 
-      :style="{ 'order': website.count *-1 }">
-        <img v-if="website.favicon != '' && website.favicon" :src="website.favicon" alt="favicon" class="favicon">
-        <span v-else class="placeholder"></span>
-        <span class="domain">{{ website.domain }}</span>
-        <span class="line"></span>
-        <span class="count" v-if="mode === 'views'">{{ website.count }}</span>
-      </li>
-    </ul>
-
-  </div> -->
 </div>
 </template>
 
 <script>
 export default {
-  name: 'test-route',
-
-  data: function() {
-    return {};
-  },
+  name: 'list view',
 
   props: {
     mode: String,

@@ -143,132 +143,75 @@ export default {
     getRelevantData: function() {
       // get the current time period
       let date = cloneDeep(this.date);
-      let storageDate = date.format('YYYY-MM-DD');
       let entireData = this.data;
       let period = this.activePeriod;
       let periodSum = {
         time: 0,
         views: 0,
       };
+      let startOfPeriod;
+      let endOfPeriod;
+      let completePeriod = []; // complete period data in array
+      let periodData = [];
 
       // reset data
       this.relevantData = [];
       this.periodSum = {};
 
-      // detect the correct time span and fill relevant Data Array
       if (period === 'day') {
-        console.log('Tag');
-        for (let i = 0; i < entireData.length; i++) {
-          if (entireData[i].date === storageDate) {
-            periodSum.time += entireData[i].timeSum;
-            periodSum.views += entireData[i].viewSum;
-            this.relevantData = entireData[i].websites;
-          }
-        }
-        // safe the time and view sum for this period in data
-        this.periodSum = periodSum;
+        startOfPeriod = cloneDeep(date);
+        endOfPeriod = cloneDeep(date);
       } else if (period === 'week') {
-        console.log('Woche');
-        let startOfWeek = cloneDeep(date).startOf('isoWeek');
-        let endOfWeek = cloneDeep(date).endOf('isoWeek');
-        let completeWeek = []; // complete week in array
-        let day = startOfWeek;
-        let weekData = [];
-
-        // get the week days
-        while (day <= endOfWeek) {
-          completeWeek.push(day.toDate());
-          day = day.clone().add(1, 'd');
-        }
-
-        // calculate the time and view some and get the data of the week
-        for (let i = 0; i < completeWeek.length; i++) {
-          let weekday = moment(completeWeek[i]).format('YYYY-MM-DD');
-          for (let x = 0; x < entireData.length; x++) {
-            if (entireData[x].date === weekday) {
-              periodSum.time += entireData[x].timeSum;
-              periodSum.views += entireData[x].viewSum;
-              weekData.push(entireData[x]);
-            }
-          }
-        }
-
-        // get the same domains and summarize their properties
-        // safe them into this.relevantData
-        this.relevantData = Array.from(
-          weekData.reduce((m, { websites }) => {
-            websites.forEach(o => {
-              var temp = m.get(o.domain);
-              if (!temp) {
-                m.set(o.domain, (temp = {}));
-              }
-              Object.entries(o).forEach(([k, v]) => {
-                if (k === 'website') return;
-                if (typeof v === 'number') {
-                  temp[k] = (temp[k] || 0) + v;
-                } else {
-                  temp[k] = v;
-                }
-              });
-            });
-            return m;
-          }, new Map()),
-          ([domain, time]) => Object.assign({ domain }, time)
-        );
-
-        // safe the time and view sum for this period in data
-        this.periodSum = periodSum;
+        startOfPeriod = cloneDeep(date).startOf('isoWeek');
+        endOfPeriod = cloneDeep(date).endOf('isoWeek');
       } else if (period === 'month') {
-        console.log('Monat');
-        let startOfMonth = cloneDeep(date).startOf('month');
-        let endOfMonth = cloneDeep(date).endOf('month');
-        let completeMonth = []; // complete month in array
-        let day = startOfMonth;
-        let monthData = [];
+        startOfPeriod = cloneDeep(date).startOf('month');
+        endOfPeriod = cloneDeep(date).endOf('month');
+      }
 
-        while (day <= endOfMonth) {
-          completeMonth.push(day.toDate());
-          day = day.clone().add(1, 'd');
-        }
+      let day = startOfPeriod;
 
-        // calculate the time and view some and get the data of the month
-        for (let i = 0; i < completeMonth.length; i++) {
-          let monthday = moment(completeMonth[i]).format('YYYY-MM-DD');
-          for (let x = 0; x < entireData.length; x++) {
-            if (entireData[x].date === monthday) {
-              periodSum.time += entireData[x].timeSum;
-              periodSum.views += entireData[x].viewSum;
-              monthData.push(entireData[x]);
-            }
+      // get the period days
+      while (day <= endOfPeriod) {
+        completePeriod.push(day.toDate());
+        day = day.clone().add(1, 'd');
+      }
+
+      // calculate the time and view some and get the data of the period
+      for (let i = 0; i < completePeriod.length; i++) {
+        let periodday = moment(completePeriod[i]).format('YYYY-MM-DD');
+        for (let x = 0; x < entireData.length; x++) {
+          if (entireData[x].date === periodday) {
+            periodSum.time += entireData[x].timeSum;
+            periodSum.views += entireData[x].viewSum;
+            periodData.push(entireData[x]);
           }
         }
-
-        // get the same domains and summarize their properties
-        // safe them into this.relevantData
-        this.relevantData = Array.from(
-          monthData.reduce((m, { websites }) => {
-            websites.forEach(o => {
-              var temp = m.get(o.domain);
-              if (!temp) {
-                m.set(o.domain, (temp = {}));
-              }
-              Object.entries(o).forEach(([k, v]) => {
-                if (k === 'website') return;
-                if (typeof v === 'number') {
-                  temp[k] = (temp[k] || 0) + v;
-                } else {
-                  temp[k] = v;
-                }
-              });
-            });
-            return m;
-          }, new Map()),
-          ([domain, time]) => Object.assign({ domain }, time)
-        );
-        // safe the time and view sum for this period in data
-        this.periodSum = periodSum;
       }
-      console.log(this.relevantData);
+
+      this.periodSum = periodSum;
+
+      // bundle same domains inside the periodData and safe them in relevantData
+      this.relevantData = Array.from(
+        periodData.reduce((m, { websites }) => {
+          websites.forEach(o => {
+            var temp = m.get(o.domain);
+            if (!temp) {
+              m.set(o.domain, (temp = {}));
+            }
+            Object.entries(o).forEach(([k, v]) => {
+              if (k === 'website') return;
+              if (typeof v === 'number') {
+                temp[k] = (temp[k] || 0) + v;
+              } else {
+                temp[k] = v;
+              }
+            });
+          });
+          return m;
+        }, new Map()),
+        ([domain, time]) => Object.assign({ domain }, time)
+      );
     },
 
     formatDate: function() {

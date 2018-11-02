@@ -47,7 +47,7 @@
 <script>
 import cloneDeep from 'lodash/cloneDeep';
 export default {
-  name: 'test-route',
+  name: 'ratio view',
   data: function() {
     return {
       descriptionLimit: 0.04,
