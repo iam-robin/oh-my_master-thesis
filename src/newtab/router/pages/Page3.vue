@@ -19,7 +19,7 @@
 
 <script>
 export default {
-  name: 'test-route',
+  name: 'page3',
   data: function() {
     return {
       descriptionLimit: 0.04,

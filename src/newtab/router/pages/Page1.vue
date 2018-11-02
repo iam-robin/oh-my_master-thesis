@@ -20,7 +20,7 @@
 
 <script>
 export default {
-  name: 'test-route',
+  name: 'page1',
   data: function() {
     return {
       // array with key (dates) and values (websites)
