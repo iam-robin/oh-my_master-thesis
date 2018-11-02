@@ -1,8 +1,8 @@
-import getTodaysDate from './getTodaysDate';
+import moment from 'moment';
 
 // send message to content.js if current tab reached the limit
 export default function sendLimitToContent(result) {
-  let today = getTodaysDate();
+  let today = moment().format('YYYY-MM-DD');
   let websites = JSON.parse(localStorage.getItem(today));
   let limits = JSON.parse(localStorage.getItem('limits'));
 
@@ -23,7 +23,4 @@ export default function sendLimitToContent(result) {
       }
     }
   }
-
-  // if current domain -> limit reached
-  // send message to content.js
 }

@@ -1,28 +1,28 @@
-import Page1 from './pages/Page1';
-import Page2 from './pages/Page2';
-import Page3 from './pages/Page3';
-import Page4 from './pages/Page4';
+import List from './pages/List';
+import Ratio from './pages/Ratio';
+import Limit from './pages/Limit';
 
 export default [
-  { path: '/', redirect: '/page1' },
   {
-    path: '/page1',
-    name: 'page1',
-    component: Page1,
+    path: '/',
+    redirect: {
+      name: 'list',
+    },
   },
   {
-    path: '/page2',
-    name: 'page2',
-    component: Page2,
+    path: '/list',
+    name: 'list',
+    component: List,
+    props: true,
   },
   {
-    path: '/page3',
-    name: 'page3',
-    component: Page3,
+    path: '/ratio',
+    name: 'ratio',
+    component: Ratio,
   },
   {
-    path: '/page4',
-    name: 'page4',
-    component: Page4,
+    path: '/limit',
+    name: 'limit',
+    component: Limit,
   },
 ];
