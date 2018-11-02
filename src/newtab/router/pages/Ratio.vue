@@ -1,42 +1,16 @@
 <template>
 <div class="container">
 
-  <!-- time grid -->
-  <div v-if="mode === 'time'">
-    <div class="grid-container" v-for="item in timeContent" :key="item.date">
-      <h1>{{item.date}}</h1>
-      <div class="grid">
-        <div class="gridItem" v-for="website in item.websites" :key="website.domain"
-        :style="{ 'grid-column-start': website.grid_column_start,
-                  'grid-column-end': website.grid_column_end,
-                  'grid-row-start': website.grid_row_start,
-                  'grid-row-end': website.grid_row_end}">
-          <div class="desc" v-if="website.percent > descriptionLimit">
-            {{website.domain}} <br>
-            {{Math.round(website.percent * 1000) / 10}}%
-            {{website.time}}  
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- view grid -->
-  <div v-if="mode === 'views'">
-    <div class="grid-container" v-for="item in viewsContent" :key="item.date">
-      <h1>{{item.date}}</h1>
-      <div class="grid">
-        <div class="gridItem" v-for="website in item.websites" :key="website.domain"
-        :style="{ 'grid-column-start': website.grid_column_start,
-                  'grid-column-end': website.grid_column_end,
-                  'grid-row-start': website.grid_row_start,
-                  'grid-row-end': website.grid_row_end}">
-          <div class="desc" v-if="website.percent > descriptionLimit">
-            {{website.domain}} <br>
-            {{Math.round(website.percent * 1000) / 10}}%
-            {{website.count}}  
-          </div>
-        </div>
+  <div class="grid">
+    <div class="gridItem" v-for="website in content" :key="website.domain"
+    :style="{ 'grid-column-start': website.grid_column_start,
+              'grid-column-end': website.grid_column_end,
+              'grid-row-start': website.grid_row_start,
+              'grid-row-end': website.grid_row_end}">
+      <div class="desc" v-if="website.percent > descriptionLimit">
+        {{website.domain}} <br>
+        {{Math.round(website.percent * 1000) / 10}}%
+        {{website.time}}  
       </div>
     </div>
   </div>
@@ -62,10 +36,7 @@ export default {
       column: false,
       mayChangeDirection: true,
 
-      // array with key (dates) and values (websites) for time ratio
-      timeContent: [],
-      // array with key (dates) and values (websites) for site views ratio
-      viewsContent: [],
+      content: [],
     };
   },
 
@@ -74,69 +45,37 @@ export default {
     data: Array,
   },
 
+  watch: {
+    mode: function() {
+      this.resetValues();
+      this.getContent();
+    },
+    data: function() {
+      this.resetValues();
+      this.getContent();
+    },
+  },
+
   created: function() {
-    this.getTimeContent();
-    this.getViewsContent();
+    this.getContent();
   },
 
   methods: {
-    getTimeContent: function() {
-      let timeData = cloneDeep(this.data);
-      let timeContent = [];
+    getContent: function() {
+      let data = cloneDeep(this.data);
+      // let content = [];
+      console.log(data);
+      console.log(this.mode);
 
-      for (let i = 0; i < timeData.length; i++) {
-        let websites = timeData[i].websites;
-        let date = timeData[i].date;
+      // get and sort the top websites (count and mode as parameter)
+      let topWebsites = this.findTopWebsites(this.count, data, this.mode);
+      topWebsites = this.getWebsitePercentage(topWebsites, this.mode);
 
-        // top usage time websites
-        let topTimeWebsites = this.findTopWebsites(this.count, websites, 'time');
-        topTimeWebsites = this.getWebsitePercentage(topTimeWebsites, 'time');
-
-        for (let i = 0; i < topTimeWebsites.length; i++) {
-          topTimeWebsites[i] = this.calculateColumnsRows(topTimeWebsites[i], i, topTimeWebsites);
-        }
-
-        let object = {
-          date: date,
-          websites: topTimeWebsites,
-        };
-
-        timeContent.push(object);
-
-        // reset values
-        this.resetValues();
+      for (let i = 0; i < topWebsites.length; i++) {
+        topWebsites[i] = this.calculateColumnsRows(topWebsites[i], i, topWebsites);
       }
-      this.timeContent = timeContent;
-    },
 
-    getViewsContent: function() {
-      let viewsData = cloneDeep(this.data);
-
-      let viewsContent = [];
-
-      for (let i = 0; i < viewsData.length; i++) {
-        let websites = viewsData[i].websites;
-        let date = viewsData[i].date;
-
-        // top site views websites
-        let topViewsWebsites = this.findTopWebsites(this.count, websites, 'views');
-        topViewsWebsites = this.getWebsitePercentage(topViewsWebsites, 'views');
-
-        for (let i = 0; i < topViewsWebsites.length; i++) {
-          topViewsWebsites[i] = this.calculateColumnsRows(topViewsWebsites[i], i, topViewsWebsites);
-        }
-
-        let object = {
-          date: date,
-          websites: topViewsWebsites,
-        };
-
-        viewsContent.push(object);
-
-        // reset values
-        this.resetValues();
-      }
-      this.viewsContent = viewsContent;
+      this.content = topWebsites;
     },
 
     findTopWebsites: function(websiteCount, websites, mode) {
@@ -289,26 +228,24 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.grid-container {
-  margin: 80px;
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
 
-  h1 {
-    flex: 0 0 100%;
-    font-size: 16px;
-    margin-bottom: 16px;
-  }
+.grid {
+  display: grid;
+  height: 90vh;
+  width: 90vh;
+  grid-template-columns: repeat(100, 1fr);
+  grid-template-rows: repeat(100, 1fr);
+  border: 1px solid #fff;
 
-  .grid {
-    display: grid;
-    height: 80vh;
-    grid-template-columns: repeat(100, 1fr);
-    grid-template-rows: repeat(100, 1fr);
+  .gridItem {
     border: 1px solid #fff;
-
-    .gridItem {
-      border: 1px solid #fff;
-      padding: 16px;
-    }
+    padding: 16px;
   }
 }
 </style>
