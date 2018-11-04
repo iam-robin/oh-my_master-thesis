@@ -68,6 +68,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../../scss/_colors.scss';
 .container {
   margin-top: 240px;
 
@@ -104,12 +105,12 @@ export default {
         margin-right: 8px;
         height: 16px;
         border-radius: 100%;
-        background-color: #fff;
+        background-color: $grey;
       }
 
       .line {
         height: 1px;
-        background-color: #fff;
+        background-color: $grey;
         margin: 0 24px;
         flex-grow: 99;
       }

@@ -3,14 +3,14 @@
     <div class="info-container">
       <header>
         <div class="menu">
-          <router-link to="/list">
-            01 List
-          </router-link>
           <router-link to="/ratio">
-            02 Ratio
+            Ratio
+          </router-link>
+          <router-link to="/list">
+            List
           </router-link>
           <router-link to="/limit">
-            03 Limits
+            Limits
           </router-link>
         </div>
       </header>
@@ -61,7 +61,7 @@ export default {
   created: function() {
     // add key down event listener to window to detect key navigation
     window.addEventListener('keydown', e => {
-      if (e.key === 'ArrowRight') {
+      if (e.key === 'ArrowRight' && this.nextAvailable) {
         // next time period
         this.nextDate();
       } else if (e.key === 'ArrowLeft') {
@@ -234,16 +234,20 @@ export default {
         this.date = this.date.subtract(1, 'months');
       }
 
+      this.nextAvailable = true;
       this.formatDate();
       this.getRelevantData();
     },
 
     nextDate: function() {
       if (this.activePeriod === 'day') {
+        // if mode = day
         this.date = this.date.add(1, 'days');
       } else if (this.activePeriod === 'week') {
+        // if mode = week
         this.date = this.date.add(1, 'weeks');
       } else if (this.activePeriod === 'month') {
+        // if mode = year
         this.date = this.date.add(1, 'months');
       }
 
@@ -274,11 +278,15 @@ export default {
 </script>
 
 <style lang="scss">
-@import url('https://fonts.googleapis.com/css?family=Fira+Mono');
+@import url('https://fonts.googleapis.com/css?family=Fira+Mono:400,700');
+@import url('https://fonts.googleapis.com/css?family=Montserrat:300,700');
+@import 'scss/_colors.scss';
+
 body {
   margin: 0;
   padding: 0;
   font-family: 'Fira Mono', monospace;
+  font-weight: 400;
   font-size: 12px;
 
   .info-container {
@@ -287,13 +295,32 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    background-color: #fece60;
+    background-color: $white;
     height: 100vh;
     padding: 40px 80px;
     box-sizing: border-box;
 
     header {
       height: 40px;
+
+      .menu {
+        display: flex;
+        justify-content: flex-end;
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 300;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+
+        a {
+          text-decoration: none;
+          color: black;
+          padding-left: 32px;
+
+          &.router-link-active {
+            font-weight: 700;
+          }
+        }
+      }
     }
 
     main {
@@ -346,23 +373,8 @@ body {
     display: inline-block;
     margin-left: 40%;
     width: 60%;
-    background-color: #e5e5e5;
+    background-color: $lightgrey;
     min-height: 100vh;
-  }
-
-  .menu {
-    display: flex;
-    justify-content: left;
-
-    a {
-      padding: 0 24px;
-      text-decoration: none;
-      color: black;
-
-      &.router-link-active {
-        font-weight: 800;
-      }
-    }
   }
 }
 </style>

@@ -10,7 +10,8 @@
       <div class="desc" v-if="website.percent > descriptionLimit">
         {{website.domain}} <br>
         {{Math.round(website.percent * 1000) / 10}}%
-        {{website.time}}  
+        <p v-if="mode === 'time'">{{formatMS(website.time)}}</p>
+        <p v-if="mode === 'views'">{{website.count}} views</p>
       </div>
     </div>
   </div>
@@ -223,11 +224,33 @@ export default {
       this.yLeft = 100;
       this.aLeft = 1000;
     },
+
+    formatMS: function(ms) {
+      let seconds = parseInt((ms / 1000) % 60);
+      let minutes = parseInt((ms / (1000 * 60)) % 60);
+      let hours = parseInt((ms / (1000 * 60 * 60)) % 24);
+
+      hours = hours < 10 ? '0' + hours : hours;
+      minutes = minutes < 10 ? '0' + minutes : minutes;
+      seconds = seconds < 10 ? '0' + seconds : seconds;
+
+      if (hours !== '00') {
+        // hours, minutes and seconds
+        return hours + 'h ' + minutes + 'min ' + seconds + 'sec ';
+      } else if (hours === '00' && minutes !== '00') {
+        // minutes and seconds
+        return minutes + 'min ' + seconds + 'sec ';
+      } else {
+        // seconds
+        return seconds + 'sec ';
+      }
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
+@import '../../scss/_colors.scss';
 .container {
   display: flex;
   justify-content: center;
@@ -241,10 +264,10 @@ export default {
   width: 90vh;
   grid-template-columns: repeat(100, 1fr);
   grid-template-rows: repeat(100, 1fr);
-  border: 1px solid #fff;
+  border: 1px solid $grey;
 
   .gridItem {
-    border: 1px solid #fff;
+    border: 1px solid $grey;
     padding: 16px;
   }
 }
