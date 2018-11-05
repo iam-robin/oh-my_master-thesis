@@ -44,23 +44,21 @@ export default {
 
   methods: {
     formatMS: function(ms) {
-      let seconds = parseInt((ms / 1000) % 60);
       let minutes = parseInt((ms / (1000 * 60)) % 60);
       let hours = parseInt((ms / (1000 * 60 * 60)) % 24);
 
       hours = hours < 10 ? '0' + hours : hours;
       minutes = minutes < 10 ? '0' + minutes : minutes;
-      seconds = seconds < 10 ? '0' + seconds : seconds;
 
       if (hours !== '00') {
         // hours, minutes and seconds
-        return hours + 'h ' + minutes + 'min ' + seconds + 'sec ';
+        return hours + 'h ' + minutes + 'min ';
       } else if (hours === '00' && minutes !== '00') {
         // minutes and seconds
-        return minutes + 'min ' + seconds + 'sec ';
+        return minutes + 'min ';
       } else {
         // seconds
-        return seconds + 'sec ';
+        return '< 01min ';
       }
     },
   },

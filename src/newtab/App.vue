@@ -2,6 +2,12 @@
   <div>
     <div class="info-container">
       <header>
+        <svg class="logo" viewBox="0 0 50 50" fill="none">
+          <rect x="1.5" y="1.5" width="47" height="47" stroke="#333333" stroke-width="3"/>
+          <rect x="1.5" y="1.5" width="17" height="47" stroke="#333333" stroke-width="3"/>
+          <rect x="-1.5" y="1.5" width="17" height="18" transform="matrix(-1 0 0 1 17 0)" fill="#FECE60" stroke="#333333" stroke-width="3"/>
+          <rect x="-1.5" y="1.5" width="30" height="17" transform="matrix(-1 0 0 1 47 30)" fill="#E6E9EE" stroke="#333333" stroke-width="3"/>
+        </svg>
         <div class="menu">
           <router-link to="/ratio">
             Ratio
@@ -24,14 +30,14 @@
         <h1 class="sum" v-if="activeMode === 'views'">{{periodSum.views}} site views</h1>
       </main>
       <footer>
-        <ul class="mode">
-          <li v-on:click="setMode('time')" :class="{ active: getMode('time') }">time</li>
-          <li v-on:click="setMode('views')" :class="{ active: getMode('views') }">views</li>
-        </ul>
         <ul class="period">
           <li v-on:click="setPeriod('day')" :class="{ active: getPeriod('day') }">day</li>
           <li v-on:click="setPeriod('week')" :class="{ active: getPeriod('week') }">week</li>
           <li v-on:click="setPeriod('month')" :class="{ active: getPeriod('month') }">month</li>
+        </ul>
+        <ul class="mode">
+          <li v-on:click="setMode('time')" :class="{ active: getMode('time') }">t</li>
+          <li v-on:click="setMode('views')" :class="{ active: getMode('views') }">v</li>
         </ul>
       </footer>
     </div>
@@ -61,7 +67,7 @@ export default {
   created: function() {
     // add key down event listener to window to detect key navigation
     window.addEventListener('keydown', e => {
-      if (e.key === 'ArrowRight' && this.nextAvailable) {
+      if (e.key === 'ArrowRight') {
         // next time period
         this.nextDate();
       } else if (e.key === 'ArrowLeft') {
@@ -103,13 +109,16 @@ export default {
 
       if (hours !== '00') {
         // hours, minutes and seconds
-        return hours + 'h ' + minutes + 'min ' + seconds + 'sec ';
+        return hours + 'h ' + minutes + 'min ';
       } else if (hours === '00' && minutes !== '00') {
         // minutes and seconds
-        return minutes + 'min ' + seconds + 'sec ';
+        return minutes + 'min ';
+      } else if (seconds === '00') {
+        // no time
+        return '–';
       } else {
         // seconds
-        return seconds + 'sec ';
+        return '< 01min';
       }
     },
 
@@ -217,7 +226,8 @@ export default {
     formatDate: function() {
       let date = cloneDeep(this.date);
       if (this.activePeriod === 'day') {
-        this.formatedDate = date.format('ddd DD/MM/YYYY');
+        // date.format('ddd DD/MM/YYYY') for weekday
+        this.formatedDate = date.format('DD/MM/YYYY');
       } else if (this.activePeriod === 'week') {
         this.formatedDate = date.startOf('isoWeek').format('DD/MM') + ' - ' + date.endOf('isoWeek').format('DD/MM/YYYY');
       } else if (this.activePeriod === 'month') {
@@ -301,15 +311,21 @@ body {
     box-sizing: border-box;
 
     header {
-      height: 40px;
+      display: flex;
+      align-items: top;
+      justify-content: space-between;
+
+      .logo {
+        width: 40px;
+        height: 40px;
+      }
 
       .menu {
         display: flex;
-        justify-content: flex-end;
         font-family: 'Montserrat', sans-serif;
         font-weight: 300;
         text-transform: uppercase;
-        letter-spacing: 3px;
+        letter-spacing: 2px;
 
         a {
           text-decoration: none;
@@ -328,13 +344,20 @@ body {
         width: 100%;
         display: flex;
         align-items: center;
-        justify-content: flex-start;
+        justify-content: center;
+        margin-bottom: 16px;
+
+        h2 {
+          font-size: 21px;
+          font-weight: 400;
+          margin: 0;
+        }
 
         span {
           display: inline-block;
-          height: 24px;
-          width: 24px;
-          background-color: tomato;
+          height: 16px;
+          width: 16px;
+          background-color: $grey;
           cursor: pointer;
 
           &:first-child {
@@ -346,10 +369,16 @@ body {
           }
         }
       }
+      h1.sum {
+        font-size: 38px;
+        margin: 0;
+        text-align: center;
+      }
     }
 
     footer {
-      height: 40px;
+      display: flex;
+      justify-content: space-between;
 
       ul {
         list-style: none;
@@ -358,12 +387,19 @@ body {
 
         li {
           display: inline-block;
-          padding: 8px 16px;
           cursor: pointer;
+          font-family: 'Montserrat', sans-serif;
+          font-weight: 300;
+          text-transform: uppercase;
+          letter-spacing: 2px;
 
           &.active {
             font-weight: 800;
           }
+        }
+
+        &.period li {
+          padding-right: 32px;
         }
       }
     }
@@ -375,6 +411,8 @@ body {
     width: 60%;
     background-color: $lightgrey;
     min-height: 100vh;
+    padding: 40px 80px;
+    box-sizing: border-box;
   }
 }
 </style>
