@@ -180,7 +180,6 @@ export default {
           website['percent'] = roundedPercentage;
         });
       }
-
       return websites;
     },
 
