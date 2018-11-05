@@ -22,9 +22,19 @@
       </header>
       <main>
         <div class="date">
-          <span v-on:click="prevDate()" class="prev"></span>
+          <span v-on:click="prevDate()" class="prev">
+            <svg viewBox="0 0 16 16" fill="none">
+              <path d="M13.3334 8H2.66669" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M6.66669 12L2.66669 8L6.66669 4" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
             <h2>{{formatedDate}}</h2>
-          <span v-on:click="nextDate()" class="next"></span>
+          <span v-on:click="nextDate()" class="next">
+            <svg viewBox="0 0 16 16" fill="none">
+              <path d="M13.3334 8H2.66669" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M6.66669 12L2.66669 8L6.66669 4" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
         </div>
         <h1 class="sum" v-if="activeMode === 'time'">{{formatMS(periodSum.time)}}</h1>
         <h1 class="sum" v-if="activeMode === 'views'">{{periodSum.views}} site views</h1>
@@ -36,8 +46,20 @@
           <li v-on:click="setPeriod('month')" :class="{ active: getPeriod('month') }">month</li>
         </ul>
         <ul class="mode">
-          <li v-on:click="setMode('time')" :class="{ active: getMode('time') }">t</li>
-          <li v-on:click="setMode('views')" :class="{ active: getMode('views') }">v</li>
+          <li v-on:click="setMode('time')" :class="{ active: getMode('time') }">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <rect width="24" height="24" fill="none"/>
+              <path d="M17.6569 6.34315C20.781 9.46735 20.781 14.5327 17.6569 17.6569C14.5327 20.781 9.46732 20.781 6.34315 17.6569C3.21895 14.5327 3.21895 9.46732 6.34315 6.34315C9.46735 3.21895 14.5327 3.21895 17.6569 6.34315" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M12 7.19995V12L14.4 14.4" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </li>
+          <li v-on:click="setMode('views')" :class="{ active: getMode('views') }">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <rect width="24" height="24" fill="none"/>
+              <path d="M2 12C2 12 5.5 5 11.625 5C17.75 5 21.25 12 21.25 12C21.25 12 17.75 19 11.625 19C5.5 19 2 12 2 12Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M13.4811 10.1438C14.5062 11.169 14.5062 12.831 13.4811 13.8562C12.456 14.8813 10.7939 14.8813 9.76881 13.8562C8.74369 12.831 8.74369 11.169 9.76881 10.1438C10.7939 9.11872 12.456 9.11872 13.4811 10.1438Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </li>
         </ul>
       </footer>
     </div>
@@ -289,7 +311,7 @@ export default {
 
 <style lang="scss">
 @import url('https://fonts.googleapis.com/css?family=Fira+Mono:400,700');
-@import url('https://fonts.googleapis.com/css?family=Montserrat:300,700');
+@import url('https://fonts.googleapis.com/css?family=Montserrat:500');
 @import 'scss/_colors.scss';
 
 body {
@@ -322,33 +344,34 @@ body {
 
       .menu {
         display: flex;
-        font-family: 'Montserrat', sans-serif;
-        font-weight: 300;
-        text-transform: uppercase;
-        letter-spacing: 2px;
 
         a {
+          font-family: 'Montserrat', sans-serif;
+          font-weight: 500;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          color: $darkgrey;
           text-decoration: none;
-          color: black;
           padding-left: 32px;
 
           &.router-link-active {
-            font-weight: 700;
+            color: $black;
           }
         }
       }
     }
 
     main {
+      user-select: none;
+
       .date {
         width: 100%;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-bottom: 16px;
 
         h2 {
-          font-size: 21px;
+          font-size: 16px;
           font-weight: 400;
           margin: 0;
         }
@@ -357,15 +380,15 @@ body {
           display: inline-block;
           height: 16px;
           width: 16px;
-          background-color: $grey;
+          padding: 16px;
           cursor: pointer;
 
-          &:first-child {
-            margin-right: 16px;
+          svg path {
+            stroke-width: 1;
           }
 
           &:last-child {
-            margin-left: 16px;
+            transform: rotate(180deg);
           }
         }
       }
@@ -379,6 +402,7 @@ body {
     footer {
       display: flex;
       justify-content: space-between;
+      align-items: center;
 
       ul {
         list-style: none;
@@ -389,17 +413,30 @@ body {
           display: inline-block;
           cursor: pointer;
           font-family: 'Montserrat', sans-serif;
-          font-weight: 300;
+          font-weight: 500;
+          color: $darkgrey;
           text-transform: uppercase;
           letter-spacing: 2px;
-
-          &.active {
-            font-weight: 800;
-          }
         }
 
         &.period li {
           padding-right: 32px;
+
+          &.active {
+            color: $black;
+          }
+        }
+
+        &.mode li {
+          padding-left: 8px;
+
+          svg path {
+            stroke: $darkgrey;
+          }
+
+          &.active svg path {
+            stroke: $black;
+          }
         }
       }
     }
@@ -411,8 +448,6 @@ body {
     width: 60%;
     background-color: $lightgrey;
     min-height: 100vh;
-    padding: 40px 80px;
-    box-sizing: border-box;
   }
 }
 </style>

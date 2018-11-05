@@ -1,12 +1,13 @@
 import List from './pages/List';
 import Ratio from './pages/Ratio';
 import Limit from './pages/Limit';
+import Detail from './pages/Detail';
 
 export default [
   {
     path: '/',
     redirect: {
-      name: 'list',
+      name: 'ratio',
     },
   },
   {
@@ -24,5 +25,10 @@ export default [
     path: '/limit',
     name: 'limit',
     component: Limit,
+  },
+  {
+    path: '/detail/:domain',
+    name: 'detail',
+    component: Detail,
   },
 ];

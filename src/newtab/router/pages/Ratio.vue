@@ -2,17 +2,25 @@
 <div class="container">
 
   <div class="grid">
-    <div class="gridItem" v-for="website in content" :key="website.domain"
-    :style="{ 'grid-column-start': website.grid_column_start,
+    <div class="gridItem" v-for="(website, index) in content" :key="website.domain"
+    :style="{ 'background-color': website.dominant_color,
+              'grid-column-start': website.grid_column_start,
               'grid-column-end': website.grid_column_end,
               'grid-row-start': website.grid_row_start,
               'grid-row-end': website.grid_row_end}">
-      <div class="desc" v-if="website.percent > descriptionLimit">
-        {{website.domain}} <br>
-        {{Math.round(website.percent * 1000) / 10}}%
-        <p v-if="mode === 'time'">{{formatMS(website.time)}}</p>
-        <p v-if="mode === 'views'">{{website.count}} views</p>
-      </div>
+      <router-link :to="{ name: 'detail', params: { domain: website.domain }}">
+        <div class="desc" v-if="website.percent > descriptionLimit">
+          <span class="index">0{{index+1}}</span>
+          <div class="content">
+            <span class="domain">{{website.domain}}</span>
+            <div class="value">
+              <span v-if="mode === 'time'">{{formatMS(website.time)}}</span>
+              <span v-if="mode === 'views'">{{website.count}} views</span>
+              <span>| {{Math.round(website.percent * 1000) / 10}}%</span>
+            </div>
+          </div>
+        </div>
+      </router-link>
     </div>
   </div>
 
@@ -21,6 +29,8 @@
 
 <script>
 import cloneDeep from 'lodash/cloneDeep';
+import RGBaster from 'rgbaster';
+
 export default {
   name: 'ratio view',
   data: function() {
@@ -38,6 +48,32 @@ export default {
       mayChangeDirection: true,
 
       content: [],
+      colorTable: [
+        { name: 'darkrose', hex: '#F53B57' },
+        { name: 'rose', hex: '#EF5777' },
+        { name: 'darkblue', hex: '#3D40C6' },
+        { name: 'blue', hex: '#575FCF' },
+        { name: 'darkaqua', hex: '#10BCF9' },
+        { name: 'aqua', hex: '#4BD1FA' },
+        { name: 'darkmint', hex: '#00D8D6' },
+        { name: 'mint', hex: '#34E7E4' },
+        { name: 'darkgras', hex: '#04C66B' },
+        { name: 'gras', hex: '#0BE881' },
+        { name: 'darkorange', hex: '#FFA800' },
+        { name: 'orange', hex: '#FFC048' },
+        { name: 'darkyellow', hex: '#FFD32A' },
+        { name: 'yellow', hex: '#FFDD59' },
+        { name: 'darkred', hex: '#FF3F34' },
+        { name: 'red', hex: '#FF5E58' },
+        { name: 'white', hex: '#F5F7FA' },
+        { name: 'lightgrey', hex: '#E6E9ED' },
+        { name: 'grey', hex: '#CCD1D9' },
+        { name: 'mediumgrey', hex: '#AAB2BD' },
+        { name: 'darkgrey', hex: '#656D78' },
+        { name: 'darkergrey', hex: '#434A54' },
+        { name: 'lightblack', hex: '#3C3B3D' },
+        { name: 'black', hex: '#323133' },
+      ],
     };
   },
 
@@ -64,9 +100,6 @@ export default {
   methods: {
     getContent: function() {
       let data = cloneDeep(this.data);
-      // let content = [];
-      console.log(data);
-      console.log(this.mode);
 
       // get and sort the top websites (count and mode as parameter)
       let topWebsites = this.findTopWebsites(this.count, data, this.mode);
@@ -77,6 +110,7 @@ export default {
       }
 
       this.content = topWebsites;
+      this.getDominantColor(this.content);
     },
 
     findTopWebsites: function(websiteCount, websites, mode) {
@@ -150,6 +184,32 @@ export default {
       return websites;
     },
 
+    getDominantColor: function(websites) {
+      for (let i = 0; i < websites.length; i++) {
+        let favicon = websites[i].favicon;
+
+        if (!favicon === '' || favicon) {
+          RGBaster.colors(favicon, {
+            exclude: ['rgb(255,255,255)', 'rgb(0,0,0)'],
+            success: function(payload) {
+              let dominantColor = payload.dominant;
+
+              dominantColor = dominantColor
+                .substring(4, dominantColor.length - 1)
+                .replace(/ /g, '')
+                .split(',');
+
+              let colorClassification = this.findClosestColor(dominantColor[0], dominantColor[1], dominantColor[2], this.colorTable);
+              this.$set(websites[i], 'dominant_color', colorClassification.hex);
+              // websites[i]['dominant_color'] = colorClassification.hex;
+            }.bind(this),
+          });
+        } else {
+          console.log('no icon');
+        }
+      }
+    },
+
     calculateColumnsRows: function(website, index) {
       const site = website;
       let aNeeded = 10000 * site.percent;
@@ -219,10 +279,39 @@ export default {
     resetValues: function() {
       this.columns = [];
       this.rows = [];
-      this.colum = false;
+      this.column = false;
       this.xLeft = 100;
       this.yLeft = 100;
       this.aLeft = 1000;
+    },
+
+    findClosestColor: function(r, g, b, table) {
+      var rgb = { r: r, g: g, b: b };
+      var delta = 3 * 256 * 256;
+      var temp = { r: 0, g: 0, b: 0 };
+      var colorFound = '#000';
+
+      for (let i = 0; i < table.length; i++) {
+        temp = this.Hex2RGB(table[i].hex);
+        if (Math.pow(temp.r - rgb.r, 2) + Math.pow(temp.g - rgb.g, 2) + Math.pow(temp.b - rgb.b, 2) < delta) {
+          delta = Math.pow(temp.r - rgb.r, 2) + Math.pow(temp.g - rgb.g, 2) + Math.pow(temp.b - rgb.b, 2);
+          colorFound = table[i];
+        }
+      }
+      return colorFound;
+    },
+
+    // hex to rgb converter. Needed inside of the find-functions
+    Hex2RGB: function(hex) {
+      if (hex.lastIndexOf('#') > -1) {
+        hex = hex.replace(/#/, '0x');
+      } else {
+        hex = '0x' + hex;
+      }
+      let r = hex >> 16;
+      let g = (hex & 0x00ff00) >> 8;
+      let b = hex & 0x0000ff;
+      return { r: r, g: g, b: b };
     },
 
     formatMS: function(ms) {
@@ -250,17 +339,83 @@ export default {
 <style lang="scss" scoped>
 @import '../../scss/_colors.scss';
 
+.container {
+  height: 100vh;
+  width: 100%;
+  // 40px 80px - margin of grid item
+  padding: 32px 32px;
+  box-sizing: border-box;
+}
+
 .grid {
   display: grid;
   width: 100%;
-  height: 90vh;
+  height: 100%;
   grid-template-columns: repeat(100, 1fr);
   grid-template-rows: repeat(100, 1fr);
-  border: 1px solid $grey;
 
   .gridItem {
-    border: 1px solid $grey;
-    padding: 16px;
+    margin: 8px;
+    border: 3px solid $black;
+    cursor: pointer;
+
+    a {
+      height: 100%;
+      width: 100%;
+      display: block;
+      color: $black;
+      text-decoration: none;
+    }
+
+    .desc {
+      position: relative;
+      background-color: $white;
+      color: $black;
+      padding: 10px 16px 10px 8px;
+      border-bottom: 3px solid $black;
+      overflow: hidden;
+
+      .index {
+        position: absolute;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        width: 32px;
+        top: 0;
+        left: 0;
+        font-weight: 700;
+
+        &:after {
+          content: '';
+          display: inline-block;
+          position: absolute;
+          right: -2px;
+          top: 0;
+          height: 100%;
+          width: 3px;
+          background-color: $black;
+        }
+      }
+
+      .content {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        margin-left: 40px;
+
+        .domain {
+          font-weight: 700;
+          margin-right: 16px;
+        }
+
+        .value {
+          &:first-child {
+            margin-right: 16px;
+          }
+        }
+      }
+    }
   }
 }
 </style>

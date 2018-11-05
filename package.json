@@ -20,7 +20,7 @@
     "lodash": "^4.17.11",
     "moment": "^2.22.2",
     "node-vibrant": "^3.0.0",
-    "rgbaster": "^1.0.0",
+    "rgbaster": "file:src/modules/rgbaster",
     "vue": "^2.5.17",
     "vue-router": "^3.0.1"
   },
