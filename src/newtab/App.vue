@@ -64,7 +64,7 @@
       </footer>
     </div>
     <div class="content-container">
-      <router-view :mode="activeMode" :data='relevantData'></router-view>
+      <router-view :mode="activeMode" :data='relevantData' :period='activePeriod'></router-view>
     </div>
   </div>
 </template>
@@ -72,6 +72,7 @@
 <script>
 import moment from 'moment';
 import cloneDeep from 'lodash/cloneDeep';
+import formatMS from './functions/formatMS';
 
 export default {
   name: 'test-route',
@@ -120,29 +121,7 @@ export default {
   },
 
   methods: {
-    formatMS: function(ms) {
-      let seconds = parseInt((ms / 1000) % 60);
-      let minutes = parseInt((ms / (1000 * 60)) % 60);
-      let hours = parseInt((ms / (1000 * 60 * 60)) % 24);
-
-      hours = hours < 10 ? '0' + hours : hours;
-      minutes = minutes < 10 ? '0' + minutes : minutes;
-      seconds = seconds < 10 ? '0' + seconds : seconds;
-
-      if (hours !== '00') {
-        // hours, minutes and seconds
-        return hours + 'h ' + minutes + 'min ';
-      } else if (hours === '00' && minutes !== '00') {
-        // minutes and seconds
-        return minutes + 'min ';
-      } else if (seconds === '00') {
-        // no time
-        return '–';
-      } else {
-        // seconds
-        return '< 01min';
-      }
-    },
+    formatMS,
 
     getData: function() {
       let storageKeys = Object.keys(localStorage);

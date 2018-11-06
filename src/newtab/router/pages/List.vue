@@ -45,6 +45,8 @@
 </template>
 
 <script>
+import formatMS from '../../functions/formatMS';
+
 export default {
   name: 'list view',
 
@@ -56,24 +58,7 @@ export default {
   created: function() {},
 
   methods: {
-    formatMS: function(ms) {
-      let minutes = parseInt((ms / (1000 * 60)) % 60);
-      let hours = parseInt((ms / (1000 * 60 * 60)) % 24);
-
-      hours = hours < 10 ? '0' + hours : hours;
-      minutes = minutes < 10 ? '0' + minutes : minutes;
-
-      if (hours !== '00') {
-        // hours, minutes and seconds
-        return hours + 'h ' + minutes + 'min ';
-      } else if (hours === '00' && minutes !== '00') {
-        // minutes and seconds
-        return minutes + 'min ';
-      } else {
-        // seconds
-        return '< 01min ';
-      }
-    },
+    formatMS,
   },
 };
 </script>
@@ -111,7 +96,7 @@ export default {
     li {
       flex: 0 0 100%;
       height: 64px;
-      border-top: 1px solid $grey;
+      border-bottom: 1px solid $grey;
 
       a {
         height: 100%;

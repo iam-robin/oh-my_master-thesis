@@ -30,6 +30,7 @@
 <script>
 import cloneDeep from 'lodash/cloneDeep';
 import RGBaster from 'rgbaster';
+import formatMS from '../../functions/formatMS';
 
 export default {
   name: 'ratio view',
@@ -81,7 +82,7 @@ export default {
         // { name: 'black', hex: '#2C3135' },
         { name: 'darkgrey', hex: '#434A54' },
         { name: 'grey', hex: '#CCD0D9' },
-        { name: 'lightgrey', hex: '#EDEFF3' },
+        // { name: 'lightgrey', hex: '#EDEFF3' },
         // { name: 'white', hex: '#FAFBFD' },
       ],
     };
@@ -108,6 +109,8 @@ export default {
   },
 
   methods: {
+    formatMS,
+
     getContent: function() {
       let data = cloneDeep(this.data);
 
@@ -322,25 +325,6 @@ export default {
       let g = (hex & 0x00ff00) >> 8;
       let b = hex & 0x0000ff;
       return { r: r, g: g, b: b };
-    },
-
-    formatMS: function(ms) {
-      let minutes = parseInt((ms / (1000 * 60)) % 60);
-      let hours = parseInt((ms / (1000 * 60 * 60)) % 24);
-
-      hours = hours < 10 ? '0' + hours : hours;
-      minutes = minutes < 10 ? '0' + minutes : minutes;
-
-      if (hours !== '00') {
-        // hours, minutes and seconds
-        return hours + 'h ' + minutes + 'min ';
-      } else if (hours === '00' && minutes !== '00') {
-        // minutes and seconds
-        return minutes + 'min ';
-      } else {
-        // seconds
-        return '< 01min ';
-      }
     },
   },
 };
