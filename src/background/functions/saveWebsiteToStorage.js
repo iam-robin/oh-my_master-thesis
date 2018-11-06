@@ -38,6 +38,10 @@ export default function saveWebsiteToStorage(websiteInfo) {
             if (websiteInfo.prevDomain !== websiteInfo.domain) {
               websites[i].count++;
             }
+            // if favicon is undefined retry get the icon
+            if (!websites[i].favicon) {
+              websites[i].favicon = websiteInfo.favicon;
+            }
           }
         }
         // when time and counter is set, save websites in local storage

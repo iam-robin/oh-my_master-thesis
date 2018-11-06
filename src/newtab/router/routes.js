@@ -20,6 +20,7 @@ export default [
     path: '/ratio',
     name: 'ratio',
     component: Ratio,
+    props: true,
   },
   {
     path: '/limit',

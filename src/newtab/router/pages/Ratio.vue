@@ -9,11 +9,11 @@
               'grid-row-start': website.grid_row_start,
               'grid-row-end': website.grid_row_end}">
       <router-link :to="{ name: 'detail', params: { domain: website.domain }}">
-        <div class="desc" v-if="website.percent > descriptionLimit">
+        <div class="desc">
           <span class="index">0{{index+1}}</span>
           <div class="content">
             <span class="domain">{{website.domain}}</span>
-            <div class="value">
+            <div v-if="columnWidthLimitation <= website.grid_column_end - website.grid_column_start" class="value">
               <span v-if="mode === 'time'">{{formatMS(website.time)}}</span>
               <span v-if="mode === 'views'">{{website.count}} views</span>
               <span>| {{Math.round(website.percent * 1000) / 10}}%</span>
@@ -35,44 +35,54 @@ export default {
   name: 'ratio view',
   data: function() {
     return {
-      descriptionLimit: 0.04,
+      columnWidthLimitation: 18,
       count: 5,
       rows: [],
       columns: [],
       xLeft: 100,
       yLeft: 100,
       aLeft: 1000,
-      minRatio: 0.1,
+      minRatio: 0.2,
 
       column: false,
       mayChangeDirection: true,
 
       content: [],
       colorTable: [
-        { name: 'darkrose', hex: '#F53B57' },
-        { name: 'rose', hex: '#EF5777' },
-        { name: 'darkblue', hex: '#3D40C6' },
-        { name: 'blue', hex: '#575FCF' },
-        { name: 'darkaqua', hex: '#10BCF9' },
-        { name: 'aqua', hex: '#4BD1FA' },
-        { name: 'darkmint', hex: '#00D8D6' },
-        { name: 'mint', hex: '#34E7E4' },
-        { name: 'darkgras', hex: '#04C66B' },
-        { name: 'gras', hex: '#0BE881' },
-        { name: 'darkorange', hex: '#FFA800' },
-        { name: 'orange', hex: '#FFC048' },
-        { name: 'darkyellow', hex: '#FFD32A' },
-        { name: 'yellow', hex: '#FFDD59' },
-        { name: 'darkred', hex: '#FF3F34' },
-        { name: 'red', hex: '#FF5E58' },
-        { name: 'white', hex: '#F5F7FA' },
-        { name: 'lightgrey', hex: '#E6E9ED' },
-        { name: 'grey', hex: '#CCD1D9' },
-        { name: 'mediumgrey', hex: '#AAB2BD' },
-        { name: 'darkgrey', hex: '#656D78' },
-        { name: 'darkergrey', hex: '#434A54' },
-        { name: 'lightblack', hex: '#3C3B3D' },
-        { name: 'black', hex: '#323133' },
+        { name: 'darkblue', hex: '#4E8BD9' },
+        { name: 'blue', hex: '#609DE9' },
+        { name: 'lightblue', hex: '#89BEFD' },
+        { name: 'darkteal', hex: '#43AFD8' },
+        { name: 'teal', hex: '#55C0E6' },
+        { name: 'lightteal', hex: '#8DDBF7' },
+        { name: 'darkpurple', hex: '#967ED9' },
+        { name: 'purple', hex: '#AC94EA' },
+        { name: 'lightpurple', hex: '#CFBDFC' },
+        { name: 'darkpink', hex: '#D672AC' },
+        { name: 'pink', hex: '#EA8ABF' },
+        { name: 'lightpink', hex: '#FDA9DA' },
+        { name: 'darkred', hex: '#D84756' },
+        { name: 'red', hex: '#EB5767' },
+        { name: 'lightred', hex: '#FD9BA5' },
+        // { name: 'darkorange', hex: '#E75844' },
+        // { name: 'orange', hex: '#F96F57' },
+        { name: 'lightorange', hex: '#FDA695' },
+        { name: 'darkyellow', hex: '#F5BA4F' },
+        { name: 'yellow', hex: '#FECE60' },
+        { name: 'lightyellow', hex: '#FEDE91' },
+        { name: 'darkgreen', hex: '#EA8ABF' },
+        { name: 'green', hex: '#A1D36E' },
+        { name: 'lightgreen', hex: '#C2E699' },
+        { name: 'darkmint', hex: '#3FBA9B' },
+        { name: 'mint', hex: '#4FCEAE' },
+        { name: 'lightmint', hex: '#99E7D2' },
+        { name: 'darkcyan', hex: '#47BEC3' },
+        { name: 'cyan', hex: '#54CBD1' },
+        // { name: 'black', hex: '#2C3135' },
+        { name: 'darkgrey', hex: '#434A54' },
+        { name: 'grey', hex: '#CCD0D9' },
+        { name: 'lightgrey', hex: '#EDEFF3' },
+        // { name: 'white', hex: '#FAFBFD' },
       ],
     };
   },
@@ -343,7 +353,7 @@ export default {
   height: 100vh;
   width: 100%;
   // 40px 80px - margin of grid item
-  padding: 32px 32px;
+  padding: 28px 28px;
   box-sizing: border-box;
 }
 
@@ -355,9 +365,10 @@ export default {
   grid-template-rows: repeat(100, 1fr);
 
   .gridItem {
-    margin: 8px;
+    margin: 12px;
     border: 3px solid $black;
     cursor: pointer;
+    transition: all 0.2s ease-in-out;
 
     a {
       height: 100%;
@@ -371,7 +382,7 @@ export default {
       position: relative;
       background-color: $white;
       color: $black;
-      padding: 10px 16px 10px 8px;
+      padding: 10px 16px 6px 8px;
       border-bottom: 3px solid $black;
       overflow: hidden;
 
@@ -405,15 +416,28 @@ export default {
         margin-left: 40px;
 
         .domain {
-          font-weight: 700;
           margin-right: 16px;
+          padding-bottom: 4px;
         }
 
         .value {
+          padding-bottom: 4px;
           &:first-child {
             margin-right: 16px;
           }
         }
+      }
+
+      // white element to crop overflowed content
+      &:after {
+        content: '';
+        position: absolute;
+        display: inline-block;
+        height: 100%;
+        width: 16px;
+        background-color: $white;
+        right: 0;
+        top: 0;
       }
     }
   }

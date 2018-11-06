@@ -314,6 +314,10 @@ export default {
 @import url('https://fonts.googleapis.com/css?family=Montserrat:500');
 @import 'scss/_colors.scss';
 
+::-webkit-scrollbar {
+  width: 0px; /* remove scrollbar space */
+}
+
 body {
   margin: 0;
   padding: 0;

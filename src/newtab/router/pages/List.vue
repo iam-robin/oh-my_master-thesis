@@ -1,32 +1,45 @@
 <template>
 <div class="container">
-  <div class="date-container">
-
-    <!--mode: time -->
-    <ul v-if="mode === 'time'">
-      <li v-for="website in data" :key="website.domain" 
-          :style="{ 'order': website.time *-1 }">
-        <img v-if="website.favicon != '' && website.favicon" :src="website.favicon" alt="favicon" class="favicon">
-        <span v-else class="placeholder"></span>
-        <span class="domain">{{ website.domain }}</span>
-        <span class="line"></span>
-        <span class="count">{{ formatMS(website.time) }}</span>
-      </li>
-    </ul>
-
-    <!--mode: views -->
-    <ul v-if="mode === 'views'">
-      <li v-for="website in data" :key="website.domain" 
-          :style="{ 'order': website.count *-1 }">
-        <img v-if="website.favicon != '' && website.favicon" :src="website.favicon" alt="favicon" class="favicon">
-        <span v-else class="placeholder"></span>
-        <span class="domain">{{ website.domain }}</span>
-        <span class="line"></span>
-        <span class="count">{{ website.count }}</span>
-      </li>
-    </ul>
-
+  
+  <div class="list-header">
+    <div>
+      <span>Domain</span> 
+    </div>
+    <div>
+      <span v-if="mode === 'time'">usage time</span>
+      <span v-if="mode === 'views'">site views</span>
+    </div>
   </div>
+
+  <!--mode: time -->
+  <ul v-if="mode === 'time'">
+    <li v-for="website in data" :key="website.domain" 
+        :style="{ 'order': website.time *-1 }">
+      <router-link :to="{ name: 'detail', params: { domain: website.domain }}">
+        <div class="left">
+          <img v-if="website.favicon != '' && website.favicon" :src="website.favicon" alt="favicon" class="favicon">
+          <span v-else class="placeholder"></span>
+          <span class="domain">{{ website.domain }}</span>
+        </div>
+        <span class="count">{{ formatMS(website.time) }}</span>
+      </router-link>
+    </li>
+  </ul>
+
+  <!--mode: views -->
+  <ul v-if="mode === 'views'">
+    <li v-for="website in data" :key="website.domain" 
+        :style="{ 'order': website.count *-1 }">
+      <router-link :to="{ name: 'detail', params: { domain: website.domain }}">
+        <div class="left">
+          <img v-if="website.favicon != '' && website.favicon" :src="website.favicon" alt="favicon" class="favicon">
+          <span v-else class="placeholder"></span>
+          <span class="domain">{{ website.domain }}</span>
+        </div>
+        <span class="count">{{ website.count }}</span>
+      </router-link>
+    </li>
+  </ul>
 
 </div>
 </template>
@@ -67,13 +80,23 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../scss/_colors.scss';
-.container {
-  margin-top: 240px;
 
-  .date-container {
-    width: 80%;
-    margin: 0 auto;
-    margin-bottom: 160px;
+.container {
+  padding: 40px 80px;
+  height: 100vh;
+  box-sizing: border-box;
+
+  .list-header {
+    display: flex;
+    justify-content: space-between;
+    height: 32px;
+    border-bottom: 3px solid $black;
+
+    span {
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 2px;
+    }
   }
 
   ul {
@@ -81,40 +104,47 @@ export default {
     flex-wrap: wrap;
     padding: 0;
     margin: 0;
-    max-height: 510px;
+    max-height: 97%;
     align-content: flex-start;
     overflow: scroll;
 
     li {
       flex: 0 0 100%;
-      display: flex;
-      font-size: 12px;
-      padding: 8px 0;
-      justify-content: space-between;
-      align-items: center;
+      height: 64px;
+      border-top: 1px solid $grey;
 
-      .favicon {
-        height: 16px;
-        margin-right: 8px;
-      }
+      a {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        font-size: 12px;
+        justify-content: space-between;
+        align-items: center;
+        color: $black;
+        text-decoration: none;
 
-      .placeholder {
-        width: 16px;
-        margin-right: 8px;
-        height: 16px;
-        border-radius: 100%;
-        background-color: $grey;
-      }
+        .left {
+          display: flex;
+          align-items: center;
 
-      .line {
-        height: 1px;
-        background-color: $grey;
-        margin: 0 24px;
-        flex-grow: 99;
-      }
+          .favicon {
+            height: 16px;
+            margin-right: 16px;
+          }
 
-      .count {
-        text-align: right;
+          .placeholder {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            margin-right: 16px;
+            border-radius: 100%;
+            background-color: $grey;
+          }
+        }
+
+        .count {
+          text-align: right;
+        }
       }
     }
   }
