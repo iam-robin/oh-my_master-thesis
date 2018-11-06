@@ -40,6 +40,7 @@ export default {
     this.data = this.getDetailData();
     this.calculateSum();
     this.getTimePerView();
+    this.$emit('detailPageActive', this.domain);
   },
 
   methods: {

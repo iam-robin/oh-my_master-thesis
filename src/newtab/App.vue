@@ -21,6 +21,7 @@
         </div>
       </header>
       <main>
+
         <div class="date">
           <span v-on:click="prevDate()" class="prev">
             <svg viewBox="0 0 16 16" fill="none">
@@ -28,7 +29,9 @@
               <path d="M6.66669 12L2.66669 8L6.66669 4" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </span>
+
             <h2>{{formatedDate}}</h2>
+
           <span v-on:click="nextDate()" class="next">
             <svg viewBox="0 0 16 16" fill="none">
               <path d="M13.3334 8H2.66669" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -36,8 +39,10 @@
             </svg>
           </span>
         </div>
+
         <h1 class="sum" v-if="activeMode === 'time'">{{formatMS(periodSum.time)}}</h1>
-        <h1 class="sum" v-if="activeMode === 'views'">{{periodSum.views}} site views</h1>
+        <h1 class="sum" v-if="activeMode === 'views'">{{periodSum.views}}</h1>
+
       </main>
       <footer>
         <ul class="period">
@@ -64,7 +69,11 @@
       </footer>
     </div>
     <div class="content-container">
-      <router-view :mode="activeMode" :data='relevantData' :period='activePeriod'></router-view>
+      <router-view :mode="activeMode"
+        :data='relevantData'
+        :period='activePeriod'
+        @detailPageActive="handleDetailPage">
+      </router-view>
     </div>
   </div>
 </template>
@@ -284,6 +293,11 @@ export default {
       this.formatDate();
       this.getRelevantData();
     },
+
+    handleDetailPage: function(domain) {
+      console.log('handle detail page');
+      console.log(domain);
+    },
   },
 };
 </script>
@@ -379,6 +393,12 @@ body {
         font-size: 38px;
         margin: 0;
         text-align: center;
+      }
+      .description {
+        margin: 0;
+        margin-top: 8px;
+        text-align: center;
+        font-size: 12px;
       }
     }
 
