@@ -1,15 +1,22 @@
 <template>
 <div class="container">
-  <span>Domain: {{ $route.params.domain }}</span>
+  <p>Domain: {{ $route.params.domain }}</p>
+  <p>Mode: {{mode}}</p>
 </div>
 </template>
 
 <script>
 export default {
   name: 'detail page',
+
   data: function() {
     return {};
   },
+
+  props: {
+    mode: String,
+  },
+
   created: function() {},
   methods: {},
 };

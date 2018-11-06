@@ -17,7 +17,7 @@
         :style="{ 'order': website.time *-1 }">
       <router-link :to="{ name: 'detail', params: { domain: website.domain }}">
         <div class="left">
-          <img v-if="website.favicon != '' && website.favicon" :src="website.favicon" alt="favicon" class="favicon">
+          <span v-if="website.favicon != '' && website.favicon" :style="{ backgroundImage: 'url(' + website.favicon + ')' }" class="favicon"></span>
           <span v-else class="placeholder"></span>
           <span class="domain">{{ website.domain }}</span>
         </div>
@@ -32,7 +32,7 @@
         :style="{ 'order': website.count *-1 }">
       <router-link :to="{ name: 'detail', params: { domain: website.domain }}">
         <div class="left">
-          <img v-if="website.favicon != '' && website.favicon" :src="website.favicon" alt="favicon" class="favicon">
+          <span v-if="website.favicon != '' && website.favicon" :style="{ backgroundImage: 'url(' + website.favicon + ')' }" class="favicon"></span>
           <span v-else class="placeholder"></span>
           <span class="domain">{{ website.domain }}</span>
         </div>
@@ -128,8 +128,13 @@ export default {
           align-items: center;
 
           .favicon {
+            display: inline-block;
+            width: 16px;
             height: 16px;
             margin-right: 16px;
+            background-size: 16px 16px;
+            background-position: center;
+            background-repeat: no-repeat;
           }
 
           .placeholder {

@@ -353,7 +353,7 @@ export default {
   height: 100vh;
   width: 100%;
   // 40px 80px - margin of grid item
-  padding: 28px 28px;
+  padding: 28px 68px;
   box-sizing: border-box;
 }
 
