@@ -106,6 +106,8 @@ export default {
 
   created: function() {
     this.getContent();
+    // send data to app.vue
+    this.$emit('detailPageActive', false);
   },
 
   methods: {

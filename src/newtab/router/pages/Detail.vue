@@ -40,7 +40,8 @@ export default {
     this.data = this.getDetailData();
     this.calculateSum();
     this.getTimePerView();
-    this.$emit('detailPageActive', this.domain);
+    // send data to app.vue
+    this.$emit('detailPageActive', true, this.domain);
   },
 
   methods: {

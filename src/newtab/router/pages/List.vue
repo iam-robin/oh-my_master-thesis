@@ -55,7 +55,10 @@ export default {
     data: Array,
   },
 
-  created: function() {},
+  created: function() {
+    // send data to app.vue
+    this.$emit('detailPageActive', false);
+  },
 
   methods: {
     formatMS,
