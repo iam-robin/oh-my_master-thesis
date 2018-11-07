@@ -40,8 +40,33 @@
           </span>
         </div>
 
-        <h1 class="sum" v-if="activeMode === 'time'">{{formatMS(periodSum.time)}}</h1>
-        <h1 class="sum" v-if="activeMode === 'views'">{{periodSum.views}}</h1>
+        <!-- time mode -->
+        <div v-if="activeMode === 'time'">
+          <!-- total view active-->
+          <div v-if="detailPageActive === false">
+            <h1 class="sum">{{formatMS(periodSum.time)}}</h1>
+            <p class="description">total usage time</p>
+          </div>
+          <!-- detail view active-->
+          <div v-if="detailPageActive === true">
+            <h1 class="sum">xx min</h1>
+            <p class="description">time spent on {{detailPageDomain}}</p>
+          </div>
+        </div>
+
+        <!-- views mode -->
+        <div v-if="activeMode === 'views'">
+          <!-- total view active-->
+          <div v-if="detailPageActive === false">
+            <h1 class="sum">{{periodSum.views}}</h1>
+            <p class="description">total site views</p>
+          </div>
+          <!-- detail view active-->
+          <div v-if="detailPageActive === true">
+            <h1 class="sum">xx</h1>
+            <p class="description">site views on {{detailPageDomain}}</p>
+          </div>
+        </div>
 
       </main>
       <footer>
@@ -94,6 +119,8 @@ export default {
       data: [],
       relevantData: [],
       periodSum: {},
+      detailPageActive: false,
+      detailPageDomain: '',
     };
   },
   created: function() {
@@ -294,7 +321,14 @@ export default {
       this.getRelevantData();
     },
 
-    handleDetailPage: function(domain) {
+    handleDetailPage: function(active, domain) {
+      if (active) {
+        this.detailPageActive = true;
+        this.detailPageDomain = domain;
+      } else {
+        this.detailPageActive = false;
+        this.detailPageDomain = '';
+      }
       console.log('handle detail page');
       console.log(domain);
     },
@@ -360,6 +394,7 @@ body {
 
     main {
       user-select: none;
+      margin-bottom: 16px;
 
       .date {
         width: 100%;
@@ -389,16 +424,17 @@ body {
           }
         }
       }
+
       h1.sum {
-        font-size: 38px;
+        font-size: 50px;
         margin: 0;
         text-align: center;
       }
+
       .description {
-        margin: 0;
-        margin-top: 8px;
+        margin: 8px 0 0 0;
+        font-size: 16px;
         text-align: center;
-        font-size: 12px;
       }
     }
 
