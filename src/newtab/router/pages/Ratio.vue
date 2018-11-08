@@ -355,6 +355,7 @@ export default {
     border: 3px solid $black;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
+    overflow: hidden;
 
     a {
       height: 100%;
