@@ -221,8 +221,6 @@ export default {
               // websites[i]['dominant_color'] = colorClassification.hex;
             }.bind(this),
           });
-        } else {
-          console.log('no icon');
         }
       }
     },

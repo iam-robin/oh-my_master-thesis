@@ -10,6 +10,43 @@ import sendLimitToContent from './functions/sendLimitToContent';
 let startTime = 0;
 let websiteInfo;
 
+let colorTable = [
+  { name: 'darkblue', hex: '#4E8BD9' },
+  { name: 'blue', hex: '#609DE9' },
+  { name: 'lightblue', hex: '#89BEFD' },
+  { name: 'darkteal', hex: '#43AFD8' },
+  { name: 'teal', hex: '#55C0E6' },
+  { name: 'lightteal', hex: '#8DDBF7' },
+  { name: 'darkpurple', hex: '#967ED9' },
+  { name: 'purple', hex: '#AC94EA' },
+  { name: 'lightpurple', hex: '#CFBDFC' },
+  { name: 'darkpink', hex: '#D672AC' },
+  { name: 'pink', hex: '#EA8ABF' },
+  { name: 'lightpink', hex: '#FDA9DA' },
+  { name: 'darkred', hex: '#D84756' },
+  { name: 'red', hex: '#EB5767' },
+  { name: 'lightred', hex: '#FD9BA5' },
+  // { name: 'darkorange', hex: '#E75844' },
+  // { name: 'orange', hex: '#F96F57' },
+  { name: 'lightorange', hex: '#FDA695' },
+  { name: 'darkyellow', hex: '#F5BA4F' },
+  { name: 'yellow', hex: '#FECE60' },
+  { name: 'lightyellow', hex: '#FEDE91' },
+  { name: 'darkgreen', hex: '#EA8ABF' },
+  { name: 'green', hex: '#A1D36E' },
+  { name: 'lightgreen', hex: '#C2E699' },
+  { name: 'darkmint', hex: '#3FBA9B' },
+  { name: 'mint', hex: '#4FCEAE' },
+  { name: 'lightmint', hex: '#99E7D2' },
+  { name: 'darkcyan', hex: '#47BEC3' },
+  { name: 'cyan', hex: '#54CBD1' },
+  // { name: 'black', hex: '#2C3135' },
+  { name: 'darkgrey', hex: '#434A54' },
+  { name: 'grey', hex: '#CCD0D9' },
+  // { name: 'lightgrey', hex: '#EDEFF3' },
+  // { name: 'white', hex: '#FAFBFD' },
+];
+
 // ================================================================================
 // EVENTS
 // ================================================================================
@@ -19,9 +56,10 @@ chrome.tabs.onActivated.addListener(function(tabId, changeInfo, tab) {
   getTabInfo(function(result) {
     websiteInfo = result;
     let time = measureUsageTime();
-    saveWebsiteToStorage(result);
-    saveTimeInStorage(result.prevDomain, time);
-    sendLimitToContent(result);
+    saveWebsiteToStorage(result, colorTable).then(() => {
+      saveTimeInStorage(result.prevDomain, time);
+      sendLimitToContent(result);
+    });
   });
 });
 
@@ -32,9 +70,10 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     getTabInfo(function(result) {
       websiteInfo = result;
       let time = measureUsageTime();
-      saveWebsiteToStorage(result);
-      saveTimeInStorage(result.prevDomain, time);
-      sendLimitToContent(result);
+      saveWebsiteToStorage(result, colorTable).then(() => {
+        saveTimeInStorage(result.prevDomain, time);
+        sendLimitToContent(result);
+      });
     });
   }
 });
