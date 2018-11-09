@@ -1,12 +1,17 @@
 <template>
-<div class="container">
-  <router-link to="/list">all websites</router-link>
-  <p>Domain: {{ domain }}</p>
-  <p>Mode: {{mode}}</p>
-  <p>Period: {{period}}</p>
-  <p>Total usage time: {{formatMS(timeSum)}} </p>
-  <p>Total site views: {{viewsSum}} </p>
-  <p>Average usage time per site view: {{formatMS(timePerView, true)}} </p>
+<div class="component">
+  <div class="left" :style="{ 'background-color': color}">
+    {{domain}}
+  </div>
+  <div class="right">
+    <router-link to="/ratio">all websites</router-link>
+    <p>Domain: {{ domain }}</p>
+    <p>Mode: {{mode}}</p>
+    <p>Period: {{period}}</p>
+    <p>Total usage time: {{formatMS(timeSum)}} </p>
+    <p>Total site views: {{viewsSum}} </p>
+    <p>Average usage time per site view: {{formatMS(timePerView, true)}} </p>
+  </div>
 </div>
 </template>
 
@@ -14,11 +19,12 @@
 import formatMS from '../../functions/formatMS';
 
 export default {
-  name: 'detail page',
+  name: 'detail-page',
 
   data: function() {
     return {
       domain: '',
+      color: '',
       data: [],
       timeSum: 0,
       viewsSum: 0,
@@ -37,11 +43,15 @@ export default {
 
   created: function() {
     this.domain = this.$route.params.domain;
+    this.color = this.$route.params.color;
     this.data = this.getDetailData();
     this.calculateSum();
     this.getTimePerView();
     // send data to app.vue
-    this.$emit('detailPageActive', true, this.domain);
+    this.$emit('detailPageActive', true);
+    console.log(this.domain);
+    console.log(this.color);
+    console.log(this.data);
   },
 
   methods: {
@@ -88,7 +98,19 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.container {
-  padding: 40px;
+.left {
+  display: flex;
+  position: fixed;
+  width: 40%;
+  height: 100vh;
+  padding: 40px 80px;
+  box-sizing: border-box;
+}
+
+.right {
+  display: inline-block;
+  margin-left: 40%;
+  width: 60%;
+  min-height: 100vh;
 }
 </style>

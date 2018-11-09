@@ -1,26 +1,28 @@
 <template>
-<div class="container">
+<div class="component">
+  <div class="container">
 
-  <div class="grid">
-    <div class="gridItem" v-for="(website, index) in content" :key="website.domain"
-    :style="{ 'background-color': website.dominant_color,
-              'grid-column-start': website.grid_column_start,
-              'grid-column-end': website.grid_column_end,
-              'grid-row-start': website.grid_row_start,
-              'grid-row-end': website.grid_row_end}">
-      <router-link :to="{ name: 'detail', params: { domain: website.domain }}">
-        <div class="desc">
-          <span class="index">0{{index+1}}</span>
-          <div class="content">
-            <span class="domain">{{website.domain}}</span>
-            <div v-if="columnWidthLimitation <= website.grid_column_end - website.grid_column_start" class="value">
-              <span v-if="mode === 'time'">{{formatMS(website.time)}}</span>
-              <span v-if="mode === 'views'">{{website.count}} views</span>
-              <span>| {{Math.round(website.percent * 1000) / 10}}%</span>
+    <div class="grid">
+      <div class="gridItem" v-for="(website, index) in content" :key="website.domain"
+      :style="{ 'background-color': website.dominant_color,
+                'grid-column-start': website.grid_column_start,
+                'grid-column-end': website.grid_column_end,
+                'grid-row-start': website.grid_row_start,
+                'grid-row-end': website.grid_row_end}">
+        <router-link :to="{ name: 'detail', params: { domain: website.domain, color: website.dominant_color }}">
+          <div class="desc">
+            <span class="index">0{{index+1}}</span>
+            <div class="content">
+              <span class="domain">{{website.domain}}</span>
+              <div v-if="columnWidthLimitation <= website.grid_column_end - website.grid_column_start" class="value">
+                <span v-if="mode === 'time'">{{formatMS(website.time)}}</span>
+                <span v-if="mode === 'views'">{{website.count}} views</span>
+                <span>| {{Math.round(website.percent * 1000) / 10}}%</span>
+              </div>
             </div>
           </div>
-        </div>
-      </router-link>
+        </router-link>
+      </div>
     </div>
   </div>
 
@@ -33,7 +35,7 @@ import RGBaster from 'rgbaster';
 import formatMS from '../../functions/formatMS';
 
 export default {
-  name: 'ratio view',
+  name: 'ratio-view',
   data: function() {
     return {
       columnWidthLimitation: 18,
@@ -337,7 +339,6 @@ export default {
 
 .container {
   height: 100vh;
-  width: 100%;
   // 40px 80px - margin of grid item
   padding: 28px 68px;
   box-sizing: border-box;
