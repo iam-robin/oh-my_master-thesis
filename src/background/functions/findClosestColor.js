@@ -4,7 +4,7 @@ export default function findClosestColor(r, g, b, table) {
   let rgb = { r: r, g: g, b: b };
   let delta = 3 * 256 * 256;
   let temp = { r: 0, g: 0, b: 0 };
-  let colorFound;
+  let colorFound = { name: 'default', hex: 'tomato' };
 
   for (let i = 0; i < table.length; i++) {
     temp = Hex2RGB(table[i].hex);

@@ -4,7 +4,7 @@
 
     <div class="grid">
       <div class="gridItem" v-for="(website, index) in content" :key="website.domain"
-      :style="{ 'background-color': website.dominant_color,
+      :style="{ 'background-color': website.dominant_color.hex,
                 'grid-column-start': website.grid_column_start,
                 'grid-column-end': website.grid_column_end,
                 'grid-row-start': website.grid_row_start,
@@ -31,7 +31,6 @@
 
 <script>
 import cloneDeep from 'lodash/cloneDeep';
-import RGBaster from 'rgbaster';
 import formatMS from '../../functions/formatMS';
 
 export default {
@@ -51,42 +50,6 @@ export default {
       mayChangeDirection: true,
 
       content: [],
-      colorTable: [
-        { name: 'darkblue', hex: '#4E8BD9' },
-        { name: 'blue', hex: '#609DE9' },
-        { name: 'lightblue', hex: '#89BEFD' },
-        { name: 'darkteal', hex: '#43AFD8' },
-        { name: 'teal', hex: '#55C0E6' },
-        { name: 'lightteal', hex: '#8DDBF7' },
-        { name: 'darkpurple', hex: '#967ED9' },
-        { name: 'purple', hex: '#AC94EA' },
-        { name: 'lightpurple', hex: '#CFBDFC' },
-        { name: 'darkpink', hex: '#D672AC' },
-        { name: 'pink', hex: '#EA8ABF' },
-        { name: 'lightpink', hex: '#FDA9DA' },
-        { name: 'darkred', hex: '#D84756' },
-        { name: 'red', hex: '#EB5767' },
-        { name: 'lightred', hex: '#FD9BA5' },
-        // { name: 'darkorange', hex: '#E75844' },
-        // { name: 'orange', hex: '#F96F57' },
-        { name: 'lightorange', hex: '#FDA695' },
-        { name: 'darkyellow', hex: '#F5BA4F' },
-        { name: 'yellow', hex: '#FECE60' },
-        { name: 'lightyellow', hex: '#FEDE91' },
-        { name: 'darkgreen', hex: '#EA8ABF' },
-        { name: 'green', hex: '#A1D36E' },
-        { name: 'lightgreen', hex: '#C2E699' },
-        { name: 'darkmint', hex: '#3FBA9B' },
-        { name: 'mint', hex: '#4FCEAE' },
-        { name: 'lightmint', hex: '#99E7D2' },
-        { name: 'darkcyan', hex: '#47BEC3' },
-        { name: 'cyan', hex: '#54CBD1' },
-        // { name: 'black', hex: '#2C3135' },
-        { name: 'darkgrey', hex: '#434A54' },
-        { name: 'grey', hex: '#CCD0D9' },
-        // { name: 'lightgrey', hex: '#EDEFF3' },
-        // { name: 'white', hex: '#FAFBFD' },
-      ],
     };
   },
 
@@ -110,6 +73,7 @@ export default {
     this.getContent();
     // send data to app.vue
     this.$emit('detailPageActive', false);
+    console.log(this.content);
   },
 
   methods: {
@@ -127,7 +91,6 @@ export default {
       }
 
       this.content = topWebsites;
-      this.getDominantColor(this.content);
     },
 
     findTopWebsites: function(websiteCount, websites, mode) {
@@ -199,30 +162,6 @@ export default {
       }
 
       return websites;
-    },
-
-    getDominantColor: function(websites) {
-      for (let i = 0; i < websites.length; i++) {
-        let favicon = websites[i].favicon;
-
-        if (!favicon === '' || favicon) {
-          RGBaster.colors(favicon, {
-            exclude: ['rgb(255,255,255)', 'rgb(0,0,0)'],
-            success: function(payload) {
-              let dominantColor = payload.dominant;
-
-              dominantColor = dominantColor
-                .substring(4, dominantColor.length - 1)
-                .replace(/ /g, '')
-                .split(',');
-
-              let colorClassification = this.findClosestColor(dominantColor[0], dominantColor[1], dominantColor[2], this.colorTable);
-              this.$set(websites[i], 'dominant_color', colorClassification.hex);
-              // websites[i]['dominant_color'] = colorClassification.hex;
-            }.bind(this),
-          });
-        }
-      }
     },
 
     calculateColumnsRows: function(website, index) {
@@ -298,35 +237,6 @@ export default {
       this.xLeft = 100;
       this.yLeft = 100;
       this.aLeft = 1000;
-    },
-
-    findClosestColor: function(r, g, b, table) {
-      var rgb = { r: r, g: g, b: b };
-      var delta = 3 * 256 * 256;
-      var temp = { r: 0, g: 0, b: 0 };
-      var colorFound = '#000';
-
-      for (let i = 0; i < table.length; i++) {
-        temp = this.Hex2RGB(table[i].hex);
-        if (Math.pow(temp.r - rgb.r, 2) + Math.pow(temp.g - rgb.g, 2) + Math.pow(temp.b - rgb.b, 2) < delta) {
-          delta = Math.pow(temp.r - rgb.r, 2) + Math.pow(temp.g - rgb.g, 2) + Math.pow(temp.b - rgb.b, 2);
-          colorFound = table[i];
-        }
-      }
-      return colorFound;
-    },
-
-    // hex to rgb converter. Needed inside of the find-functions
-    Hex2RGB: function(hex) {
-      if (hex.lastIndexOf('#') > -1) {
-        hex = hex.replace(/#/, '0x');
-      } else {
-        hex = '0x' + hex;
-      }
-      let r = hex >> 16;
-      let g = (hex & 0x00ff00) >> 8;
-      let b = hex & 0x0000ff;
-      return { r: r, g: g, b: b };
     },
   },
 };

@@ -10,6 +10,7 @@ export default function saveWebsiteToStorage(websiteInfo, colorTable) {
       favicon: websiteInfo.favicon,
       count: 1,
       time: 0,
+      dominant_color: { name: 'default', hex: 'tomato' },
     };
 
     extractDominantColors(websiteInfo, colorTable, website).then(websiteWithColors => {
@@ -33,7 +34,7 @@ function extractDominantColors(websiteInfo, colorTable, website) {
             .split(',');
 
           let colorClassification = findClosestColor(dominantColor[0], dominantColor[1], dominantColor[2], colorTable);
-          website.color = colorClassification;
+          website.dominant_color = colorClassification;
           resolve(website);
         },
       });
@@ -44,7 +45,6 @@ function extractDominantColors(websiteInfo, colorTable, website) {
 }
 
 function saveToStorage(websiteInfo, website) {
-  console.log(website);
   let today = moment().format('YYYY-MM-DD');
 
   if (websiteInfo.domain !== 'newtab' && websiteInfo.domain !== '') {
@@ -78,6 +78,10 @@ function saveToStorage(websiteInfo, website) {
             // if favicon is undefined retry get the icon
             if (!websites[i].favicon) {
               websites[i].favicon = websiteInfo.favicon;
+            }
+
+            if (websites[i].dominant_color.name === 'default') {
+              websites[i].dominant_color = website.dominant_color;
             }
           }
         }
