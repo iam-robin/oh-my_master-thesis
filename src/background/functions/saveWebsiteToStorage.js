@@ -1,6 +1,5 @@
 import moment from 'moment';
 import RGBaster from 'rgbaster';
-import findClosestColor from './findClosestColor';
 
 // save website to local storage
 export default function saveWebsiteToStorage(websiteInfo, colorTable) {
@@ -10,7 +9,7 @@ export default function saveWebsiteToStorage(websiteInfo, colorTable) {
       favicon: websiteInfo.favicon,
       count: 1,
       time: 0,
-      dominant_color: { name: 'default', hex: 'tomato' },
+      dominant_color: { name: 'default', hex: '#CCD0D9' },
     };
 
     extractDominantColors(websiteInfo, colorTable, website).then(websiteWithColors => {
@@ -42,6 +41,34 @@ function extractDominantColors(websiteInfo, colorTable, website) {
       resolve(website);
     }
   });
+}
+
+function findClosestColor(r, g, b, table) {
+  let rgb = { r: r, g: g, b: b };
+  let delta = 3 * 256 * 256;
+  let temp = { r: 0, g: 0, b: 0 };
+  let colorFound = { name: 'default', hex: '#CCD0D9' };
+
+  for (let i = 0; i < table.length; i++) {
+    temp = Hex2RGB(table[i].hex);
+    if (Math.pow(temp.r - rgb.r, 2) + Math.pow(temp.g - rgb.g, 2) + Math.pow(temp.b - rgb.b, 2) < delta) {
+      delta = Math.pow(temp.r - rgb.r, 2) + Math.pow(temp.g - rgb.g, 2) + Math.pow(temp.b - rgb.b, 2);
+      colorFound = table[i];
+    }
+  }
+  return colorFound;
+}
+
+function Hex2RGB(hex) {
+  if (hex.lastIndexOf('#') > -1) {
+    hex = hex.replace(/#/, '0x');
+  } else {
+    hex = '0x' + hex;
+  }
+  let r = hex >> 16;
+  let g = (hex & 0x00ff00) >> 8;
+  let b = hex & 0x0000ff;
+  return { r: r, g: g, b: b };
 }
 
 function saveToStorage(websiteInfo, website) {

@@ -1,5 +1,5 @@
 <template>
-<div class="component">
+
   <div class="container">
 
     <div class="grid">
@@ -9,7 +9,7 @@
                 'grid-column-end': website.grid_column_end,
                 'grid-row-start': website.grid_row_start,
                 'grid-row-end': website.grid_row_end}">
-        <router-link :to="{ name: 'detail', params: { domain: website.domain, color: website.dominant_color }}">
+        <router-link :to="{ name: 'detail', params: { domain: website.domain}}">
           <div class="desc">
             <span class="index">0{{index+1}}</span>
             <div class="content">
@@ -26,7 +26,6 @@
     </div>
   </div>
 
-</div>
 </template>
 
 <script>
