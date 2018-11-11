@@ -42,30 +42,14 @@
 
         <!-- time mode -->
         <div v-if="activeMode === 'time'">
-          <!-- total view active-->
-          <div v-if="detailPageActive === false">
-            <h1 class="sum">{{formatMS(periodSum.time)}}</h1>
-            <p class="description">total usage time</p>
-          </div>
-          <!-- detail view active-->
-          <div v-if="detailPageActive === true">
-            <h1 class="sum">xx min</h1>
-            <p class="description">time spent on {{detailPageDomain}}</p>
-          </div>
+          <h1 class="sum">{{formatMS(periodSum.time)}}</h1>
+          <p class="description">total usage time</p>
         </div>
 
         <!-- views mode -->
         <div v-if="activeMode === 'views'">
-          <!-- total view active-->
-          <div v-if="detailPageActive === false">
             <h1 class="sum">{{periodSum.views}}</h1>
             <p class="description">total site views</p>
-          </div>
-          <!-- detail view active-->
-          <div v-if="detailPageActive === true">
-            <h1 class="sum">xx</h1>
-            <p class="description">site views on {{detailPageDomain}}</p>
-          </div>
         </div>
 
       </main>
@@ -93,7 +77,7 @@
         </ul>
       </footer>
     </div>
-    <div class="content-container">
+    <div class="content-container" v-bind:class="{detail: detailPageActive}">
       <router-view :mode="activeMode"
         :data='relevantData'
         :period='activePeriod'
@@ -109,7 +93,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import formatMS from './functions/formatMS';
 
 export default {
-  name: 'test-route',
+  name: 'app-view',
   data: function() {
     return {
       activeMode: 'time',
@@ -120,7 +104,6 @@ export default {
       relevantData: [],
       periodSum: {},
       detailPageActive: false,
-      detailPageDomain: '',
     };
   },
   created: function() {
@@ -321,16 +304,8 @@ export default {
       this.getRelevantData();
     },
 
-    handleDetailPage: function(active, domain) {
-      if (active) {
-        this.detailPageActive = true;
-        this.detailPageDomain = domain;
-      } else {
-        this.detailPageActive = false;
-        this.detailPageDomain = '';
-      }
-      console.log('handle detail page');
-      console.log(domain);
+    handleDetailPage: function(isActive) {
+      this.detailPageActive = isActive;
     },
   },
 };
@@ -487,6 +462,12 @@ body {
     width: 60%;
     background-color: $lightgrey;
     min-height: 100vh;
+
+    &.detail {
+      position: absolute;
+      width: 100%;
+      margin: 0;
+    }
   }
 }
 </style>

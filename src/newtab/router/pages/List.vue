@@ -1,46 +1,48 @@
 <template>
-<div class="container">
-  
-  <div class="list-header">
-    <div>
-      <span>Domain</span> 
+<div class="component">
+  <div class="container">
+    
+    <div class="list-header">
+      <div>
+        <span>Domain</span> 
+      </div>
+      <div>
+        <span v-if="mode === 'time'">usage time</span>
+        <span v-if="mode === 'views'">site views</span>
+      </div>
     </div>
-    <div>
-      <span v-if="mode === 'time'">usage time</span>
-      <span v-if="mode === 'views'">site views</span>
-    </div>
+
+    <!--mode: time -->
+    <ul v-if="mode === 'time'">
+      <li v-for="website in data" :key="website.domain" 
+          :style="{ 'order': website.time *-1 }">
+        <router-link :to="{ name: 'detail', params: { domain: website.domain }}">
+          <div class="left">
+            <span v-if="website.favicon != '' && website.favicon" :style="{ backgroundImage: 'url(' + website.favicon + ')' }" class="favicon"></span>
+            <span v-else class="placeholder"></span>
+            <span class="domain">{{ website.domain }}</span>
+          </div>
+          <span class="count">{{ formatMS(website.time) }}</span>
+        </router-link>
+      </li>
+    </ul>
+
+    <!--mode: views -->
+    <ul v-if="mode === 'views'">
+      <li v-for="website in data" :key="website.domain" 
+          :style="{ 'order': website.count *-1 }">
+        <router-link :to="{ name: 'detail', params: { domain: website.domain }}">
+          <div class="left">
+            <span v-if="website.favicon != '' && website.favicon" :style="{ backgroundImage: 'url(' + website.favicon + ')' }" class="favicon"></span>
+            <span v-else class="placeholder"></span>
+            <span class="domain">{{ website.domain }}</span>
+          </div>
+          <span class="count">{{ website.count }}</span>
+        </router-link>
+      </li>
+    </ul>
+
   </div>
-
-  <!--mode: time -->
-  <ul v-if="mode === 'time'">
-    <li v-for="website in data" :key="website.domain" 
-        :style="{ 'order': website.time *-1 }">
-      <router-link :to="{ name: 'detail', params: { domain: website.domain }}">
-        <div class="left">
-          <span v-if="website.favicon != '' && website.favicon" :style="{ backgroundImage: 'url(' + website.favicon + ')' }" class="favicon"></span>
-          <span v-else class="placeholder"></span>
-          <span class="domain">{{ website.domain }}</span>
-        </div>
-        <span class="count">{{ formatMS(website.time) }}</span>
-      </router-link>
-    </li>
-  </ul>
-
-  <!--mode: views -->
-  <ul v-if="mode === 'views'">
-    <li v-for="website in data" :key="website.domain" 
-        :style="{ 'order': website.count *-1 }">
-      <router-link :to="{ name: 'detail', params: { domain: website.domain }}">
-        <div class="left">
-          <span v-if="website.favicon != '' && website.favicon" :style="{ backgroundImage: 'url(' + website.favicon + ')' }" class="favicon"></span>
-          <span v-else class="placeholder"></span>
-          <span class="domain">{{ website.domain }}</span>
-        </div>
-        <span class="count">{{ website.count }}</span>
-      </router-link>
-    </li>
-  </ul>
-
 </div>
 </template>
 
@@ -48,7 +50,7 @@
 import formatMS from '../../functions/formatMS';
 
 export default {
-  name: 'list view',
+  name: 'list-view',
 
   props: {
     mode: String,
