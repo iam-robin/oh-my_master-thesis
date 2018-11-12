@@ -3,6 +3,9 @@ let usageBehavior = {
   scroll: 0,
 };
 
+let totalScrollOffset = 0;
+let currScrollOffset = window.pageYOffset;
+
 export default function detectUsageBehavior() {
   // detect click event
   document.onclick = function() {
@@ -12,8 +15,6 @@ export default function detectUsageBehavior() {
   };
 
   // detect scroll event
-  let totalScrollOffset = 0;
-  let currScrollOffset = window.pageYOffset;
   window.addEventListener(
     'scroll',
     () => {
@@ -49,5 +50,11 @@ function debounce(func, wait, immediate) {
 let sendBehaviorToBackground = debounce(function() {
   chrome.runtime.sendMessage({ usageBehavior: usageBehavior }, function(response) {
     console.log('sent usage behavior to background');
+
+    // reset variables:
+    usageBehavior.scroll = 0;
+    usageBehavior.clicks = 0;
+    totalScrollOffset = 0;
+    currScrollOffset = window.pageYOffset;
   });
 }, 500);

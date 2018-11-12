@@ -1,7 +1,7 @@
 import moment from 'moment';
 
 // save website to local storage
-export default function saveTimeInStorage(domain, time) {
+export default function saveBehaviorInStorage(domain, usageBehavior) {
   let today = moment().format('YYYY-MM-DD');
   let websites = JSON.parse(localStorage.getItem(today));
 
@@ -9,8 +9,9 @@ export default function saveTimeInStorage(domain, time) {
     for (let i = 0; i < websites.length; i++) {
       // when domain in storage equal to previos domain
       // add data
-      if (websites[i].domain === domain) {
-        websites[i].time += time;
+      if (websites[i].domain === domain && usageBehavior) {
+        websites[i].clicks += usageBehavior.clicks;
+        websites[i].scroll += usageBehavior.scroll;
       }
     }
 

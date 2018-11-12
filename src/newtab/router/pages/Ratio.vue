@@ -43,7 +43,7 @@ export default {
       xLeft: 100,
       yLeft: 100,
       aLeft: 1000,
-      minRatio: 0.2,
+      minRatio: 0.1,
 
       column: false,
       mayChangeDirection: true,
@@ -137,13 +137,27 @@ export default {
       if (mode === 'time') {
         // calculate sum of the top Websites usage time
         for (let i = 0; i < websites.length; i++) {
-          sum += websites[i].time;
+          // merge ms time into minutes
+          let time = parseInt((websites[i].time / (1000 * 60)) % 60);
+          // if 0 minutes -> 0.5
+          if (time === 0) {
+            time = 0.5;
+          }
+          sum += time;
         }
         // add the percentage of each top side to the object
         websites.forEach(function(website) {
-          let time = website.time;
+          // merge ms time into minutes
+          let time = parseInt((website.time / (1000 * 60)) % 60);
+
+          // if 0 minutes -> 0.5
+          if (time === 0) {
+            time = 0.5;
+          }
+
           let percentage = ((100 / sum) * time) / 100;
           let roundedPercentage = Math.round(percentage * 1000) / 1000;
+          console.log(roundedPercentage);
           website['percent'] = roundedPercentage;
         });
       } else if (mode === 'views') {

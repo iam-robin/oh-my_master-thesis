@@ -10,7 +10,7 @@
         </svg>
         <div class="menu">
           <router-link to="/ratio">
-            Ratio
+            Top Five
           </router-link>
           <router-link to="/list">
             List

@@ -45,11 +45,31 @@
         </div>
         <div class="box">
           <p>Ø time per site view</p>
-          <h2>{{formatMS(timePerView, true)}}</h2>
+          <h2>{{formatMS(this.timeSum / this.viewsSum, true)}}</h2>
         </div>
         <div class="box">
-          <p>Ø internal loads</p>
-          <h2>{{innerCount/viewsSum}}</h2>
+          <p>Ø internal site views</p>
+          <h2>{{Math.round((innerViewsSum/viewsSum) * 100) / 100}} views</h2>
+        </div>
+        <div class="box">
+          <p>total clicks</p>
+          <h2>{{clickSum}} clicks</h2>
+        </div>
+        <div class="box">
+          <p>Ø clicks per site view</p>
+          <h2>{{Math.round((clickSum/viewsSum) * 100) / 100}} clicks</h2>
+        </div>
+        <div class="box">
+          <p>total scroll distance</p>
+          <h2>{{scrollSum}} px</h2>
+        </div>
+        <div class="box">
+          <p>Ø scroll distance per site view</p>
+          <h2>{{Math.round((scrollSum/viewsSum) * 100) / 100}} px</h2>
+        </div>
+        <div class="box">
+          <p>Ø scroll speed</p>
+          <h2>{{getScrollSpeed()}} px/sec</h2>
         </div>
       </div>
     </main>
@@ -71,8 +91,9 @@ export default {
       data: [],
       timeSum: 0,
       viewsSum: 0,
-      timePerView: 0,
-      innerCount: 0,
+      innerViewsSum: 0,
+      clickSum: 0,
+      scrollSum: 0,
     };
   },
 
@@ -84,7 +105,6 @@ export default {
     this.domain = this.$route.params.domain;
     this.data = this.getDetailData();
     this.calculateSum();
-    this.getTimePerView();
 
     // send data to app.vue
     this.$emit('detailPageActive', true);
@@ -118,20 +138,31 @@ export default {
     calculateSum: function() {
       let timeSum = 0;
       let viewsSum = 0;
-      let innerCount = 0;
+      let innerViewsSum = 0;
+      let clickSum = 0;
+      let scrollSum = 0;
 
       for (let i = 0; i < this.data.length; i++) {
         timeSum += this.data[i].info.time;
         viewsSum += this.data[i].info.count;
-        innerCount += this.data[i].info.innerCount;
+        innerViewsSum += this.data[i].info.innerCount;
+        clickSum += this.data[i].info.clicks;
+        scrollSum += this.data[i].info.scroll;
       }
       this.timeSum = timeSum;
       this.viewsSum = viewsSum;
-      this.innerCount = innerCount;
+      this.innerViewsSum = innerViewsSum;
+      this.clickSum = clickSum;
+      this.scrollSum = scrollSum;
     },
 
-    getTimePerView: function() {
-      this.timePerView = this.timeSum / this.viewsSum;
+    getScrollSpeed: function() {
+      let scroll = this.scrollSum;
+      let timeInSec = parseInt(this.timeSum / 1000);
+      let speed = scroll / timeInSec;
+      speed = Math.round(speed * 100) / 100;
+
+      return speed;
     },
   },
 };
@@ -244,6 +275,7 @@ export default {
           letter-spacing: 1px;
           margin: 16px 0 16px 0;
           font-size: 14px;
+          width: 60%;
         }
 
         h2 {

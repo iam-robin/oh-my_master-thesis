@@ -1,6 +1,8 @@
 import moment from 'moment';
 import RGBaster from 'rgbaster';
 
+let defaultColor = '#CCD0D9';
+
 // save website to local storage
 export default function saveWebsiteToStorage(websiteInfo, colorTable) {
   return new Promise(resolve => {
@@ -10,7 +12,9 @@ export default function saveWebsiteToStorage(websiteInfo, colorTable) {
       count: 1,
       innerCount: 0,
       time: 0,
-      dominant_color: { name: 'default', hex: '#CCD0D9' },
+      clicks: 0,
+      scroll: 0,
+      dominant_color: { name: 'default', hex: defaultColor },
     };
 
     extractDominantColors(websiteInfo, colorTable, website).then(websiteWithColors => {
@@ -48,7 +52,7 @@ function findClosestColor(r, g, b, table) {
   let rgb = { r: r, g: g, b: b };
   let delta = 3 * 256 * 256;
   let temp = { r: 0, g: 0, b: 0 };
-  let colorFound = { name: 'default', hex: '#CCD0D9' };
+  let colorFound = { name: 'default', hex: defaultColor };
 
   for (let i = 0; i < table.length; i++) {
     temp = Hex2RGB(table[i].hex);

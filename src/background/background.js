@@ -1,6 +1,7 @@
 import getTabInfo from './functions/getTabInfo';
 import saveWebsiteToStorage from './functions/saveWebsiteToStorage';
 import saveTimeInStorage from './functions/saveTimeInStorage';
+import saveBehaviorInStorage from './functions/saveBehaviorInStorage';
 import sendLimitToContent from './functions/sendLimitToContent';
 
 // ================================================================================
@@ -9,6 +10,12 @@ import sendLimitToContent from './functions/sendLimitToContent';
 
 let startTime = 0;
 let websiteInfo;
+
+// usage behavior
+let usageBehaviorSum = {
+  clicks: 0,
+  scroll: 0,
+};
 
 let colorTable = [
   { name: 'darkblue', hex: '#4E8BD9' },
@@ -58,7 +65,12 @@ chrome.tabs.onActivated.addListener(function(tabId, changeInfo, tab) {
     let time = measureUsageTime();
     saveWebsiteToStorage(result, colorTable).then(() => {
       saveTimeInStorage(result.prevDomain, time);
+      saveBehaviorInStorage(result.prevDomain, usageBehaviorSum);
       sendLimitToContent(result);
+
+      // reset usage behavior
+      usageBehaviorSum.clicks = 0;
+      usageBehaviorSum.scroll = 0;
     });
   });
 });
@@ -72,7 +84,12 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
       let time = measureUsageTime();
       saveWebsiteToStorage(result, colorTable).then(() => {
         saveTimeInStorage(result.prevDomain, time);
+        saveBehaviorInStorage(result.prevDomain, usageBehaviorSum);
         sendLimitToContent(result);
+
+        // reset usage behavior
+        usageBehaviorSum.clicks = 0;
+        usageBehaviorSum.scroll = 0;
       });
     });
   }
@@ -85,7 +102,9 @@ chrome.windows.onFocusChanged.addListener(function(window) {
     // get current usageTime and save it to storage
     console.log('browser lost focus');
     let time = measureUsageTime();
-    saveTimeInStorage(websiteInfo.domain, time);
+    if (websiteInfo) {
+      saveTimeInStorage(websiteInfo.domain, time);
+    }
     startTime = 0;
   } else {
     // browser get focus
@@ -109,9 +128,13 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     measureUsageTime();
   }
 
+  // get usage Behavior message from content
   if (request.usageBehavior) {
-    console.log('user behavior:');
-    console.log(request);
+    // add the values up
+    usageBehaviorSum.clicks += request.usageBehavior.clicks;
+    usageBehaviorSum.scroll += request.usageBehavior.scroll;
+    console.log('clicks: ' + usageBehaviorSum.clicks);
+    console.log('scroll: ' + usageBehaviorSum.scroll);
   }
 });
 
