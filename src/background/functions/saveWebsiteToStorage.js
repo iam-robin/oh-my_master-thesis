@@ -8,6 +8,7 @@ export default function saveWebsiteToStorage(websiteInfo, colorTable) {
       domain: websiteInfo.domain,
       favicon: websiteInfo.favicon,
       count: 1,
+      innerCount: 0,
       time: 0,
       dominant_color: { name: 'default', hex: '#CCD0D9' },
     };
@@ -101,6 +102,8 @@ function saveToStorage(websiteInfo, website) {
             // counter++ if prev site isnt current site
             if (websiteInfo.prevDomain !== websiteInfo.domain) {
               websites[i].count++;
+            } else {
+              websites[i].innerCount++;
             }
             // if favicon is undefined retry get the icon
             if (!websites[i].favicon) {

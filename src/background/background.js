@@ -108,6 +108,11 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     console.log(sender.tab ? 'active:' + sender.tab.url : 'from the extension');
     measureUsageTime();
   }
+
+  if (request.usageBehavior) {
+    console.log('user behavior:');
+    console.log(request);
+  }
 });
 
 // ================================================================================

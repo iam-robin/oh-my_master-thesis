@@ -47,6 +47,10 @@
           <p>Ø time per site view</p>
           <h2>{{formatMS(timePerView, true)}}</h2>
         </div>
+        <div class="box">
+          <p>Ø internal loads</p>
+          <h2>{{innerCount/viewsSum}}</h2>
+        </div>
       </div>
     </main>
 
@@ -68,6 +72,7 @@ export default {
       timeSum: 0,
       viewsSum: 0,
       timePerView: 0,
+      innerCount: 0,
     };
   },
 
@@ -113,13 +118,16 @@ export default {
     calculateSum: function() {
       let timeSum = 0;
       let viewsSum = 0;
+      let innerCount = 0;
 
       for (let i = 0; i < this.data.length; i++) {
         timeSum += this.data[i].info.time;
         viewsSum += this.data[i].info.count;
+        innerCount += this.data[i].info.innerCount;
       }
       this.timeSum = timeSum;
       this.viewsSum = viewsSum;
+      this.innerCount = innerCount;
     },
 
     getTimePerView: function() {
@@ -223,11 +231,12 @@ export default {
   main {
     .stat-overview {
       display: flex;
+      flex-wrap: wrap;
 
       .box {
         width: 33%;
         display: inline-block;
-        margin: 0;
+        margin: 0 0 40px 0;
 
         p {
           color: $grey;
