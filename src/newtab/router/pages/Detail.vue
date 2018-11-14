@@ -34,38 +34,54 @@
     </header>
 
     <main>
+
+      <ul class="filter">
+        <li v-on:click="setPeriod('day')" :class="{ active: getPeriod('day') }">
+          today
+        </li>
+        <li v-on:click="setPeriod('week')" :class="{ active: getPeriod('week') }">
+          this week
+        </li>
+        <li v-on:click="setPeriod('month')" :class="{ active: getPeriod('month') }">
+          this month
+        </li>
+        <li v-on:click="setPeriod('total')" :class="{ active: getPeriod('total') }">
+          total
+        </li>
+      </ul>
+
       <div class="stat-overview">
         <div class="box">
           <p>time spent</p>
-          <h2>{{formatMS(timeSum)}}</h2>
+          <h2>{{formatMS(periodSum.time)}}</h2>
         </div>
         <div class="box">
           <p>site views</p>
-          <h2>{{viewsSum}} views</h2>
+          <h2>{{periodSum.views}} views</h2>
         </div>
         <div class="box">
           <p>Ø time per site view</p>
-          <h2>{{formatMS(this.timeSum / this.viewsSum, true)}}</h2>
+          <h2>{{formatMS(periodSum.time / periodSum.views, true)}}</h2>
         </div>
         <div class="box">
           <p>Ø internal site views</p>
-          <h2>{{Math.round((innerViewsSum/viewsSum) * 100) / 100}} views</h2>
+          <h2>{{Math.round((periodSum.innerViews/periodSum.views) * 100) / 100}} views</h2>
         </div>
         <div class="box">
           <p>total clicks</p>
-          <h2>{{clickSum}} clicks</h2>
+          <h2>{{periodSum.clicks}} clicks</h2>
         </div>
         <div class="box">
           <p>Ø clicks per site view</p>
-          <h2>{{Math.round((clickSum/viewsSum) * 100) / 100}} clicks</h2>
+          <h2>{{Math.round((periodSum.clicks/periodSum.views) * 100) / 100}} clicks</h2>
         </div>
         <div class="box">
           <p>total scroll distance</p>
-          <h2>{{scrollSum}} px</h2>
+          <h2>{{periodSum.scroll}} px</h2>
         </div>
         <div class="box">
           <p>Ø scroll distance per site view</p>
-          <h2>{{parseInt(Math.round((scrollSum/viewsSum) * 100) / 100)}} px</h2>
+          <h2>{{parseInt(Math.round((periodSum.scroll/periodSum.views) * 100) / 100)}} px</h2>
         </div>
         <div class="box">
           <p>Ø scroll speed</p>
@@ -80,6 +96,8 @@
 </template>
 
 <script>
+import moment from 'moment';
+import cloneDeep from 'lodash/cloneDeep';
 import formatMS from '../../functions/formatMS';
 
 export default {
@@ -88,12 +106,10 @@ export default {
   data: function() {
     return {
       domain: '',
+      date: moment(),
       data: [],
-      timeSum: 0,
-      viewsSum: 0,
-      innerViewsSum: 0,
-      clickSum: 0,
-      scrollSum: 0,
+      periodSum: {},
+      activePeriod: 'day',
     };
   },
 
@@ -104,11 +120,10 @@ export default {
   created: function() {
     this.domain = this.$route.params.domain;
     this.data = this.getDetailData();
-    this.calculateSum();
+    this.getPeriodSum();
 
     // send data to app.vue
     this.$emit('detailPageActive', true);
-    console.log(this.data);
   },
 
   methods: {
@@ -135,34 +150,88 @@ export default {
       return data;
     },
 
-    calculateSum: function() {
-      let timeSum = 0;
-      let viewsSum = 0;
-      let innerViewsSum = 0;
-      let clickSum = 0;
-      let scrollSum = 0;
+    getPeriodSum: function() {
+      // get the current time period
+      let date = cloneDeep(this.date);
+      let entireData = cloneDeep(this.data);
+      let period = this.activePeriod;
+      let periodSum = {
+        time: 0,
+        views: 0,
+        innerViews: 0,
+        clicks: 0,
+        scroll: 0,
+      };
 
-      for (let i = 0; i < this.data.length; i++) {
-        timeSum += this.data[i].info.time;
-        viewsSum += this.data[i].info.count;
-        innerViewsSum += this.data[i].info.innerCount;
-        clickSum += this.data[i].info.clicks;
-        scrollSum += this.data[i].info.scroll;
+      // reset data
+      this.periodSum = {};
+
+      if (period === 'total') {
+        for (let i = 0; i < this.data.length; i++) {
+          periodSum.time += this.data[i].info.time;
+          periodSum.views += this.data[i].info.count;
+          periodSum.innerViews += this.data[i].info.innerCount;
+          periodSum.clicks += this.data[i].info.clicks;
+          periodSum.scroll += this.data[i].info.scroll;
+        }
+        this.periodSum = periodSum;
+      } else {
+        let startOfPeriod;
+        let endOfPeriod;
+
+        if (period === 'day') {
+          startOfPeriod = cloneDeep(date);
+          endOfPeriod = cloneDeep(date);
+        } else if (period === 'week') {
+          startOfPeriod = cloneDeep(date).startOf('isoWeek');
+          endOfPeriod = cloneDeep(date).endOf('isoWeek');
+        } else if (period === 'month') {
+          startOfPeriod = cloneDeep(date).startOf('month');
+          endOfPeriod = cloneDeep(date).endOf('month');
+        }
+
+        let day = startOfPeriod;
+        let completePeriod = []; // complete period days (moment) in array
+
+        // get the period days
+        while (day <= endOfPeriod) {
+          completePeriod.push(day.toDate());
+          day = day.clone().add(1, 'd');
+        }
+
+        // calculate the time and view and get the data of the period
+        for (let i = 0; i < completePeriod.length; i++) {
+          let periodday = moment(completePeriod[i]).format('YYYY-MM-DD');
+          for (let x = 0; x < entireData.length; x++) {
+            if (entireData[x].date === periodday) {
+              periodSum.time += entireData[x].info.time;
+              periodSum.views += entireData[x].info.count;
+              periodSum.innerViews += entireData[x].info.innerCount;
+              periodSum.clicks += entireData[x].info.clicks;
+              periodSum.scroll += entireData[x].info.scroll;
+            }
+          }
+        }
+        this.periodSum = periodSum;
       }
-      this.timeSum = timeSum;
-      this.viewsSum = viewsSum;
-      this.innerViewsSum = innerViewsSum;
-      this.clickSum = clickSum;
-      this.scrollSum = scrollSum;
     },
 
     getScrollSpeed: function() {
-      let scroll = this.scrollSum;
-      let timeInSec = parseInt(this.timeSum / 1000);
+      let scroll = this.periodSum.scroll;
+      let timeInSec = parseInt(this.periodSum.time / 1000);
       let speed = scroll / timeInSec;
       speed = Math.round(speed * 100) / 100;
 
       return speed;
+    },
+
+    getPeriod: function(menuItem) {
+      return this.activePeriod === menuItem;
+    },
+
+    setPeriod: function(menuItem) {
+      this.activePeriod = menuItem;
+      this.getPeriodSum();
     },
   },
 };
@@ -260,6 +329,23 @@ export default {
   }
 
   main {
+    .filter {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      margin-bottom: 40px;
+
+      li {
+        display: inline-block;
+        padding-right: 16px;
+        cursor: pointer;
+
+        &.active {
+          font-weight: 800;
+        }
+      }
+    }
+
     .stat-overview {
       display: flex;
       flex-wrap: wrap;

@@ -1,7 +1,7 @@
 import moment from 'moment';
 import RGBaster from 'rgbaster';
 
-let defaultColor = '#CCD0D9';
+let defaultColor = '#434A54';
 
 // save website to local storage
 export default function saveWebsiteToStorage(websiteInfo, colorTable) {

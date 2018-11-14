@@ -17,6 +17,8 @@
               <div v-if="columnWidthLimitation <= website.grid_column_end - website.grid_column_start" class="value">
                 <span v-if="mode === 'time'">{{formatMS(website.time)}}</span>
                 <span v-if="mode === 'views'">{{website.count}} views</span>
+                <span v-if="mode === 'clicks'">{{website.clicks}} clicks</span>
+                <span v-if="mode === 'scroll'">{{website.scroll}} px</span>
                 <span>| {{Math.round(website.percent * 1000) / 10}}%</span>
               </div>
             </div>
@@ -72,7 +74,6 @@ export default {
     this.getContent();
     // send data to app.vue
     this.$emit('detailPageActive', false);
-    console.log(this.content);
   },
 
   methods: {
@@ -118,6 +119,28 @@ export default {
             return -1;
           }
         });
+      } else if (mode === 'clicks') {
+        // sort all Websites by clicks (highest first)
+        sortedWebsites.sort(function(a, b) {
+          if (a.clicks < b.clicks) {
+            return 1;
+          } else if (a.clicks === b.clicks) {
+            return 0;
+          } else {
+            return -1;
+          }
+        });
+      } else if (mode === 'scroll') {
+        // sort all Websites by scroll (highest first)
+        sortedWebsites.sort(function(a, b) {
+          if (a.scroll < b.scroll) {
+            return 1;
+          } else if (a.scroll === b.scroll) {
+            return 0;
+          } else {
+            return -1;
+          }
+        });
       }
 
       // get nth (count) highest times and save them in new array
@@ -157,11 +180,9 @@ export default {
 
           let percentage = ((100 / sum) * time) / 100;
           let roundedPercentage = Math.round(percentage * 1000) / 1000;
-          console.log(roundedPercentage);
           website['percent'] = roundedPercentage;
         });
       } else if (mode === 'views') {
-        // calculate sum of the top Websites usage time
         for (let i = 0; i < websites.length; i++) {
           sum += websites[i].count;
         }
@@ -169,6 +190,28 @@ export default {
         websites.forEach(function(website) {
           let count = website.count;
           let percentage = ((100 / sum) * count) / 100;
+          let roundedPercentage = Math.round(percentage * 1000) / 1000;
+          website['percent'] = roundedPercentage;
+        });
+      } else if (mode === 'clicks') {
+        for (let i = 0; i < websites.length; i++) {
+          sum += websites[i].clicks;
+        }
+        // add the percentage of each top side to the object
+        websites.forEach(function(website) {
+          let clicks = website.clicks;
+          let percentage = ((100 / sum) * clicks) / 100;
+          let roundedPercentage = Math.round(percentage * 1000) / 1000;
+          website['percent'] = roundedPercentage;
+        });
+      } else if (mode === 'scroll') {
+        for (let i = 0; i < websites.length; i++) {
+          sum += websites[i].scroll;
+        }
+        // add the percentage of each top side to the object
+        websites.forEach(function(website) {
+          let scroll = website.scroll;
+          let percentage = ((100 / sum) * scroll) / 100;
           let roundedPercentage = Math.round(percentage * 1000) / 1000;
           website['percent'] = roundedPercentage;
         });

@@ -9,6 +9,8 @@
       <div>
         <span v-if="mode === 'time'">usage time</span>
         <span v-if="mode === 'views'">site views</span>
+        <span v-if="mode === 'clicks'">clicks on website</span>
+        <span v-if="mode === 'scroll'">scroll distance</span>
       </div>
     </div>
 
@@ -38,6 +40,36 @@
             <span class="domain">{{ website.domain }}</span>
           </div>
           <span class="count">{{ website.count }}</span>
+        </router-link>
+      </li>
+    </ul>
+
+    <!--mode: clicks -->
+    <ul v-if="mode === 'clicks'">
+      <li v-for="website in data" :key="website.domain" 
+          :style="{ 'order': website.clicks *-1 }">
+        <router-link :to="{ name: 'detail', params: { domain: website.domain }}">
+          <div class="left">
+            <span v-if="website.favicon != '' && website.favicon" :style="{ backgroundImage: 'url(' + website.favicon + ')' }" class="favicon"></span>
+            <span v-else class="placeholder"></span>
+            <span class="domain">{{ website.domain }}</span>
+          </div>
+          <span class="count">{{ website.clicks }} clicks</span>
+        </router-link>
+      </li>
+    </ul>
+
+    <!--mode: scroll -->
+    <ul v-if="mode === 'scroll'">
+      <li v-for="website in data" :key="website.domain" 
+          :style="{ 'order': website.scroll *-1 }">
+        <router-link :to="{ name: 'detail', params: { domain: website.domain }}">
+          <div class="left">
+            <span v-if="website.favicon != '' && website.favicon" :style="{ backgroundImage: 'url(' + website.favicon + ')' }" class="favicon"></span>
+            <span v-else class="placeholder"></span>
+            <span class="domain">{{ website.domain }}</span>
+          </div>
+          <span class="count">{{ parseInt(website.scroll) }} px</span>
         </router-link>
       </li>
     </ul>

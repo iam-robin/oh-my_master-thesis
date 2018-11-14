@@ -20,61 +20,71 @@
           </router-link>
         </div>
       </header>
+
       <main>
-
-        <div class="date">
-          <span v-on:click="prevDate()" class="prev">
-            <svg viewBox="0 0 16 16" fill="none">
-              <path d="M13.3334 8H2.66669" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M6.66669 12L2.66669 8L6.66669 4" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </span>
-
-            <h2>{{formatedDate}}</h2>
-
-          <span v-on:click="nextDate()" class="next">
-            <svg viewBox="0 0 16 16" fill="none">
-              <path d="M13.3334 8H2.66669" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M6.66669 12L2.66669 8L6.66669 4" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </span>
-        </div>
+        <ul class="mode">
+          <li v-on:click="setMode('time')" :class="{ active: getMode('time') }">
+            usage time
+          </li>
+          <li v-on:click="setMode('views')" :class="{ active: getMode('views') }">
+            site views
+          </li>
+          <li v-on:click="setMode('clicks')" :class="{ active: getMode('clicks') }">
+            clicks
+          </li>
+          <li v-on:click="setMode('scroll')" :class="{ active: getMode('scroll') }">
+            scroll distance
+          </li>
+        </ul>
 
         <!-- time mode -->
         <div v-if="activeMode === 'time'">
           <h1 class="sum">{{formatMS(periodSum.time)}}</h1>
-          <p class="description">total usage time</p>
         </div>
 
         <!-- views mode -->
         <div v-if="activeMode === 'views'">
-            <h1 class="sum">{{periodSum.views}}</h1>
-            <p class="description">total site views</p>
+            <h1 class="sum">{{periodSum.views}} views</h1>
+        </div>
+
+        <!-- clicks mode -->
+        <div v-if="activeMode === 'clicks'">
+            <h1 class="sum">{{periodSum.clicks}} clicks</h1>
+        </div>
+
+        <!-- scroll mode -->
+        <div v-if="activeMode === 'scroll'">
+            <h1 class="sum">{{parseInt(periodSum.scroll)}} px</h1>
         </div>
 
       </main>
+
       <footer>
-        <ul class="period">
-          <li v-on:click="setPeriod('day')" :class="{ active: getPeriod('day') }">day</li>
-          <li v-on:click="setPeriod('week')" :class="{ active: getPeriod('week') }">week</li>
-          <li v-on:click="setPeriod('month')" :class="{ active: getPeriod('month') }">month</li>
-        </ul>
-        <ul class="mode">
-          <li v-on:click="setMode('time')" :class="{ active: getMode('time') }">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <rect width="24" height="24" fill="none"/>
-              <path d="M17.6569 6.34315C20.781 9.46735 20.781 14.5327 17.6569 17.6569C14.5327 20.781 9.46732 20.781 6.34315 17.6569C3.21895 14.5327 3.21895 9.46732 6.34315 6.34315C9.46735 3.21895 14.5327 3.21895 17.6569 6.34315" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M12 7.19995V12L14.4 14.4" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </li>
-          <li v-on:click="setMode('views')" :class="{ active: getMode('views') }">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <rect width="24" height="24" fill="none"/>
-              <path d="M2 12C2 12 5.5 5 11.625 5C17.75 5 21.25 12 21.25 12C21.25 12 17.75 19 11.625 19C5.5 19 2 12 2 12Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M13.4811 10.1438C14.5062 11.169 14.5062 12.831 13.4811 13.8562C12.456 14.8813 10.7939 14.8813 9.76881 13.8562C8.74369 12.831 8.74369 11.169 9.76881 10.1438C10.7939 9.11872 12.456 9.11872 13.4811 10.1438Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </li>
-        </ul>
+        <div>
+          <div class="date">
+            <span v-on:click="prevDate()" class="prev">
+              <svg viewBox="0 0 16 16" fill="none">
+                <path d="M13.3334 8H2.66669" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M6.66669 12L2.66669 8L6.66669 4" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+
+              <h2>{{formatedDate}}</h2>
+
+            <span v-on:click="nextDate()" class="next">
+              <svg viewBox="0 0 16 16" fill="none">
+                <path d="M13.3334 8H2.66669" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M6.66669 12L2.66669 8L6.66669 4" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </div>
+
+          <ul class="period">
+            <li v-on:click="setPeriod('day')" :class="{ active: getPeriod('day') }">day</li>
+            <li v-on:click="setPeriod('week')" :class="{ active: getPeriod('week') }">week</li>
+            <li v-on:click="setPeriod('month')" :class="{ active: getPeriod('month') }">month</li>
+          </ul>
+        </div>
       </footer>
     </div>
     <div class="content-container" v-bind:class="{detail: detailPageActive}">
@@ -153,15 +163,21 @@ export default {
           let websites = JSON.parse(localStorage.getItem(key));
           let timeSum = 0;
           let viewSum = 0;
+          let clickSum = 0;
+          let scrollSum = 0;
           for (let i = 0; i < websites.length; i++) {
             timeSum += websites[i].time;
             viewSum += websites[i].count;
+            clickSum += websites[i].clicks;
+            scrollSum += websites[i].scroll;
           }
           let object = {
             date: key,
             websites: websites,
             timeSum: timeSum,
             viewSum: viewSum,
+            clickSum: clickSum,
+            scrollSum: scrollSum,
           };
           data.unshift(object);
         }
@@ -177,6 +193,8 @@ export default {
       let periodSum = {
         time: 0,
         views: 0,
+        clicks: 0,
+        scroll: 0,
       };
       let startOfPeriod;
       let endOfPeriod;
@@ -206,13 +224,15 @@ export default {
         day = day.clone().add(1, 'd');
       }
 
-      // calculate the time and view some and get the data of the period
+      // calculate the time and view and get the data of the period
       for (let i = 0; i < completePeriod.length; i++) {
         let periodday = moment(completePeriod[i]).format('YYYY-MM-DD');
         for (let x = 0; x < entireData.length; x++) {
           if (entireData[x].date === periodday) {
             periodSum.time += entireData[x].timeSum;
             periodSum.views += entireData[x].viewSum;
+            periodSum.clicks += entireData[x].clickSum;
+            periodSum.scroll += entireData[x].scrollSum;
             periodData.push(entireData[x]);
           }
         }
@@ -241,6 +261,7 @@ export default {
         }, new Map()),
         ([domain, time]) => Object.assign({ domain }, time)
       );
+      console.log(this.relevantData);
     },
 
     formatDate: function() {
@@ -371,11 +392,19 @@ body {
       user-select: none;
       margin-bottom: 16px;
 
+      h1.sum {
+        font-size: 64px;
+        margin: 0;
+      }
+    }
+
+    footer {
       .date {
         width: 100%;
         display: flex;
         align-items: center;
-        justify-content: center;
+        margin-left: -16px;
+        margin-bottom: 8px;
 
         h2 {
           font-size: 16px;
@@ -400,25 +429,7 @@ body {
         }
       }
 
-      h1.sum {
-        font-size: 50px;
-        margin: 0;
-        text-align: center;
-      }
-
-      .description {
-        margin: 8px 0 0 0;
-        font-size: 16px;
-        text-align: center;
-      }
-    }
-
-    footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-
-      ul {
+      ul.period {
         list-style: none;
         margin: 0;
         padding: 0;
@@ -431,25 +442,10 @@ body {
           color: $darkgrey;
           text-transform: uppercase;
           letter-spacing: 2px;
-        }
-
-        &.period li {
           padding-right: 32px;
 
           &.active {
             color: $black;
-          }
-        }
-
-        &.mode li {
-          padding-left: 8px;
-
-          svg path {
-            stroke: $darkgrey;
-          }
-
-          &.active svg path {
-            stroke: $black;
           }
         }
       }
