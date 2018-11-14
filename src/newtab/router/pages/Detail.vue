@@ -65,7 +65,7 @@
         </div>
         <div class="box">
           <p>Ø scroll distance per site view</p>
-          <h2>{{Math.round((scrollSum/viewsSum) * 100) / 100}} px</h2>
+          <h2>{{parseInt(Math.round((scrollSum/viewsSum) * 100) / 100)}} px</h2>
         </div>
         <div class="box">
           <p>Ø scroll speed</p>
@@ -273,13 +273,13 @@ export default {
           color: $grey;
           font-family: 'Montserrat', sans-serif;
           letter-spacing: 1px;
-          margin: 16px 0 16px 0;
-          font-size: 14px;
+          margin: 8px 0 8px 0;
+          font-size: 12px;
           width: 60%;
         }
 
         h2 {
-          font-size: 24px;
+          font-size: 16px;
           font-weight: 800;
           margin: 0;
         }

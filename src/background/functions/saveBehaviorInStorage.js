@@ -5,6 +5,9 @@ export default function saveBehaviorInStorage(domain, usageBehavior) {
   let today = moment().format('YYYY-MM-DD');
   let websites = JSON.parse(localStorage.getItem(today));
 
+  console.log('saved in: ' + domain);
+  console.log(usageBehavior);
+
   if (websites) {
     for (let i = 0; i < websites.length; i++) {
       // when domain in storage equal to previos domain

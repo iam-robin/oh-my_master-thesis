@@ -133,8 +133,10 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     // add the values up
     usageBehaviorSum.clicks += request.usageBehavior.clicks;
     usageBehaviorSum.scroll += request.usageBehavior.scroll;
-    console.log('clicks: ' + usageBehaviorSum.clicks);
+    console.log('clicks sum: ' + usageBehaviorSum.clicks);
+    console.log('clicks added: ' + request.usageBehavior.clicks);
     console.log('scroll: ' + usageBehaviorSum.scroll);
+    console.log('scroll added: ' + request.usageBehavior.scroll);
   }
 });
 

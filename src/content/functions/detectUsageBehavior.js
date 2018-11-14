@@ -50,11 +50,16 @@ function debounce(func, wait, immediate) {
 let sendBehaviorToBackground = debounce(function() {
   chrome.runtime.sendMessage({ usageBehavior: usageBehavior }, function(response) {
     console.log('sent usage behavior to background');
-
-    // reset variables:
-    usageBehavior.scroll = 0;
-    usageBehavior.clicks = 0;
-    totalScrollOffset = 0;
-    currScrollOffset = window.pageYOffset;
+    // resetData();
   });
-}, 500);
+  resetData();
+}, 250);
+
+function resetData() {
+  // reset variables:
+  console.log('reset');
+  usageBehavior.scroll = 0;
+  usageBehavior.clicks = 0;
+  totalScrollOffset = 0;
+  currScrollOffset = window.pageYOffset;
+}
