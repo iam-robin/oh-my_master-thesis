@@ -125,6 +125,10 @@ export default {
       } else if (e.key === 'ArrowLeft') {
         // prev time period
         this.prevDate();
+      } else if (e.key === 'ArrowDown') {
+        this.nextMode();
+      } else if (e.key === 'ArrowUp') {
+        this.prevMode();
       } else if (e.key === 'd') {
         // day mode
         this.setPeriod('day');
@@ -261,7 +265,6 @@ export default {
         }, new Map()),
         ([domain, time]) => Object.assign({ domain }, time)
       );
-      console.log(this.relevantData);
     },
 
     formatDate: function() {
@@ -306,6 +309,30 @@ export default {
       this.getRelevantData();
     },
 
+    nextMode: function() {
+      if (this.activeMode === 'time') {
+        this.setMode('views');
+      } else if (this.activeMode === 'views') {
+        this.setMode('clicks');
+      } else if (this.activeMode === 'clicks') {
+        this.setMode('scroll');
+      } else if (this.activeMode === 'scroll') {
+        this.setMode('time');
+      }
+    },
+
+    prevMode: function() {
+      if (this.activeMode === 'time') {
+        this.setMode('scroll');
+      } else if (this.activeMode === 'views') {
+        this.setMode('time');
+      } else if (this.activeMode === 'clicks') {
+        this.setMode('views');
+      } else if (this.activeMode === 'scroll') {
+        this.setMode('clicks');
+      }
+    },
+
     getMode: function(menuItem) {
       return this.activeMode === menuItem;
     },
@@ -341,7 +368,14 @@ export default {
   width: 0px; /* remove scrollbar space */
 }
 
+html {
+  overflow: hidden;
+  height: 100%;
+}
+
 body {
+  height: 100%;
+  overflow: auto;
   margin: 0;
   padding: 0;
   font-family: 'Fira Mono', monospace;

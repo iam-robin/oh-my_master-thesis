@@ -161,7 +161,7 @@ export default {
         // calculate sum of the top Websites usage time
         for (let i = 0; i < websites.length; i++) {
           // merge ms time into minutes
-          let time = parseInt((websites[i].time / (1000 * 60)) % 60);
+          let time = parseInt(websites[i].time / (1000 * 60));
           // if 0 minutes -> 0.5
           if (time === 0) {
             time = 0.5;
@@ -171,7 +171,7 @@ export default {
         // add the percentage of each top side to the object
         websites.forEach(function(website) {
           // merge ms time into minutes
-          let time = parseInt((website.time / (1000 * 60)) % 60);
+          let time = parseInt(website.time / (1000 * 60));
 
           // if 0 minutes -> 0.5
           if (time === 0) {
@@ -181,6 +181,7 @@ export default {
           let percentage = ((100 / sum) * time) / 100;
           let roundedPercentage = Math.round(percentage * 1000) / 1000;
           website['percent'] = roundedPercentage;
+          console.log(website);
         });
       } else if (mode === 'views') {
         for (let i = 0; i < websites.length; i++) {
@@ -293,6 +294,7 @@ export default {
       this.xLeft = 100;
       this.yLeft = 100;
       this.aLeft = 1000;
+      this.mayChangeDirection = true;
     },
   },
 };
