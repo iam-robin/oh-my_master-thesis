@@ -45,7 +45,7 @@
       </main>
 
       <footer>
-        <div class="menu">
+        <div class="menu" :class="{ active: this.menuActive }">
 
           <div class="menu-container date">
             <span v-on:click="prevDate()" class="arrow prev">
@@ -170,7 +170,7 @@
           </div>
       
         </div>
-        <button class="settings">Settings</button>
+        <button class="settings" v-on:click="toggleMenu()">Settings</button>
       </footer>
     </div>
     <div class="content-container" v-bind:class="{detail: detailPageActive}">
@@ -200,6 +200,7 @@ export default {
       relevantData: [],
       periodSum: {},
       detailPageActive: false,
+      menuActive: false,
     };
   },
   created: function() {
@@ -349,6 +350,10 @@ export default {
       );
     },
 
+    toggleMenu: function() {
+      this.menuActive = !this.menuActive;
+    },
+
     formatDate: function() {
       let date = cloneDeep(this.date);
       if (this.activePeriod === 'day') {
@@ -389,6 +394,26 @@ export default {
 
       this.formatDate();
       this.getRelevantData();
+    },
+
+    nextPeriod: function() {
+      if (this.activePeriod === 'day') {
+        this.setPeriod('week');
+      } else if (this.activePeriod === 'week') {
+        this.setPeriod('month');
+      } else if (this.activePeriod === 'month') {
+        this.setPeriod('day');
+      }
+    },
+
+    prevPeriod: function() {
+      if (this.activePeriod === 'day') {
+        this.setPeriod('month');
+      } else if (this.activePeriod === 'week') {
+        this.setPeriod('day');
+      } else if (this.activePeriod === 'month') {
+        this.setPeriod('week');
+      }
     },
 
     nextMode: function() {
@@ -526,7 +551,14 @@ body {
       .menu {
         display: flex;
         flex-wrap: wrap;
+        height: 0;
         user-select: none;
+        z-index: 9;
+        transition: 0.3s ease-in-out;
+
+        &.active {
+          height: 360px;
+        }
 
         .menu-container {
           width: 100%;
@@ -535,13 +567,14 @@ body {
           justify-content: space-between;
           border-top: 3px solid $black;
           height: 120px;
+          box-sizing: border-box;
 
           span.arrow {
             display: flex;
             align-items: center;
             justify-content: center;
             width: 80px;
-            height: 120px;
+            height: 117px;
             cursor: pointer;
 
             &.prev {
@@ -561,8 +594,8 @@ body {
             }
 
             svg {
-              height: 32px;
-              width: 32px;
+              height: 24px;
+              width: 24px;
             }
           }
 
@@ -595,7 +628,7 @@ body {
                   margin-top: 8px;
                   font-family: 'Montserrat', sans-serif;
                   font-weight: 500;
-                  font-size: 9px;
+                  font-size: 10px;
                   text-transform: uppercase;
                   text-align: center;
                   letter-spacing: 2px;
@@ -626,6 +659,7 @@ body {
       }
 
       button.settings {
+        position: relative;
         width: 100%;
         height: 96px;
         border: none;
@@ -637,6 +671,7 @@ body {
         font-weight: 500;
         text-transform: uppercase;
         letter-spacing: 2px;
+        z-index: 999;
 
         &:hover {
           background-color: $primary;
