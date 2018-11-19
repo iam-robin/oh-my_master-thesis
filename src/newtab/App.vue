@@ -66,28 +66,107 @@
           </div>
 
           <div class="menu-container period">
+            <span v-on:click="prevPeriod()" class="arrow prev">
+              <svg viewBox="0 0 16 16" fill="none">
+                <path d="M13.3334 8H2.66669" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M6.66669 12L2.66669 8L6.66669 4" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
             <ul>
-              <li v-on:click="setPeriod('day')" :class="{ active: getPeriod('day') }">day</li>
-              <li v-on:click="setPeriod('week')" :class="{ active: getPeriod('week') }">week</li>
-              <li v-on:click="setPeriod('month')" :class="{ active: getPeriod('month') }">month</li>
+
+              <li v-on:click="setPeriod('day')" :class="{ active: getPeriod('day') }">
+                <svg width="16" height="20" viewBox="0 0 16 20" fill="none">
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M7.70182 8.0738C7.88951 7.97996 8.11042 7.97996 8.29811 8.0738L14.9648 11.4071C15.1906 11.5201 15.3333 11.7509 15.3333 12.0034C15.3333 12.2559 15.1906 12.4868 14.9648 12.5997L8.29811 15.933C8.11042 16.0269 7.88951 16.0269 7.70182 15.933L1.03515 12.5997C0.809294 12.4868 0.666626 12.2559 0.666626 12.0034C0.666626 11.7509 0.809294 11.5201 1.03515 11.4071L7.70182 8.0738ZM2.82401 12.0034L7.99996 14.5914L13.1759 12.0034L7.99996 9.41544L2.82401 12.0034Z" fill="black"/>
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M0.737032 15.0386C0.901691 14.7093 1.30214 14.5758 1.63146 14.7404L7.99999 17.9247L14.3685 14.7404C14.6978 14.5758 15.0983 14.7093 15.2629 15.0386C15.4276 15.3679 15.2941 15.7684 14.9648 15.933L8.29813 19.2664C8.11044 19.3602 7.88953 19.3602 7.70184 19.2664L1.03517 15.933C0.705855 15.7684 0.572372 15.3679 0.737032 15.0386Z" fill="black"/>
+                </svg>
+                <span>day</span>
+              </li>
+
+              <li v-on:click="setPeriod('week')" :class="{ active: getPeriod('week') }">
+                <svg width="16" height="20" viewBox="0 0 16 20" fill="none">
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M7.70182 4.73689C7.88951 4.64304 8.11042 4.64304 8.29811 4.73689L14.9648 8.07022C15.1906 8.18315 15.3333 8.41399 15.3333 8.66651C15.3333 8.91902 15.1906 9.14986 14.9648 9.26279L8.29811 12.5961C8.11042 12.69 7.88951 12.69 7.70182 12.5961L1.03515 9.26279C0.809294 9.14986 0.666626 8.91902 0.666626 8.66651C0.666626 8.41399 0.809294 8.18315 1.03515 8.07022L7.70182 4.73689ZM2.82401 8.66651L7.99996 11.2545L13.1759 8.66651L7.99996 6.07853L2.82401 8.66651Z" fill="black"/>
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M0.737032 15.0349C0.901691 14.7056 1.30214 14.5721 1.63146 14.7368L7.99999 17.9211L14.3685 14.7368C14.6978 14.5721 15.0983 14.7056 15.2629 15.0349C15.4276 15.3642 15.2941 15.7647 14.9648 15.9294L8.29813 19.2627C8.11044 19.3565 7.88953 19.3565 7.70184 19.2627L1.03517 15.9294C0.705855 15.7647 0.572372 15.3642 0.737032 15.0349Z" fill="black"/>
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M0.737032 11.7017C0.901691 11.3724 1.30214 11.2389 1.63146 11.4035L7.99999 14.5878L14.3685 11.4035C14.6978 11.2389 15.0983 11.3724 15.2629 11.7017C15.4276 12.031 15.2941 12.4314 14.9648 12.5961L8.29813 15.9294C8.11044 16.0233 7.88953 16.0233 7.70184 15.9294L1.03517 12.5961C0.705855 12.4314 0.572372 12.031 0.737032 11.7017Z" fill="black"/>
+                </svg>
+                <span>week</span>
+              </li>
+
+              <li v-on:click="setPeriod('month')" :class="{ active: getPeriod('month') }">
+                <svg width="16" height="20" viewBox="0 0 16 20" fill="none">
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M0.737032 15.0349C0.901691 14.7056 1.30214 14.5721 1.63146 14.7368L7.99999 17.9211L14.3685 14.7368C14.6978 14.5721 15.0983 14.7056 15.2629 15.0349C15.4276 15.3642 15.2941 15.7647 14.9648 15.9294L8.29813 19.2627C8.11044 19.3565 7.88953 19.3565 7.70184 19.2627L1.03517 15.9294C0.705855 15.7647 0.572372 15.3642 0.737032 15.0349Z" fill="black"/>
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M0.737032 11.7017C0.901691 11.3724 1.30214 11.2389 1.63146 11.4035L7.99999 14.5878L14.3685 11.4035C14.6978 11.2389 15.0983 11.3724 15.2629 11.7017C15.4276 12.031 15.2941 12.4314 14.9648 12.5961L8.29813 15.9294C8.11044 16.0233 7.88953 16.0233 7.70184 15.9294L1.03517 12.5961C0.705855 12.4314 0.572372 12.031 0.737032 11.7017Z" fill="black"/>
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M0.737032 8.36843C0.901691 8.03911 1.30214 7.90562 1.63146 8.07028L7.99999 11.2545L14.3685 8.07028C14.6978 7.90562 15.0983 8.03911 15.2629 8.36843C15.4276 8.69775 15.2941 9.09819 14.9648 9.26285L8.29813 12.5962C8.11044 12.69 7.88953 12.69 7.70184 12.5962L1.03517 9.26285C0.705855 9.09819 0.572372 8.69775 0.737032 8.36843Z" fill="black"/>
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M7.70182 1.40363C7.88951 1.30979 8.11042 1.30979 8.29811 1.40363L14.9648 4.73697C15.1906 4.8499 15.3333 5.08074 15.3333 5.33325C15.3333 5.58577 15.1906 5.81661 14.9648 5.92954L8.29811 9.26287C8.11042 9.35672 7.88951 9.35672 7.70182 9.26287L1.03515 5.92954C0.809294 5.81661 0.666626 5.58577 0.666626 5.33325C0.666626 5.08074 0.809294 4.8499 1.03515 4.73697L7.70182 1.40363ZM2.82401 5.33325L7.99996 7.92123L13.1759 5.33325L7.99996 2.74528L2.82401 5.33325Z" fill="black"/>
+                </svg>
+                <span>month</span>
+              </li>
+
             </ul>
+            <span v-on:click="nextPeriod()" class="arrow next">
+              <svg viewBox="0 0 16 16" fill="none">
+                <path d="M13.3334 8H2.66669" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M6.66669 12L2.66669 8L6.66669 4" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
           </div>
 
           <div class="menu-container mode">
+            <span v-on:click="prevMode()" class="arrow prev">
+              <svg viewBox="0 0 16 16" fill="none">
+                <path d="M13.3334 8H2.66669" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M6.66669 12L2.66669 8L6.66669 4" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
             <ul>
               <li v-on:click="setMode('time')" :class="{ active: getMode('time') }">
-                time
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <g>
+                    <path d="M8.00002 16C3.60001 16 0 12.4 0 8.00002C0 3.60001 3.60001 0 8.00002 0C12.4 0 16 3.60001 16 8.00002C16 12.4 12.4 16 8.00002 16ZM8.00002 1.33334C4.33334 1.33334 1.33334 4.33334 1.33334 8.00002C1.33334 11.6667 4.33334 14.6667 8.00002 14.6667C11.6667 14.6667 14.6667 11.6667 14.6667 8.00002C14.6667 4.33334 11.6667 1.33334 8.00002 1.33334Z" fill="black"/>
+                    <path d="M8.00004 8.66676C7.60004 8.66676 7.33337 8.40009 7.33337 8.00009V3.33342C7.33337 2.93342 7.60004 2.66675 8.00004 2.66675C8.40004 2.66675 8.66671 2.93342 8.66671 3.33342V8.00009C8.66671 8.40009 8.40004 8.66676 8.00004 8.66676Z" fill="black"/>
+                    <path d="M10.6667 11.3333C10.4667 11.3333 10.3334 11.2666 10.2 11.1333L7.53337 8.46659C7.26671 8.19992 7.26671 7.79992 7.53337 7.53325C7.80004 7.26659 8.20004 7.26659 8.46671 7.53325L11.1334 10.1999C11.4001 10.4666 11.4001 10.8666 11.1334 11.1333C11 11.2666 10.8667 11.3333 10.6667 11.3333Z" fill="black"/>
+                  </g>
+                </svg>
+                <span>time</span>
               </li>
+
               <li v-on:click="setMode('views')" :class="{ active: getMode('views') }">
-                views
+                <svg width="16" height="16" viewBox="0 0 16 16">
+                  <g>
+                    <path d="M8.00005 10.6666C6.53338 10.6666 5.33337 9.46659 5.33337 7.99992C5.33337 6.53325 6.53338 5.33325 8.00005 5.33325C9.46672 5.33325 10.6667 6.53325 10.6667 7.99992C10.6667 9.46659 9.46672 10.6666 8.00005 10.6666ZM8.00005 6.66659C7.26671 6.66659 6.66671 7.26659 6.66671 7.99992C6.66671 8.73326 7.26671 9.33326 8.00005 9.33326C8.73338 9.33326 9.33338 8.73326 9.33338 7.99992C9.33338 7.26659 8.73338 6.66659 8.00005 6.66659Z" fill="#B4BBC5"/>
+                    <path d="M8.00012 14C3.02087 14 0.232487 8.6 0.0997071 8.375C-0.0330729 8.15 -0.0330729 7.85 0.0997071 7.625C0.232487 7.4 3.02087 2 8.00012 2C12.9794 2 15.7678 7.4 15.9005 7.625C16.0333 7.85 16.0333 8.15 15.9005 8.375C15.7678 8.6 12.9794 14 8.00012 14ZM1.4939 8C2.1578 9.125 4.48145 12.5 8.00012 12.5C11.5188 12.5 13.8424 9.125 14.5063 8C13.8424 6.875 11.5188 3.5 8.00012 3.5C4.48145 3.5 2.1578 6.875 1.4939 8Z" fill="#B4BBC5"/>
+                  </g>
+                </svg>
+                <span>views</span>
               </li>
+
               <li v-on:click="setMode('clicks')" :class="{ active: getMode('clicks') }">
-                clicks
+                <svg width="16" height="16" version="1.1" viewBox="0 0 16 16">
+                  <g transform="scale(0.666667)">
+                    <path fill="#000" d="M14,23c0,0 0,0 0,0c-0.4,0 -0.8,-0.3 -0.9,-0.7l-2.3,-6.9c-0.2,-0.5 0.1,-1.1 0.6,-1.3c0.5,-0.2 1.1,0.1 1.3,0.6l1.4,4.3l6.1,-15.3l-15.3,6.2l4.3,1.4c0.5,0.2 0.8,0.7 0.6,1.3c-0.2,0.5 -0.7,0.8 -1.3,0.6l-6.9,-2.3c-0.3,-0.1 -0.6,-0.5 -0.6,-0.9c0,-0.4 0.2,-0.8 0.6,-1l20,-8c0.4,-0.1 0.8,0 1.1,0.3c0.3,0.3 0.4,0.7 0.2,1.1l-8,20c-0.1,0.4 -0.5,0.6 -0.9,0.6Z"></path>
+                    <path fill="#000" d="M4,23c-0.8,0 -1.5,-0.3 -2.1,-0.9c-1.2,-1.2 -1.2,-3.1 0,-4.2l6.3,-6.3c0.4,-0.4 1,-0.4 1.4,0c0.4,0.4 0.4,1 0,1.4l-6.3,6.3c-0.2,0.2 -0.3,0.4 -0.3,0.7c0,0.3 0.1,0.5 0.3,0.7c0.4,0.4 1,0.4 1.4,0l6.3,-6.3c0.4,-0.4 1,-0.4 1.4,0c0.4,0.4 0.4,1 0,1.4l-6.3,6.3c-0.6,0.6 -1.3,0.9 -2.1,0.9Z"></path>
+                  </g>
+                </svg>
+                <span>clicks</span>
               </li>
+
               <li v-on:click="setMode('scroll')" :class="{ active: getMode('scroll') }">
-                scroll
+                <svg width="16" height="16" version="1.1" viewBox="0 0 16 16" >
+                  <g transform="scale(0.666667)">
+                    <path fill="#000" d="M12,24c-6.6,0 -12,-5.4 -12,-12c0,-6.6 5.4,-12 12,-12c6.6,0 12,5.4 12,12c0,6.6 -5.4,12 -12,12Zm0,-22c-5.5,0 -10,4.5 -10,10c0,5.5 4.5,10 10,10c5.5,0 10,-4.5 10,-10c0,-5.5 -4.5,-10 -10,-10Z"></path>
+                    <path fill="#000" d="M15,11c-0.3,0 -0.5,-0.1 -0.7,-0.3l-2.3,-2.3l-2.3,2.3c-0.4,0.4 -1,0.4 -1.4,0c-0.4,-0.4 -0.4,-1 0,-1.4l3,-3c0.4,-0.4 1,-0.4 1.4,0l3,3c0.4,0.4 0.4,1 0,1.4c-0.2,0.2 -0.4,0.3 -0.7,0.3Z"></path>
+                    <path fill="#000" d="M12,18c-0.3,0 -0.5,-0.1 -0.7,-0.3l-3,-3c-0.4,-0.4 -0.4,-1 0,-1.4c0.4,-0.4 1,-0.4 1.4,0l2.3,2.3l2.3,-2.3c0.4,-0.4 1,-0.4 1.4,0c0.4,0.4 0.4,1 0,1.4l-3,3c-0.2,0.2 -0.4,0.3 -0.7,0.3Z"></path>
+                  </g>
+                </svg>
+                <span>scroll</span>
               </li>
+
             </ul>
+            <span v-on:click="nextMode()" class="arrow next">
+              <svg viewBox="0 0 16 16" fill="none">
+                <path d="M13.3334 8H2.66669" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M6.66669 12L2.66669 8L6.66669 4" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
           </div>
       
         </div>
@@ -388,7 +467,7 @@ body {
   font-family: 'Fira Mono', monospace;
   font-weight: 400;
   font-size: 12px;
-  border: 4px solid $black;
+  border: 3px solid $black;
 
   .info-container {
     width: 40%;
@@ -398,7 +477,7 @@ body {
     justify-content: space-between;
     background-color: $white;
     height: 100vh;
-    border-right: 4px solid $black;
+    border-right: 3px solid $black;
 
     header {
       display: flex;
@@ -407,7 +486,7 @@ body {
       padding: 40px 80px;
       height: 120px;
       box-sizing: border-box;
-      border-bottom: 4px solid $black;
+      border-bottom: 3px solid $black;
 
       .logo {
         width: 40px;
@@ -439,6 +518,7 @@ body {
       h1.sum {
         font-size: 70px;
         margin: 0;
+        text-align: center;
       }
     }
 
@@ -452,63 +532,94 @@ body {
           width: 100%;
           display: flex;
           align-items: center;
-          border-top: 4px solid $black;
+          justify-content: space-between;
+          border-top: 3px solid $black;
           height: 120px;
+
+          span.arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 80px;
+            height: 120px;
+            cursor: pointer;
+
+            &.prev {
+              border-right: 3px solid $black;
+            }
+
+            &.next {
+              border-left: 3px solid $black;
+
+              svg {
+                transform: rotate(180deg);
+              }
+            }
+
+            &:hover {
+              background-color: $primary;
+            }
+
+            svg {
+              height: 32px;
+              width: 32px;
+            }
+          }
 
           &.period,
           &.mode {
-            justify-content: center;
-
             ul {
               margin: 0;
               padding: 0;
               display: flex;
 
               li {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
                 list-style: none;
-                padding: 20px;
+                padding: 16px;
                 cursor: pointer;
+                text-decoration: none;
+
+                svg {
+                  flex: 0 0 100%;
+
+                  path {
+                    fill: $darkgrey;
+                  }
+                }
+
+                span {
+                  flex: 0 0 100%;
+                  margin-top: 8px;
+                  font-family: 'Montserrat', sans-serif;
+                  font-weight: 500;
+                  font-size: 9px;
+                  text-transform: uppercase;
+                  text-align: center;
+                  letter-spacing: 2px;
+                  color: $darkgrey;
+                }
+
+                &.active {
+                  svg path {
+                    fill: $black;
+                  }
+
+                  span {
+                    color: $black;
+                  }
+                }
               }
             }
           }
 
           &.date {
-            justify-content: space-between;
-
             h2 {
               font-size: 21px;
               font-weight: 400;
               margin: 0;
-            }
-
-            span.arrow {
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              width: 80px;
-              height: 120px;
-              cursor: pointer;
-
-              &.prev {
-                border-right: 4px solid $black;
-              }
-
-              &.next {
-                border-left: 4px solid $black;
-
-                svg {
-                  transform: rotate(180deg);
-                }
-              }
-
-              &:hover {
-                background-color: $primary;
-              }
-
-              svg {
-                height: 32px;
-                width: 32px;
-              }
             }
           }
         }
@@ -520,7 +631,7 @@ body {
         border: none;
         outline: none;
         cursor: pointer;
-        border-top: 4px solid $black;
+        border-top: 3px solid $black;
         font-family: 'Montserrat', sans-serif;
         font-size: 12px;
         font-weight: 500;
