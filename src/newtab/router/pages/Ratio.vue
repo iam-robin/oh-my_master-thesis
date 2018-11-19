@@ -181,7 +181,6 @@ export default {
           let percentage = ((100 / sum) * time) / 100;
           let roundedPercentage = Math.round(percentage * 1000) / 1000;
           website['percent'] = roundedPercentage;
-          console.log(website);
         });
       } else if (mode === 'views') {
         for (let i = 0; i < websites.length; i++) {
