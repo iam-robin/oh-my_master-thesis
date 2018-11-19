@@ -22,21 +22,6 @@
       </header>
 
       <main>
-        <ul class="mode">
-          <li v-on:click="setMode('time')" :class="{ active: getMode('time') }">
-            usage time
-          </li>
-          <li v-on:click="setMode('views')" :class="{ active: getMode('views') }">
-            site views
-          </li>
-          <li v-on:click="setMode('clicks')" :class="{ active: getMode('clicks') }">
-            clicks
-          </li>
-          <li v-on:click="setMode('scroll')" :class="{ active: getMode('scroll') }">
-            scroll distance
-          </li>
-        </ul>
-
         <!-- time mode -->
         <div v-if="activeMode === 'time'">
           <h1 class="sum">{{formatMS(periodSum.time)}}</h1>
@@ -60,9 +45,10 @@
       </main>
 
       <footer>
-        <div>
-          <div class="date">
-            <span v-on:click="prevDate()" class="prev">
+        <div class="menu">
+
+          <div class="menu-container date">
+            <span v-on:click="prevDate()" class="arrow prev">
               <svg viewBox="0 0 16 16" fill="none">
                 <path d="M13.3334 8H2.66669" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M6.66669 12L2.66669 8L6.66669 4" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -71,7 +57,7 @@
 
               <h2>{{formatedDate}}</h2>
 
-            <span v-on:click="nextDate()" class="next">
+            <span v-on:click="nextDate()" class="arrow next">
               <svg viewBox="0 0 16 16" fill="none">
                 <path d="M13.3334 8H2.66669" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M6.66669 12L2.66669 8L6.66669 4" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -79,12 +65,33 @@
             </span>
           </div>
 
-          <ul class="period">
-            <li v-on:click="setPeriod('day')" :class="{ active: getPeriod('day') }">day</li>
-            <li v-on:click="setPeriod('week')" :class="{ active: getPeriod('week') }">week</li>
-            <li v-on:click="setPeriod('month')" :class="{ active: getPeriod('month') }">month</li>
-          </ul>
+          <div class="menu-container period">
+            <ul>
+              <li v-on:click="setPeriod('day')" :class="{ active: getPeriod('day') }">day</li>
+              <li v-on:click="setPeriod('week')" :class="{ active: getPeriod('week') }">week</li>
+              <li v-on:click="setPeriod('month')" :class="{ active: getPeriod('month') }">month</li>
+            </ul>
+          </div>
+
+          <div class="menu-container mode">
+            <ul>
+              <li v-on:click="setMode('time')" :class="{ active: getMode('time') }">
+                time
+              </li>
+              <li v-on:click="setMode('views')" :class="{ active: getMode('views') }">
+                views
+              </li>
+              <li v-on:click="setMode('clicks')" :class="{ active: getMode('clicks') }">
+                clicks
+              </li>
+              <li v-on:click="setMode('scroll')" :class="{ active: getMode('scroll') }">
+                scroll
+              </li>
+            </ul>
+          </div>
+      
         </div>
+        <button class="settings">Settings</button>
       </footer>
     </div>
     <div class="content-container" v-bind:class="{detail: detailPageActive}">
@@ -125,10 +132,6 @@ export default {
       } else if (e.key === 'ArrowLeft') {
         // prev time period
         this.prevDate();
-      } else if (e.key === 'ArrowDown') {
-        this.nextMode();
-      } else if (e.key === 'ArrowUp') {
-        this.prevMode();
       } else if (e.key === 'd') {
         // day mode
         this.setPeriod('day');
@@ -368,6 +371,10 @@ export default {
   width: 0px; /* remove scrollbar space */
 }
 
+::selection {
+  background: $primary;
+}
+
 html {
   overflow: hidden;
   height: 100%;
@@ -381,6 +388,7 @@ body {
   font-family: 'Fira Mono', monospace;
   font-weight: 400;
   font-size: 12px;
+  border: 4px solid $black;
 
   .info-container {
     width: 40%;
@@ -390,13 +398,16 @@ body {
     justify-content: space-between;
     background-color: $white;
     height: 100vh;
-    padding: 40px 80px;
-    box-sizing: border-box;
+    border-right: 4px solid $black;
 
     header {
       display: flex;
-      align-items: top;
+      align-items: center;
       justify-content: space-between;
+      padding: 40px 80px;
+      height: 120px;
+      box-sizing: border-box;
+      border-bottom: 4px solid $black;
 
       .logo {
         width: 40px;
@@ -413,7 +424,7 @@ body {
           letter-spacing: 2px;
           color: $darkgrey;
           text-decoration: none;
-          padding-left: 32px;
+          padding-left: 40px;
 
           &.router-link-active {
             color: $black;
@@ -423,64 +434,101 @@ body {
     }
 
     main {
-      user-select: none;
-      margin-bottom: 16px;
+      padding: 0 80px;
 
       h1.sum {
-        font-size: 64px;
+        font-size: 70px;
         margin: 0;
       }
     }
 
     footer {
-      .date {
-        width: 100%;
+      .menu {
         display: flex;
-        align-items: center;
-        margin-left: -16px;
-        margin-bottom: 8px;
+        flex-wrap: wrap;
+        user-select: none;
 
-        h2 {
-          font-size: 16px;
-          font-weight: 400;
-          margin: 0;
-        }
+        .menu-container {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          border-top: 4px solid $black;
+          height: 120px;
 
-        span {
-          display: inline-block;
-          height: 16px;
-          width: 16px;
-          padding: 16px;
-          cursor: pointer;
+          &.period,
+          &.mode {
+            justify-content: center;
 
-          svg path {
-            stroke-width: 1;
+            ul {
+              margin: 0;
+              padding: 0;
+              display: flex;
+
+              li {
+                list-style: none;
+                padding: 20px;
+                cursor: pointer;
+              }
+            }
           }
 
-          &:last-child {
-            transform: rotate(180deg);
+          &.date {
+            justify-content: space-between;
+
+            h2 {
+              font-size: 21px;
+              font-weight: 400;
+              margin: 0;
+            }
+
+            span.arrow {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              width: 80px;
+              height: 120px;
+              cursor: pointer;
+
+              &.prev {
+                border-right: 4px solid $black;
+              }
+
+              &.next {
+                border-left: 4px solid $black;
+
+                svg {
+                  transform: rotate(180deg);
+                }
+              }
+
+              &:hover {
+                background-color: $primary;
+              }
+
+              svg {
+                height: 32px;
+                width: 32px;
+              }
+            }
           }
         }
       }
 
-      ul.period {
-        list-style: none;
-        margin: 0;
-        padding: 0;
+      button.settings {
+        width: 100%;
+        height: 96px;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        border-top: 4px solid $black;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 12px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 2px;
 
-        li {
-          display: inline-block;
-          cursor: pointer;
-          font-family: 'Montserrat', sans-serif;
-          font-weight: 500;
-          color: $darkgrey;
-          text-transform: uppercase;
-          letter-spacing: 2px;
-          padding-right: 32px;
-
-          &.active {
-            color: $black;
-          }
+        &:hover {
+          background-color: $primary;
         }
       }
     }

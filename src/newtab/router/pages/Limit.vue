@@ -85,7 +85,7 @@ export default {
 
       .line {
         height: 1px;
-        background-color: $grey;
+        background-color: $darkgrey;
         margin: 0 24px;
         flex-grow: 99;
       }

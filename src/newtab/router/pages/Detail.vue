@@ -314,12 +314,12 @@ export default {
 
     getShadeColor: function() {
       let baseColor = this.data[0].info.dominant_color.hex;
-      let dark2 = this.shadeColor(baseColor, -0.4);
       let dark1 = this.shadeColor(baseColor, -0.2);
-      let light1 = this.shadeColor(baseColor, 0.4);
+      let light1 = this.shadeColor(baseColor, 0.3);
+      let light2 = this.shadeColor(baseColor, 0.7);
       let neutral = '#EDEFF3';
 
-      this.colors = [neutral, light1, baseColor, dark1, dark2];
+      this.colors = [neutral, light2, light1, baseColor, dark1];
     },
 
     getPeriod: function(menuItem) {
@@ -398,7 +398,7 @@ export default {
     justify-content: space-between;
     margin-bottom: 96px;
     padding-bottom: 24px;
-    border-bottom: 1px solid $grey;
+    border-bottom: 1px solid $darkgrey;
 
     .website {
       display: flex;
@@ -420,7 +420,7 @@ export default {
         height: 16px;
         margin-right: 16px;
         border-radius: 100%;
-        background-color: $grey;
+        background-color: $darkgrey;
       }
     }
 
@@ -473,7 +473,7 @@ export default {
         margin: 0 0 40px 0;
 
         p {
-          color: $grey;
+          color: $darkgrey;
           font-family: 'Montserrat', sans-serif;
           letter-spacing: 1px;
           margin: 8px 0 8px 0;

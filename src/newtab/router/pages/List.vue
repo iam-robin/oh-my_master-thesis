@@ -133,7 +133,7 @@ export default {
     li {
       flex: 0 0 100%;
       height: 64px;
-      border-bottom: 1px solid $grey;
+      border-bottom: 1px solid $darkgrey;
 
       a {
         height: 100%;
@@ -165,7 +165,7 @@ export default {
             height: 16px;
             margin-right: 16px;
             border-radius: 100%;
-            background-color: $grey;
+            background-color: $darkgrey;
           }
         }
 
