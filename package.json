@@ -22,6 +22,7 @@
     "node-vibrant": "^3.0.0",
     "rgbaster": "file:src/modules/rgbaster",
     "vue": "^2.5.17",
+    "vue-calendar-heatmap": "^0.8.4",
     "vue-router": "^3.0.1"
   },
   "devDependencies": {

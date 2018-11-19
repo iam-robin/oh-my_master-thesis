@@ -56,11 +56,9 @@ export default {
       for (let i = 0; i < this.limits.length; i++) {
         if (this.tabInfo.domain === this.limits[i].domain) {
           this.hasLimit = true;
-          console.log(this.hasLimit);
           break;
         } else {
           this.hasLimit = false;
-          console.log(this.hasLimit);
         }
       }
     },

@@ -88,6 +88,25 @@
           <h2>{{getScrollSpeed()}} px/sec</h2>
         </div>
       </div>
+
+      <ul class="filter">
+        <li v-on:click="setMode('time')" :class="{ active: getMode('time') }">
+          time
+        </li>
+        <li v-on:click="setMode('views')" :class="{ active: getMode('views') }">
+          views
+        </li>
+        <li v-on:click="setMode('clicks')" :class="{ active: getMode('clicks') }">
+          clicks
+        </li>
+        <li v-on:click="setMode('scroll')" :class="{ active: getMode('scroll') }">
+          scroll
+        </li>
+      </ul>
+
+      <calendar-heatmap class="calendar-heatmap" :values="heatMapData"
+                        :endDate="this.date"
+                        :range-color="this.colors" />
     </main>
 
   </div>
@@ -97,11 +116,16 @@
 
 <script>
 import moment from 'moment';
+import { CalendarHeatmap } from 'vue-calendar-heatmap';
 import cloneDeep from 'lodash/cloneDeep';
 import formatMS from '../../functions/formatMS';
 
 export default {
   name: 'detail-page',
+
+  components: {
+    CalendarHeatmap,
+  },
 
   data: function() {
     return {
@@ -109,7 +133,10 @@ export default {
       date: moment(),
       data: [],
       periodSum: {},
+      heatMapData: [],
       activePeriod: 'day',
+      activeMode: 'time',
+      colors: [],
     };
   },
 
@@ -121,6 +148,8 @@ export default {
     this.domain = this.$route.params.domain;
     this.data = this.getDetailData();
     this.getPeriodSum();
+    this.getHeatMapData();
+    this.getShadeColor();
 
     // send data to app.vue
     this.$emit('detailPageActive', true);
@@ -216,6 +245,64 @@ export default {
       }
     },
 
+    getHeatMapData: function() {
+      let data = cloneDeep(this.data);
+      let dataDays = [];
+
+      let startOfPeriod = cloneDeep(this.date).subtract(1, 'year');
+      let endOfPeriod = cloneDeep(this.date);
+
+      // add the percentage of each top side to the object
+      data.forEach(function(day) {
+        dataDays.push(moment(day.date));
+      });
+
+      let minData = moment.min(dataDays);
+
+      // if min data date is closer to present then present minus 1 year -> use minData
+      if (minData > startOfPeriod) {
+        startOfPeriod = minData;
+      }
+
+      let day = startOfPeriod;
+      let completePeriod = []; // complete period days (moment) in array
+
+      // get the period days
+      while (day <= endOfPeriod) {
+        completePeriod.push(day.toDate());
+        day = day.clone().add(1, 'd');
+      }
+
+      let heatMapData = [];
+
+      for (let i = 0; i < completePeriod.length; i++) {
+        let day = moment(completePeriod[i]).format('YYYY-MM-DD');
+
+        for (let x = 0; x < data.length; x++) {
+          let dataDay = data[x].date;
+          let value;
+          // change value for other data set
+          if (this.activeMode === 'time') {
+            value = data[x].info.time;
+          } else if (this.activeMode === 'views') {
+            value = data[x].info.count;
+          } else if (this.activeMode === 'clicks') {
+            value = data[x].info.clicks;
+          } else if (this.activeMode === 'scroll') {
+            value = data[x].info.scroll;
+          }
+
+          if (dataDay === day) {
+            let object = {};
+            object.date = day;
+            object.count = value;
+            heatMapData.push(object);
+          }
+        }
+      }
+      this.heatMapData = heatMapData;
+    },
+
     getScrollSpeed: function() {
       let scroll = this.periodSum.scroll;
       let timeInSec = parseInt(this.periodSum.time / 1000);
@@ -225,6 +312,16 @@ export default {
       return speed;
     },
 
+    getShadeColor: function() {
+      let baseColor = this.data[0].info.dominant_color.hex;
+      let dark2 = this.shadeColor(baseColor, -0.4);
+      let dark1 = this.shadeColor(baseColor, -0.2);
+      let light1 = this.shadeColor(baseColor, 0.4);
+      let neutral = '#EDEFF3';
+
+      this.colors = [neutral, light1, baseColor, dark1, dark2];
+    },
+
     getPeriod: function(menuItem) {
       return this.activePeriod === menuItem;
     },
@@ -232,6 +329,25 @@ export default {
     setPeriod: function(menuItem) {
       this.activePeriod = menuItem;
       this.getPeriodSum();
+    },
+
+    getMode: function(menuItem) {
+      return this.activeMode === menuItem;
+    },
+
+    setMode: function(menuItem) {
+      this.activeMode = menuItem;
+      this.getHeatMapData();
+    },
+
+    shadeColor(color, percent) {
+      let f = parseInt(color.slice(1), 16);
+      let t = percent < 0 ? 0 : 255;
+      let p = percent < 0 ? percent * -1 : percent;
+      let R = f >> 16;
+      let G = (f >> 8) & 0x00ff;
+      let B = f & 0x0000ff;
+      return '#' + (0x1000000 + (Math.round((t - R) * p) + R) * 0x10000 + (Math.round((t - G) * p) + G) * 0x100 + (Math.round((t - B) * p) + B)).toString(16).slice(1);
     },
   },
 };
@@ -333,6 +449,7 @@ export default {
       list-style: none;
       margin: 0;
       padding: 0;
+      margin-top: 80px;
       margin-bottom: 40px;
 
       li {
@@ -370,6 +487,10 @@ export default {
           margin: 0;
         }
       }
+    }
+
+    .calendar-heatmap {
+      margin-top: 24px;
     }
   }
 }
