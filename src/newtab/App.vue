@@ -24,22 +24,26 @@
       <main>
         <!-- time mode -->
         <div v-if="activeMode === 'time'">
-          <h1 class="sum">{{formatMS(periodSum.time)}}</h1>
+          <h1 v-if="periodSum.time > 0" class="sum">{{formatMS(periodSum.time, true)}}</h1>
+          <h1 v-else class="sum">–</h1>
         </div>
 
         <!-- views mode -->
         <div v-if="activeMode === 'views'">
-            <h1 class="sum">{{periodSum.views}} views</h1>
+            <h1 v-if="periodSum.views > 0" class="sum">{{periodSum.views}} views</h1>
+            <h1 v-else class="sum">–</h1>
         </div>
 
         <!-- clicks mode -->
         <div v-if="activeMode === 'clicks'">
-            <h1 class="sum">{{periodSum.clicks}} clicks</h1>
+            <h1 v-if="periodSum.clicks > 0" class="sum">{{periodSum.clicks}} clicks</h1>
+            <h1 v-else class="sum">–</h1>
         </div>
 
         <!-- scroll mode -->
         <div v-if="activeMode === 'scroll'">
-            <h1 class="sum">{{parseInt(periodSum.scroll)}} px</h1>
+            <h1 v-if="periodSum.scroll > 0" class="sum">{{parseInt(periodSum.scroll/100)}}K px</h1>
+            <h1 v-else class="sum">–</h1>
         </div>
 
       </main>

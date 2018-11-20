@@ -9,18 +9,10 @@ export default function formatMS(ms, showSec) {
 
   if (hours !== '00') {
     // hours, minutes and seconds
-    if (showSec) {
-      return hours + 'h ' + minutes + 'min ' + seconds + 'sec ';
-    } else {
-      return hours + 'h ' + minutes + 'min ';
-    }
+    return hours + 'h ' + minutes + 'min ';
   } else if (hours === '00' && minutes !== '00') {
     // minutes and seconds
-    if (showSec) {
-      return minutes + 'min ' + seconds + 'sec ';
-    } else {
-      return minutes + 'min ';
-    }
+    return minutes + 'min ';
   } else if (seconds === '00') {
     // no time
     return '–';

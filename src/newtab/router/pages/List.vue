@@ -25,9 +25,9 @@
             <span class="domain">{{ website.domain }}</span>
           </div>
           <div class="right">
-            <span class="count">{{ formatMS(website.time) }}</span>
-            <span v-if="website.relativeData">{{ getRelativeValue(website.time, website.relativeData.time) }}</span>
-            <span v-else>+{{ website.time }}</span>
+            <span>{{ formatMS(website.time, true) }}</span>
+            <span class="relative" v-if="website.relativeData">| {{ getRelativeValue(website.time, website.relativeData.time) }}</span>
+            <span class="relative" v-else>| +{{ formatMS(website.time, true) }}</span>
           </div>
         </router-link>
       </li>
@@ -45,8 +45,8 @@
           </div>
           <div class="right">
             <span class="count">{{ website.count }}</span>
-            <span v-if="website.relativeData">{{ getRelativeValue(website.count, website.relativeData.count) }}</span>
-            <span v-else>+{{ website.count }}</span>
+            <span v-if="website.relativeData">| {{ getRelativeValue(website.count, website.relativeData.count) }}</span>
+            <span v-else>| +{{ website.count }}</span>
           </div>
         </router-link>
       </li>
@@ -64,8 +64,8 @@
           </div>
           <div class="right">
             <span class="count">{{ website.clicks }} clicks</span>
-            <span v-if="website.relativeData">{{ getRelativeValue(website.clicks, website.relativeData.clicks) }} clicks</span>
-            <span v-else>+{{ website.clicks }} clicks</span>
+            <span v-if="website.relativeData">| {{ getRelativeValue(website.clicks, website.relativeData.clicks) }} clicks</span>
+            <span v-else>| +{{ website.clicks }} clicks</span>
           </div>
         </router-link>
       </li>
@@ -82,9 +82,9 @@
             <span class="domain">{{ website.domain }}</span>
           </div>
           <div class="right">
-            <span>{{ parseInt(website.scroll) }} px</span>
-            <span v-if="website.relativeData">{{ getRelativeValue(website.scroll, website.relativeData.scroll) }} px</span>
-            <span v-else>+{{ website.scroll }} px</span>
+            <span>{{ parseInt(website.scroll)}} px</span>
+            <span v-if="website.relativeData">| {{ getRelativeValue(website.scroll, website.relativeData.scroll) }} px</span>
+            <span v-else>| +{{ website.scroll}} px</span>
           </div>
         </router-link>
       </li>
@@ -116,10 +116,20 @@ export default {
 
     getRelativeValue: function(currentData, prevData) {
       let relativeValue = (prevData - currentData) * -1;
-      if (relativeValue >= 0) {
-        return '+' + relativeValue;
+
+      if (this.mode === 'time') {
+        if (relativeValue >= 0) {
+          return '+' + formatMS(relativeValue, true);
+        } else {
+          relativeValue = relativeValue * -1;
+          return '-' + formatMS(relativeValue, true);
+        }
       } else {
-        return relativeValue;
+        if (relativeValue >= 0) {
+          return '+' + relativeValue;
+        } else {
+          return relativeValue;
+        }
       }
     },
   },
