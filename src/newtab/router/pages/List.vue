@@ -26,8 +26,8 @@
           </div>
           <div class="right">
             <span>{{ formatMS(website.time, true) }}</span>
-            <span class="relative" v-if="website.relativeData">| {{ getRelativeValue(website.time, website.relativeData.time) }}</span>
-            <span class="relative" v-else>| +{{ formatMS(website.time, true) }}</span>
+            <span class="relative" v-if="website.relativeData" :class="{ more: (website.relativeData.time-website.time) <= 0 }"> {{ getRelativeValue(website.time, website.relativeData.time) }}</span>
+            <span class="relative more" v-else> ↑ {{ formatMS(website.time, true) }}</span>
           </div>
         </router-link>
       </li>
@@ -44,9 +44,9 @@
             <span class="domain">{{ website.domain }}</span>
           </div>
           <div class="right">
-            <span class="count">{{ website.count }}</span>
-            <span v-if="website.relativeData">| {{ getRelativeValue(website.count, website.relativeData.count) }}</span>
-            <span v-else>| +{{ website.count }}</span>
+            <span class="count">{{ website.count }} views</span>
+            <span class="relative" v-if="website.relativeData" :class="{ more: (website.relativeData.count-website.count) <= 0 }"> {{ getRelativeValue(website.count, website.relativeData.count) }} views</span>
+            <span class="relative more" v-else> ↑ {{ website.count }} views</span>
           </div>
         </router-link>
       </li>
@@ -64,8 +64,8 @@
           </div>
           <div class="right">
             <span class="count">{{ website.clicks }} clicks</span>
-            <span v-if="website.relativeData">| {{ getRelativeValue(website.clicks, website.relativeData.clicks) }} clicks</span>
-            <span v-else>| +{{ website.clicks }} clicks</span>
+            <span class="relative" v-if="website.relativeData" :class="{ more: (website.relativeData.clicks-website.clicks) <= 0 }"> {{ getRelativeValue(website.clicks, website.relativeData.clicks) }} clicks</span>
+            <span class="relative more" v-else> ↑ {{ website.clicks }} clicks</span>
           </div>
         </router-link>
       </li>
@@ -83,8 +83,8 @@
           </div>
           <div class="right">
             <span>{{ parseInt(website.scroll)}} px</span>
-            <span v-if="website.relativeData">| {{ getRelativeValue(website.scroll, website.relativeData.scroll) }} px</span>
-            <span v-else>| +{{ website.scroll}} px</span>
+            <span class="relative" v-if="website.relativeData" :class="{ more: (website.relativeData.scroll-website.scroll) <= 0 }"> {{ getRelativeValue(website.scroll, website.relativeData.scroll) }} px</span>
+            <span class="relative more" v-else> ↑ {{ website.scroll}} px</span>
           </div>
         </router-link>
       </li>
@@ -119,16 +119,16 @@ export default {
 
       if (this.mode === 'time') {
         if (relativeValue >= 0) {
-          return '+' + formatMS(relativeValue, true);
+          return '↑ ' + formatMS(relativeValue, true);
         } else {
           relativeValue = relativeValue * -1;
-          return '-' + formatMS(relativeValue, true);
+          return '↓ ' + formatMS(relativeValue, true);
         }
       } else {
         if (relativeValue >= 0) {
-          return '+' + relativeValue;
+          return '↑ ' + relativeValue;
         } else {
-          return relativeValue;
+          return '↓ ' + relativeValue * -1;
         }
       }
     },
@@ -168,14 +168,14 @@ export default {
 
     li {
       flex: 0 0 100%;
-      height: 64px;
+      height: 80px;
       border-bottom: 1px solid $darkgrey;
 
       a {
         height: 100%;
         width: 100%;
         display: flex;
-        font-size: 12px;
+        font-size: 16px;
         justify-content: space-between;
         align-items: center;
         color: $black;
@@ -202,6 +202,19 @@ export default {
             margin-right: 16px;
             border-radius: 100%;
             background-color: $darkgrey;
+          }
+        }
+
+        .right {
+          .relative {
+            display: inline-block;
+            width: 96px;
+            text-align: right;
+            color: #3fba9b;
+
+            &.more {
+              color: #d84756;
+            }
           }
         }
       }

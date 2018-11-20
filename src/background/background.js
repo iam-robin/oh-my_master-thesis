@@ -39,7 +39,7 @@ let colorTable = [
   { name: 'darkyellow', hex: '#F5BA4F' },
   { name: 'yellow', hex: '#FECE60' },
   { name: 'lightyellow', hex: '#FEDE91' },
-  { name: 'darkgreen', hex: '#EA8ABF' },
+  { name: 'darkgreen', hex: '#8EC059' },
   { name: 'green', hex: '#A1D36E' },
   { name: 'lightgreen', hex: '#C2E699' },
   { name: 'darkmint', hex: '#3FBA9B' },
