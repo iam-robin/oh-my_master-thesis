@@ -170,7 +170,12 @@
           </div>
       
         </div>
-        <button class="settings" v-on:click="toggleMenu()">Settings</button>
+        <button class="settings"
+                v-on:click="toggleMenu()"
+                :style="[menuActive ? { 'background-color' : '#CCD0D8' } : { 'background-color' : '#fff' }]">
+          <span v-if="menuActive">Close</span>
+          <span v-else>Settings</span>
+        </button>
       </footer>
     </div>
     <div class="content-container" v-bind:class="{detail: detailPageActive}">
@@ -273,62 +278,134 @@ export default {
     },
 
     getRelevantData: function() {
-      // get the current time period
-      let date = cloneDeep(this.date);
       let entireData = this.data;
-      let period = this.activePeriod;
+
       let periodSum = {
         time: 0,
         views: 0,
         clicks: 0,
         scroll: 0,
       };
-      let startOfPeriod;
-      let endOfPeriod;
-      let completePeriod = []; // complete period data in array
-      let periodData = [];
+
+      let currentPeriod = [];
+      let currentPeriodData = [];
+      let prevPeriod = [];
+      let prevPeriodData = [];
+
+      let relevantData = [];
+      let relativeData = [];
 
       // reset data
       this.relevantData = [];
       this.periodSum = {};
 
-      if (period === 'day') {
-        startOfPeriod = cloneDeep(date);
-        endOfPeriod = cloneDeep(date);
-      } else if (period === 'week') {
-        startOfPeriod = cloneDeep(date).startOf('isoWeek');
-        endOfPeriod = cloneDeep(date).endOf('isoWeek');
-      } else if (period === 'month') {
-        startOfPeriod = cloneDeep(date).startOf('month');
-        endOfPeriod = cloneDeep(date).endOf('month');
-      }
+      currentPeriod = this.getPeriodDays('current');
+      prevPeriod = this.getPeriodDays('prev');
 
-      let day = startOfPeriod;
-
-      // get the period days
-      while (day <= endOfPeriod) {
-        completePeriod.push(day.toDate());
-        day = day.clone().add(1, 'd');
-      }
-
-      // calculate the time and view and get the data of the period
-      for (let i = 0; i < completePeriod.length; i++) {
-        let periodday = moment(completePeriod[i]).format('YYYY-MM-DD');
+      // calculate the current period
+      for (let i = 0; i < currentPeriod.length; i++) {
+        let periodday = moment(currentPeriod[i]).format('YYYY-MM-DD');
         for (let x = 0; x < entireData.length; x++) {
           if (entireData[x].date === periodday) {
             periodSum.time += entireData[x].timeSum;
             periodSum.views += entireData[x].viewSum;
             periodSum.clicks += entireData[x].clickSum;
             periodSum.scroll += entireData[x].scrollSum;
-            periodData.push(entireData[x]);
+            currentPeriodData.push(entireData[x]);
           }
         }
       }
 
       this.periodSum = periodSum;
+      relevantData = this.mergeSameWebsitesInPeriod(currentPeriodData);
 
-      // bundle same domains inside the periodData and safe them in relevantData
-      this.relevantData = Array.from(
+      // calculate the prev period
+      for (let i = 0; i < prevPeriod.length; i++) {
+        let periodday = moment(prevPeriod[i]).format('YYYY-MM-DD');
+        for (let x = 0; x < entireData.length; x++) {
+          if (entireData[x].date === periodday) {
+            prevPeriodData.push(entireData[x]);
+          }
+        }
+      }
+
+      // bundle same domains inside the currentPeriodData and safe them in relevantData
+      relativeData = this.mergeSameWebsitesInPeriod(prevPeriodData);
+
+      for (let i = 0; i < relativeData.length; i++) {
+        for (let x = 0; x < relevantData.length; x++) {
+          if (relativeData[i].domain === relevantData[x].domain) {
+            let object = {
+              clicks: relativeData[i].clicks,
+              count: relativeData[i].count,
+              innerCount: relativeData[i].innerCount,
+              scroll: relativeData[i].scroll,
+              time: relativeData[i].time,
+            };
+
+            relevantData[x].relativeData = object;
+          }
+        }
+      }
+
+      this.relevantData = relevantData;
+    },
+
+    getPeriodDays: function(version) {
+      let date = cloneDeep(this.date);
+      let period = this.activePeriod;
+      let startOfPeriod;
+      let endOfPeriod;
+      let currentPeriod = []; // complete period data in array
+
+      if (version === 'current') {
+        if (period === 'day') {
+          startOfPeriod = cloneDeep(date);
+          endOfPeriod = cloneDeep(date);
+        } else if (period === 'week') {
+          startOfPeriod = cloneDeep(date).startOf('isoWeek');
+          endOfPeriod = cloneDeep(date).endOf('isoWeek');
+        } else if (period === 'month') {
+          startOfPeriod = cloneDeep(date).startOf('month');
+          endOfPeriod = cloneDeep(date).endOf('month');
+        }
+      } else if (version === 'prev') {
+        if (period === 'day') {
+          startOfPeriod = cloneDeep(date).subtract(1, 'days');
+          endOfPeriod = cloneDeep(date).subtract(1, 'days');
+        } else if (period === 'week') {
+          startOfPeriod = cloneDeep(date)
+            .startOf('isoWeek')
+            .subtract(1, 'weeks');
+          endOfPeriod = cloneDeep(date)
+            .endOf('isoWeek')
+            .subtract(1, 'weeks');
+        } else if (period === 'month') {
+          startOfPeriod = cloneDeep(date)
+            .startOf('month')
+            .subtract(1, 'months');
+          endOfPeriod = cloneDeep(date)
+            .endOf('month')
+            .subtract(1, 'months');
+        }
+      }
+
+      let day = startOfPeriod;
+
+      // get the period days
+      while (day <= endOfPeriod) {
+        currentPeriod.push(day.toDate());
+        day = day.clone().add(1, 'd');
+      }
+
+      return currentPeriod;
+    },
+
+    mergeSameWebsitesInPeriod: function(periodData) {
+      // bundle same domains inside the currentPeriodData and safe them in relevantData
+      let mergedData = [];
+
+      mergedData = Array.from(
         periodData.reduce((m, { websites }) => {
           websites.forEach(o => {
             var temp = m.get(o.domain);
@@ -348,6 +425,8 @@ export default {
         }, new Map()),
         ([domain, time]) => Object.assign({ domain }, time)
       );
+
+      return mergedData;
     },
 
     toggleMenu: function() {
@@ -552,6 +631,7 @@ body {
         display: flex;
         flex-wrap: wrap;
         height: 0;
+        margin-bottom: 96px;
         user-select: none;
         z-index: 9;
         transition: 0.3s ease-in-out;
@@ -659,8 +739,9 @@ body {
       }
 
       button.settings {
-        position: relative;
-        width: 100%;
+        position: fixed;
+        bottom: 0;
+        width: 40%;
         height: 96px;
         border: none;
         outline: none;

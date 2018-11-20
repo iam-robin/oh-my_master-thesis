@@ -38,7 +38,7 @@ export default {
   name: 'ratio-view',
   data: function() {
     return {
-      columnWidthLimitation: 18,
+      columnWidthLimitation: 20,
       count: 5,
       rows: [],
       columns: [],
