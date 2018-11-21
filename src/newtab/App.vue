@@ -1,25 +1,12 @@
 <template>
   <div>
     <div class="info-container">
-      <header>
-        <svg class="logo" viewBox="0 0 50 50" fill="none">
-          <rect x="1.5" y="1.5" width="47" height="47" stroke="#333333" stroke-width="3"/>
-          <rect x="1.5" y="1.5" width="17" height="47" stroke="#333333" stroke-width="3"/>
-          <rect x="-1.5" y="1.5" width="17" height="18" transform="matrix(-1 0 0 1 17 0)" fill="#FECE60" stroke="#333333" stroke-width="3"/>
-          <rect x="-1.5" y="1.5" width="30" height="17" transform="matrix(-1 0 0 1 47 30)" fill="#E6E9EE" stroke="#333333" stroke-width="3"/>
-        </svg>
-        <div class="menu">
-          <router-link to="/ratio">
-            Top Five
-          </router-link>
-          <router-link to="/list">
-            List
-          </router-link>
-          <router-link to="/limit">
-            Limits
-          </router-link>
-        </div>
-      </header>
+      <MainHeader
+        :links="[
+          {name: 'Top Five', to: '/ratio'},
+          {name: 'List', to: '/list'},
+          {name: 'Limits', to: '/limit'}]"
+      />
 
       <main>
         <!-- time mode -->
@@ -193,9 +180,12 @@
 </template>
 
 <script>
+import MainHeader from './components/MainHeader.vue';
+
 import moment from 'moment';
 import cloneDeep from 'lodash/cloneDeep';
 import formatMS from './functions/formatMS';
+import getPeriodDays from './functions/getPeriodDays';
 
 export default {
   name: 'app-view',
@@ -212,6 +202,11 @@ export default {
       menuActive: false,
     };
   },
+
+  components: {
+    MainHeader,
+  },
+
   created: function() {
     // add key down event listener to window to detect key navigation
     window.addEventListener('keydown', e => {
@@ -303,8 +298,8 @@ export default {
       this.relevantData = [];
       this.periodSum = {};
 
-      currentPeriod = this.getPeriodDays('current');
-      prevPeriod = this.getPeriodDays('prev');
+      currentPeriod = getPeriodDays('current', this.date, this.activePeriod);
+      prevPeriod = getPeriodDays('prev', this.date, this.activePeriod);
 
       // calculate the current period
       for (let i = 0; i < currentPeriod.length; i++) {
@@ -353,56 +348,6 @@ export default {
       }
 
       this.relevantData = relevantData;
-    },
-
-    getPeriodDays: function(version) {
-      let date = cloneDeep(this.date);
-      let period = this.activePeriod;
-      let startOfPeriod;
-      let endOfPeriod;
-      let currentPeriod = []; // complete period data in array
-
-      if (version === 'current') {
-        if (period === 'day') {
-          startOfPeriod = cloneDeep(date);
-          endOfPeriod = cloneDeep(date);
-        } else if (period === 'week') {
-          startOfPeriod = cloneDeep(date).startOf('isoWeek');
-          endOfPeriod = cloneDeep(date).endOf('isoWeek');
-        } else if (period === 'month') {
-          startOfPeriod = cloneDeep(date).startOf('month');
-          endOfPeriod = cloneDeep(date).endOf('month');
-        }
-      } else if (version === 'prev') {
-        if (period === 'day') {
-          startOfPeriod = cloneDeep(date).subtract(1, 'days');
-          endOfPeriod = cloneDeep(date).subtract(1, 'days');
-        } else if (period === 'week') {
-          startOfPeriod = cloneDeep(date)
-            .startOf('isoWeek')
-            .subtract(1, 'weeks');
-          endOfPeriod = cloneDeep(date)
-            .endOf('isoWeek')
-            .subtract(1, 'weeks');
-        } else if (period === 'month') {
-          startOfPeriod = cloneDeep(date)
-            .startOf('month')
-            .subtract(1, 'months');
-          endOfPeriod = cloneDeep(date)
-            .endOf('month')
-            .subtract(1, 'months');
-        }
-      }
-
-      let day = startOfPeriod;
-
-      // get the period days
-      while (day <= endOfPeriod) {
-        currentPeriod.push(day.toDate());
-        day = day.clone().add(1, 'd');
-      }
-
-      return currentPeriod;
     },
 
     mergeSameWebsitesInPeriod: function(periodData) {
@@ -587,44 +532,11 @@ body {
     height: 100vh;
     border-right: 3px solid $black;
 
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 40px 80px;
-      height: 120px;
-      box-sizing: border-box;
-      border-bottom: 3px solid $black;
-
-      .logo {
-        width: 40px;
-        height: 40px;
-      }
-
-      .menu {
-        display: flex;
-
-        a {
-          font-family: 'Montserrat', sans-serif;
-          font-weight: 500;
-          text-transform: uppercase;
-          letter-spacing: 2px;
-          color: $darkgrey;
-          text-decoration: none;
-          padding-left: 40px;
-
-          &.router-link-active {
-            color: $black;
-          }
-        }
-      }
-    }
-
     main {
       padding: 0 80px;
 
       h1.sum {
-        font-size: 70px;
+        font-size: 67px;
         margin: 0;
         text-align: center;
       }

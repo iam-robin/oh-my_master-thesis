@@ -2,112 +2,123 @@
 <div class="component">
 
   <div class="left" :style="{ 'background-color': data[0].info.dominant_color.hex}">
-    <header>
-      header
-    </header>
-
-    <main>
-      <h1>{{domain}}</h1>
-    </main>
-
-    <footer>
-      footer
-    </footer>
-
+    <MainHeader
+      :links="[
+        {name: 'All Websites', to: '/ratio'},]"
+    />
   </div>
 
   <div class="right">
 
-    <header>
-      <div class="website">
-        <span v-if="data[0].info.favicon != '' && data[0].info.favicon" :style="{ backgroundImage: 'url(' + data[0].info.favicon + ')' }" class="favicon"></span>
-        <span v-else class="placeholder"></span>
-        <span>{{domain}}</span>
-      </div>
-      <router-link class="back" to="/ratio">
-        <span>all websites</span>
-        <svg viewBox="0 0 16 16" fill="none">
-          <path d="M13.3334 8H2.66669" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M6.66669 12L2.66669 8L6.66669 4" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </router-link>
-    </header>
+    <div class="website">
+      <span v-if="data[0].info.favicon != '' && data[0].info.favicon" :style="{ backgroundImage: 'url(' + data[0].info.favicon + ')' }" class="favicon"></span>
+      <span v-else class="placeholder"></span>
+      <span>{{domain}}</span>
+    </div>
 
-    <main>
+    <ul class="filter">
+      <li v-on:click="setPeriod('day')" :class="{ active: getPeriod('day') }">
+        today
+      </li>
+      <li v-on:click="setPeriod('week')" :class="{ active: getPeriod('week') }">
+        this week
+      </li>
+      <li v-on:click="setPeriod('month')" :class="{ active: getPeriod('month') }">
+        this month
+      </li>
+      <li v-on:click="setPeriod('total')" :class="{ active: getPeriod('total') }">
+        total
+      </li>
+    </ul>
 
-      <ul class="filter">
-        <li v-on:click="setPeriod('day')" :class="{ active: getPeriod('day') }">
-          today
-        </li>
-        <li v-on:click="setPeriod('week')" :class="{ active: getPeriod('week') }">
-          this week
-        </li>
-        <li v-on:click="setPeriod('month')" :class="{ active: getPeriod('month') }">
-          this month
-        </li>
-        <li v-on:click="setPeriod('total')" :class="{ active: getPeriod('total') }">
-          total
-        </li>
-      </ul>
+    <div class="stat-overview">
 
-      <div class="stat-overview">
-        <div class="box">
+      <div class="box">
+        <div>
           <p>time spent</p>
-          <h2>{{formatMS(periodSum.time)}}</h2>
+          <h2>{{formatMS(periodSum.time, true)}}</h2>
+          <h3 v-if="getRelativeTime() >= 0">↓ {{formatMS(getRelativeTime(), true)}}</h3>
+          <h3 v-else class="more">↑ {{formatMS(getRelativeTime() * -1, true)}}</h3>
         </div>
-        <div class="box">
+      </div>
+
+      <div class="box">
+        <div>
           <p>site views</p>
           <h2>{{periodSum.views}} views</h2>
+          <h3>{{prevPeriodSum.views - periodSum.views}} views</h3>
         </div>
-        <div class="box">
+      </div>
+
+      <div class="box">
+        <div>
           <p>Ø time per site view</p>
           <h2>{{formatMS(periodSum.time / periodSum.views, true)}}</h2>
+          <h3>{{getRelativeViews()}} views</h3>
         </div>
-        <div class="box">
+      </div>
+
+      <div class="box">
+        <div>
           <p>Ø internal site views</p>
           <h2>{{Math.round((periodSum.innerViews/periodSum.views) * 100) / 100}} views</h2>
         </div>
-        <div class="box">
+      </div>
+
+      <div class="box">
+        <div>
           <p>total clicks</p>
           <h2>{{periodSum.clicks}} clicks</h2>
         </div>
-        <div class="box">
+      </div>
+
+      <div class="box">
+        <div>
           <p>Ø clicks per site view</p>
           <h2>{{Math.round((periodSum.clicks/periodSum.views) * 100) / 100}} clicks</h2>
         </div>
-        <div class="box">
+      </div>
+
+      <div class="box">
+        <div>
           <p>total scroll distance</p>
           <h2>{{periodSum.scroll}} px</h2>
         </div>
-        <div class="box">
+      </div>
+
+      <div class="box">
+        <div>
           <p>Ø scroll distance per site view</p>
           <h2>{{parseInt(Math.round((periodSum.scroll/periodSum.views) * 100) / 100)}} px</h2>
         </div>
-        <div class="box">
+      </div>
+
+      <div class="box">
+        <div>
           <p>Ø scroll speed</p>
           <h2>{{getScrollSpeed()}} px/sec</h2>
         </div>
       </div>
+    </div>
 
-      <ul class="filter">
-        <li v-on:click="setMode('time')" :class="{ active: getMode('time') }">
-          time
-        </li>
-        <li v-on:click="setMode('views')" :class="{ active: getMode('views') }">
-          views
-        </li>
-        <li v-on:click="setMode('clicks')" :class="{ active: getMode('clicks') }">
-          clicks
-        </li>
-        <li v-on:click="setMode('scroll')" :class="{ active: getMode('scroll') }">
-          scroll
-        </li>
-      </ul>
+    <!-- <ul class="filter">
+      <li v-on:click="setMode('time')" :class="{ active: getMode('time') }">
+        time
+      </li>
+      <li v-on:click="setMode('views')" :class="{ active: getMode('views') }">
+        views
+      </li>
+      <li v-on:click="setMode('clicks')" :class="{ active: getMode('clicks') }">
+        clicks
+      </li>
+      <li v-on:click="setMode('scroll')" :class="{ active: getMode('scroll') }">
+        scroll
+      </li>
+    </ul>
 
-      <calendar-heatmap class="calendar-heatmap" :values="heatMapData"
-                        :endDate="this.date"
-                        :range-color="this.colors" />
-    </main>
+    <calendar-heatmap class="calendar-heatmap" :values="heatMapData"
+                      :endDate="this.date"
+                      :range-color="this.colors" /> -->
 
   </div>
 
@@ -115,15 +126,19 @@
 </template>
 
 <script>
+import MainHeader from '../../components/MainHeader.vue';
+
 import moment from 'moment';
 import { CalendarHeatmap } from 'vue-calendar-heatmap';
 import cloneDeep from 'lodash/cloneDeep';
 import formatMS from '../../functions/formatMS';
+import getPeriodDays from '../../functions/getPeriodDays';
 
 export default {
   name: 'detail-page',
 
   components: {
+    MainHeader,
     CalendarHeatmap,
   },
 
@@ -133,6 +148,7 @@ export default {
       date: moment(),
       data: [],
       periodSum: {},
+      prevPeriodSum: {},
       heatMapData: [],
       activePeriod: 'day',
       activeMode: 'time',
@@ -181,9 +197,9 @@ export default {
 
     getPeriodSum: function() {
       // get the current time period
-      let date = cloneDeep(this.date);
       let entireData = cloneDeep(this.data);
       let period = this.activePeriod;
+
       let periodSum = {
         time: 0,
         views: 0,
@@ -192,8 +208,20 @@ export default {
         scroll: 0,
       };
 
+      let prevPeriodSum = {
+        time: 0,
+        views: 0,
+        innerViews: 0,
+        clicks: 0,
+        scroll: 0,
+      };
+
+      let currentPeriod = [];
+      let prevPeriod = [];
+
       // reset data
       this.periodSum = {};
+      this.prevPeriodSum = {};
 
       if (period === 'total') {
         for (let i = 0; i < this.data.length; i++) {
@@ -205,32 +233,10 @@ export default {
         }
         this.periodSum = periodSum;
       } else {
-        let startOfPeriod;
-        let endOfPeriod;
+        currentPeriod = getPeriodDays('current', this.date, this.activePeriod);
 
-        if (period === 'day') {
-          startOfPeriod = cloneDeep(date);
-          endOfPeriod = cloneDeep(date);
-        } else if (period === 'week') {
-          startOfPeriod = cloneDeep(date).startOf('isoWeek');
-          endOfPeriod = cloneDeep(date).endOf('isoWeek');
-        } else if (period === 'month') {
-          startOfPeriod = cloneDeep(date).startOf('month');
-          endOfPeriod = cloneDeep(date).endOf('month');
-        }
-
-        let day = startOfPeriod;
-        let completePeriod = []; // complete period days (moment) in array
-
-        // get the period days
-        while (day <= endOfPeriod) {
-          completePeriod.push(day.toDate());
-          day = day.clone().add(1, 'd');
-        }
-
-        // calculate the time and view and get the data of the period
-        for (let i = 0; i < completePeriod.length; i++) {
-          let periodday = moment(completePeriod[i]).format('YYYY-MM-DD');
+        for (let i = 0; i < currentPeriod.length; i++) {
+          let periodday = moment(currentPeriod[i]).format('YYYY-MM-DD');
           for (let x = 0; x < entireData.length; x++) {
             if (entireData[x].date === periodday) {
               periodSum.time += entireData[x].info.time;
@@ -242,7 +248,30 @@ export default {
           }
         }
         this.periodSum = periodSum;
+
+        prevPeriod = getPeriodDays('prev', this.date, this.activePeriod);
+        for (let i = 0; i < prevPeriod.length; i++) {
+          let periodday = moment(prevPeriod[i]).format('YYYY-MM-DD');
+          for (let x = 0; x < entireData.length; x++) {
+            if (entireData[x].date === periodday) {
+              prevPeriodSum.time += entireData[x].info.time;
+              prevPeriodSum.views += entireData[x].info.count;
+              prevPeriodSum.innerViews += entireData[x].info.innerCount;
+              prevPeriodSum.clicks += entireData[x].info.clicks;
+              prevPeriodSum.scroll += entireData[x].info.scroll;
+            }
+          }
+        }
+        this.prevPeriodSum = prevPeriodSum;
       }
+    },
+
+    getRelativeTime: function() {
+      return this.prevPeriodSum.time - this.periodSum.time;
+    },
+
+    getRelativeViews: function() {
+      return this.prevPeriodSum.views - this.periodSum.views;
     },
 
     getHeatMapData: function() {
@@ -317,7 +346,7 @@ export default {
       let dark1 = this.shadeColor(baseColor, -0.2);
       let light1 = this.shadeColor(baseColor, 0.3);
       let light2 = this.shadeColor(baseColor, 0.7);
-      let neutral = '#EDEFF3';
+      let neutral = '#fff';
 
       this.colors = [neutral, light2, light1, baseColor, dark1];
     },
@@ -355,20 +384,24 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../scss/_colors.scss';
+
 .left {
   display: flex;
   position: fixed;
   width: 40%;
   height: 100vh;
-  padding: 40px 80px;
-  box-sizing: border-box;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+  border-right: 3px solid $black;
 
   header {
     display: flex;
     width: 100%;
+    height: 120px;
+    background-color: $white;
+    border-bottom: 3px solid $black;
+    box-sizing: border-box;
     justify-content: space-between;
   }
 
@@ -391,107 +424,102 @@ export default {
   min-height: 100vh;
   padding: 40px 80px;
   box-sizing: border-box;
-  background-color: $white;
+  background-color: $lightgrey;
 
-  header {
+  .website {
     display: flex;
-    justify-content: space-between;
-    margin-bottom: 96px;
-    padding-bottom: 24px;
-    border-bottom: 1px solid $darkgrey;
+    align-items: center;
 
-    .website {
-      display: flex;
-      align-items: center;
-
-      .favicon {
-        display: inline-block;
-        width: 16px;
-        height: 16px;
-        margin-right: 16px;
-        background-size: 16px 16px;
-        background-position: center;
-        background-repeat: no-repeat;
-      }
-
-      .placeholder {
-        display: inline-block;
-        width: 16px;
-        height: 16px;
-        margin-right: 16px;
-        border-radius: 100%;
-        background-color: $darkgrey;
-      }
+    .favicon {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      margin-right: 16px;
+      background-size: 16px 16px;
+      background-position: center;
+      background-repeat: no-repeat;
     }
 
-    .back {
-      display: flex;
-      align-content: center;
+    .placeholder {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      margin-right: 16px;
+      border-radius: 100%;
+      background-color: $darkgrey;
+    }
+  }
 
-      color: $black;
-      text-decoration: none;
-      font-family: 'Montserrat', sans-serif;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 2px;
+  .filter {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    margin-top: 80px;
+    margin-bottom: 40px;
 
-      svg {
-        margin-left: 8px;
-        width: 16px;
-        height: 16px;
-        transform: rotate(180deg);
+    li {
+      display: inline-block;
+      padding-right: 16px;
+      cursor: pointer;
+
+      &.active {
+        font-weight: 800;
       }
     }
   }
 
-  main {
-    .filter {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      margin-top: 80px;
-      margin-bottom: 40px;
+  .stat-overview {
+    display: flex;
+    flex-wrap: wrap;
+    margin: -12px;
 
-      li {
-        display: inline-block;
-        padding-right: 16px;
-        cursor: pointer;
+    .box {
+      width: 33%;
+      display: inline-block;
 
-        &.active {
-          font-weight: 800;
+      div {
+        //min-height: 120px;
+        background-color: white;
+        margin: 12px;
+        padding: 24px 24px 32px 24px;
+        border: 2px solid black;
+      }
+
+      p {
+        color: $darkgrey;
+        font-family: 'Montserrat', sans-serif;
+        letter-spacing: 1px;
+        font-size: 9px;
+        line-height: 1.5;
+        text-transform: uppercase;
+        margin: 0;
+        padding: 0;
+        width: 80%;
+        min-height: 26px;
+        margin-bottom: 8px;
+      }
+
+      h2 {
+        font-size: 19px;
+        font-weight: 800;
+        margin: 0 0 8px 0;
+      }
+
+      h3 {
+        font-size: 12px;
+        font-weight: 400;
+        margin: 0;
+        color: #3fba9b;
+
+        &.more {
+          color: #d84756;
         }
       }
     }
+  }
 
-    .stat-overview {
-      display: flex;
-      flex-wrap: wrap;
-
-      .box {
-        width: 33%;
-        display: inline-block;
-        margin: 0 0 40px 0;
-
-        p {
-          color: $darkgrey;
-          font-family: 'Montserrat', sans-serif;
-          letter-spacing: 1px;
-          margin: 8px 0 8px 0;
-          font-size: 12px;
-          width: 60%;
-        }
-
-        h2 {
-          font-size: 16px;
-          font-weight: 800;
-          margin: 0;
-        }
-      }
-    }
-
-    .calendar-heatmap {
-      margin-top: 24px;
-    }
+  .calendar-heatmap {
+    margin-top: 24px;
   }
 }
 </style>
