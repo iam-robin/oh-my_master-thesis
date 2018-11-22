@@ -27,7 +27,7 @@
           <div class="right">
             <span>{{ formatMS(website.time, true) }}</span>
             <span class="relative" v-if="website.relativeData" :class="{ more: (website.relativeData.time-website.time) <= 0 }"> {{ getRelativeValue(website.time, website.relativeData.time) }}</span>
-            <span class="relative more" v-else> ↑ {{ formatMS(website.time, true) }}</span>
+            <span class="relative more" v-else> ↑ {{ formatMS(website.time, true) }} </span>
           </div>
         </router-link>
       </li>
