@@ -46,7 +46,8 @@
         <div>
           <p>site views</p>
           <h2>{{periodSum.views}} views</h2>
-          <h3>{{prevPeriodSum.views - periodSum.views}} views</h3>
+          <h3 v-if="getRelativeViews() >= 0">↓ {{getRelativeViews()}} views</h3>
+          <h3 v-else class="more">↑ {{getRelativeViews() * -1}} views</h3>
         </div>
       </div>
 
@@ -54,7 +55,8 @@
         <div>
           <p>Ø time per site view</p>
           <h2>{{formatMS(periodSum.time / periodSum.views, true)}}</h2>
-          <h3>{{getRelativeViews()}} views</h3>
+          <h3 v-if="getRelativeTimePerView() >= 0">↓ {{formatMS(getRelativeTimePerView(), true)}}</h3>
+          <h3 v-else>↑ {{formatMS(getRelativeTimePerView(), true)}}</h3>
         </div>
       </div>
 
@@ -274,6 +276,10 @@ export default {
       return this.prevPeriodSum.views - this.periodSum.views;
     },
 
+    getRelativeTimePerView: function() {
+      return this.getRelativeTime() / this.getRelativeViews();
+    },
+
     getHeatMapData: function() {
       let data = cloneDeep(this.data);
       let dataDays = [];
@@ -489,13 +495,13 @@ export default {
         color: $darkgrey;
         font-family: 'Montserrat', sans-serif;
         letter-spacing: 1px;
-        font-size: 9px;
+        font-size: 12px;
         line-height: 1.5;
         text-transform: uppercase;
         margin: 0;
         padding: 0;
         width: 80%;
-        min-height: 26px;
+        min-height: 35px;
         margin-bottom: 8px;
       }
 
