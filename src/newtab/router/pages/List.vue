@@ -26,8 +26,11 @@
           </div>
           <div class="right">
             <span>{{ formatMS(website.time, true) }}</span>
-            <span class="relative" v-if="website.relativeData" :class="{ more: (website.relativeData.time-website.time) <= 0 }"> {{ getRelativeValue(website.time, website.relativeData.time) }}</span>
-            <span class="relative more" v-else> ↑ {{ formatMS(website.time, true) }}</span>
+            <span v-if="period === 'day'"
+              v-bind:class="{'above':(website.time > website.averageData.time)}"
+              class="average">
+              | {{formatMS(website.averageData.time, true)}}
+            </span>
           </div>
         </router-link>
       </li>
@@ -45,8 +48,11 @@
           </div>
           <div class="right">
             <span class="count">{{ website.count }} views</span>
-            <span class="relative" v-if="website.relativeData" :class="{ more: (website.relativeData.count-website.count) <= 0 }"> {{ getRelativeValue(website.count, website.relativeData.count) }} views</span>
-            <span class="relative more" v-else> ↑ {{ website.count }} views</span>
+            <span v-if="period === 'day'"
+              v-bind:class="{'above':(website.count > website.averageData.count)}"
+              class="average">
+              | {{Number((website.averageData.count).toFixed(1))}} views
+            </span>
           </div>
         </router-link>
       </li>
@@ -64,8 +70,11 @@
           </div>
           <div class="right">
             <span class="count">{{ website.clicks }} clicks</span>
-            <span class="relative" v-if="website.relativeData" :class="{ more: (website.relativeData.clicks-website.clicks) <= 0 }"> {{ getRelativeValue(website.clicks, website.relativeData.clicks) }} clicks</span>
-            <span class="relative more" v-else> ↑ {{ website.clicks }} clicks</span>
+            <span v-if="period === 'day'"
+              v-bind:class="{'above':(website.clicks > website.averageData.clicks)}"
+              class="average">
+              | {{Number((website.averageData.clicks).toFixed(1))}} clicks
+            </span>
           </div>
         </router-link>
       </li>
@@ -83,8 +92,11 @@
           </div>
           <div class="right">
             <span>{{ parseInt(website.scroll)}} px</span>
-            <span class="relative" v-if="website.relativeData" :class="{ more: (website.relativeData.scroll-website.scroll) <= 0 }"> {{ getRelativeValue(website.scroll, website.relativeData.scroll) }} px</span>
-            <span class="relative more" v-else> ↑ {{ website.scroll}} px</span>
+            <span v-if="period === 'day'"
+              v-bind:class="{'above':(website.scroll > website.averageData.scroll)}"
+              class="average">
+              | {{parseInt(website.averageData.scroll)}} px
+            </span>
           </div>
         </router-link>
       </li>
@@ -96,17 +108,26 @@
 
 <script>
 import formatMS from '../../functions/formatMS';
+import mergeSameWebsitesInPeriod from '../../functions/mergeSameWebsitesInPeriod';
 
 export default {
   name: 'list-view',
 
   props: {
     mode: String,
+    period: String,
     data: Array,
+    entireData: Array,
+  },
+
+  watch: {
+    data: function() {
+      this.getAverage();
+    },
   },
 
   created: function() {
-    console.log(this.data);
+    this.getAverage();
     // send data to app.vue
     this.$emit('detailPageActive', false);
   },
@@ -114,23 +135,40 @@ export default {
   methods: {
     formatMS,
 
-    getRelativeValue: function(currentData, prevData) {
-      let relativeValue = (prevData - currentData) * -1;
+    getAverage: function() {
+      let data = this.data;
+      let entireData = this.entireData;
+      let mergedEntireData = mergeSameWebsitesInPeriod(entireData);
+      data.forEach(website => {
+        let averageData = {};
 
-      if (this.mode === 'time') {
-        if (relativeValue >= 0) {
-          return '↑ ' + formatMS(relativeValue, true);
-        } else {
-          relativeValue = relativeValue * -1;
-          return '↓ ' + formatMS(relativeValue, true);
+        let days = 0;
+        // get number of days the website was used
+        for (let i = 0; i < entireData.length; i++) {
+          entireData[i].websites.forEach(dailywebsite => {
+            if (dailywebsite.domain === website.domain) {
+              days++;
+            }
+          });
         }
-      } else {
-        if (relativeValue >= 0) {
-          return '↑ ' + relativeValue;
-        } else {
-          return '↓ ' + relativeValue * -1;
+        averageData.days = days;
+
+        // safe added up data of entire data in averageData object
+        for (let i = 0; i < mergedEntireData.length; i++) {
+          if (mergedEntireData[i].domain === website.domain) {
+            averageData.timeSum = mergedEntireData[i].time;
+            averageData.countSum = mergedEntireData[i].count;
+            averageData.clicksSum = mergedEntireData[i].clicks;
+            averageData.scrollSum = mergedEntireData[i].scroll;
+            averageData.time = mergedEntireData[i].time / days;
+            averageData.count = mergedEntireData[i].count / days;
+            averageData.clicks = mergedEntireData[i].clicks / days;
+            averageData.scroll = mergedEntireData[i].scroll / days;
+          }
         }
-      }
+
+        website.averageData = averageData;
+      });
     },
   },
 };
@@ -206,13 +244,10 @@ export default {
         }
 
         .right {
-          .relative {
-            display: inline-block;
-            width: 96px;
-            text-align: right;
+          .average {
             color: #3fba9b;
 
-            &.more {
+            &.above {
               color: #d84756;
             }
           }

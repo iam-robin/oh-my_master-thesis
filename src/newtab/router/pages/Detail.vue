@@ -34,76 +34,61 @@
     <div class="stat-overview">
 
       <div class="box">
-        <div>
-          <p>time spent</p>
-          <h2>{{formatMS(periodSum.time, true)}}</h2>
-          <h3 v-if="getRelativeTime() >= 0">↓ {{formatMS(getRelativeTime(), true)}}</h3>
-          <h3 v-else class="more">↑ {{formatMS(getRelativeTime() * -1, true)}}</h3>
-        </div>
+        <h2>time spent</h2>
+        <p v-if="periodSum.time != 0">{{formatMS(periodSum.time, true)}}</p>
+        <p v-else>–</p>
       </div>
 
       <div class="box">
-        <div>
-          <p>site views</p>
-          <h2>{{periodSum.views}} views</h2>
-          <h3 v-if="getRelativeViews() >= 0">↓ {{getRelativeViews()}} views</h3>
-          <h3 v-else class="more">↑ {{getRelativeViews() * -1}} views</h3>
-        </div>
+        <h2>site views</h2>
+        <p v-if="periodSum.views != 0">{{periodSum.views}} views</p>
+        <p v-else>–</p>
       </div>
 
       <div class="box">
-        <div>
-          <p>Ø time per site view</p>
-          <h2>{{formatMS(periodSum.time / periodSum.views, true)}}</h2>
-          <h3 v-if="getRelativeTimePerView() >= 0">↓ {{formatMS(getRelativeTimePerView(), true)}}</h3>
-          <h3 v-else>↑ {{formatMS(getRelativeTimePerView(), true)}}</h3>
-        </div>
+        <h2>Ø time per site view</h2>
+        <p v-if="periodSum.time != 0 && periodSum.views != 0">{{formatMS(periodSum.time / periodSum.views, true)}}</p>
+        <p v-else>–</p>
       </div>
 
       <div class="box">
-        <div>
-          <p>Ø internal site views</p>
-          <h2>{{Math.round((periodSum.innerViews/periodSum.views) * 100) / 100}} views</h2>
-        </div>
+        <h2>Ø clicks with site loads</h2>
+        <p v-if="periodSum.innerViews != 0">{{Math.round((periodSum.innerViews/periodSum.views) * 100) / 100}} views</p>
+        <p v-else>–</p>
       </div>
 
       <div class="box">
-        <div>
-          <p>total clicks</p>
-          <h2>{{periodSum.clicks}} clicks</h2>
-        </div>
+        <h2>total clicks</h2>
+        <p v-if="periodSum.clicks != 0">{{periodSum.clicks}} clicks</p>
+        <p v-else>–</p>
       </div>
 
       <div class="box">
-        <div>
-          <p>Ø clicks per site view</p>
-          <h2>{{Math.round((periodSum.clicks/periodSum.views) * 100) / 100}} clicks</h2>
-        </div>
+        <h2>Ø clicks per site view</h2>
+        <p v-if="periodSum.clicks != 0">{{Math.round((periodSum.clicks/periodSum.views) * 100) / 100}} clicks</p>
+        <p v-else>–</p>
       </div>
 
       <div class="box">
-        <div>
-          <p>total scroll distance</p>
-          <h2>{{periodSum.scroll}} px</h2>
-        </div>
+        <h2>total scroll distance</h2>
+        <p v-if="periodSum.scroll != 0">{{periodSum.scroll}} px</p>
+        <p v-else>–</p>
       </div>
 
       <div class="box">
-        <div>
-          <p>Ø scroll distance per site view</p>
-          <h2>{{parseInt(Math.round((periodSum.scroll/periodSum.views) * 100) / 100)}} px</h2>
-        </div>
+        <h2>Ø scroll distance per site view</h2>
+        <p v-if="periodSum.scroll != 0">{{parseInt(Math.round((periodSum.scroll/periodSum.views) * 100) / 100)}} px</p>
+        <p v-else>–</p>
       </div>
 
       <div class="box">
-        <div>
-          <p>Ø scroll speed</p>
-          <h2>{{getScrollSpeed()}} px/sec</h2>
-        </div>
+        <h2>Ø scroll speed</h2>
+        <p v-if="periodSum.scroll != 0">{{getScrollSpeed()}} px/sec</p>
+        <p v-else>–</p>
       </div>
     </div>
 
-    <!-- <ul class="filter">
+    <ul class="filter">
       <li v-on:click="setMode('time')" :class="{ active: getMode('time') }">
         time
       </li>
@@ -120,7 +105,7 @@
 
     <calendar-heatmap class="calendar-heatmap" :values="heatMapData"
                       :endDate="this.date"
-                      :range-color="this.colors" /> -->
+                      :range-color="this.colors" />
 
   </div>
 
@@ -210,20 +195,10 @@ export default {
         scroll: 0,
       };
 
-      let prevPeriodSum = {
-        time: 0,
-        views: 0,
-        innerViews: 0,
-        clicks: 0,
-        scroll: 0,
-      };
-
       let currentPeriod = [];
-      let prevPeriod = [];
 
       // reset data
       this.periodSum = {};
-      this.prevPeriodSum = {};
 
       if (period === 'total') {
         for (let i = 0; i < this.data.length; i++) {
@@ -250,34 +225,7 @@ export default {
           }
         }
         this.periodSum = periodSum;
-
-        prevPeriod = getPeriodDays('prev', this.date, this.activePeriod);
-        for (let i = 0; i < prevPeriod.length; i++) {
-          let periodday = moment(prevPeriod[i]).format('YYYY-MM-DD');
-          for (let x = 0; x < entireData.length; x++) {
-            if (entireData[x].date === periodday) {
-              prevPeriodSum.time += entireData[x].info.time;
-              prevPeriodSum.views += entireData[x].info.count;
-              prevPeriodSum.innerViews += entireData[x].info.innerCount;
-              prevPeriodSum.clicks += entireData[x].info.clicks;
-              prevPeriodSum.scroll += entireData[x].info.scroll;
-            }
-          }
-        }
-        this.prevPeriodSum = prevPeriodSum;
       }
-    },
-
-    getRelativeTime: function() {
-      return this.prevPeriodSum.time - this.periodSum.time;
-    },
-
-    getRelativeViews: function() {
-      return this.prevPeriodSum.views - this.periodSum.views;
-    },
-
-    getRelativeTimePerView: function() {
-      return this.getRelativeTime() / this.getRelativeViews();
     },
 
     getHeatMapData: function() {
@@ -477,49 +425,23 @@ export default {
   .stat-overview {
     display: flex;
     flex-wrap: wrap;
-    margin: -12px;
 
     .box {
       width: 33%;
       display: inline-block;
+      margin-bottom: 32px;
 
-      div {
-        //min-height: 120px;
-        background-color: white;
-        margin: 12px;
-        padding: 24px 24px 32px 24px;
-        border: 2px solid black;
+      h2 {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 500;
+        font-size: 12px;
+        line-height: 1.5;
+        width: 60%;
       }
 
       p {
-        color: $darkgrey;
-        font-family: 'Montserrat', sans-serif;
-        letter-spacing: 1px;
-        font-size: 12px;
-        line-height: 1.5;
-        text-transform: uppercase;
-        margin: 0;
-        padding: 0;
-        width: 80%;
-        min-height: 35px;
-        margin-bottom: 8px;
-      }
-
-      h2 {
-        font-size: 19px;
+        font-size: 16px;
         font-weight: 800;
-        margin: 0 0 8px 0;
-      }
-
-      h3 {
-        font-size: 12px;
-        font-weight: 400;
-        margin: 0;
-        color: #3fba9b;
-
-        &.more {
-          color: #d84756;
-        }
       }
     }
   }

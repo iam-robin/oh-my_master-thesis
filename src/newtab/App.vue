@@ -172,6 +172,7 @@
     <div class="content-container" v-bind:class="{detail: detailPageActive}">
       <router-view :mode="activeMode"
         :data='relevantData'
+        :entireData='data'
         :period='activePeriod'
         @detailPageActive="handleDetailPage">
       </router-view>
@@ -186,6 +187,7 @@ import moment from 'moment';
 import cloneDeep from 'lodash/cloneDeep';
 import formatMS from './functions/formatMS';
 import getPeriodDays from './functions/getPeriodDays';
+import mergeSameWebsitesInPeriod from './functions/mergeSameWebsitesInPeriod';
 
 export default {
   name: 'app-view',
@@ -288,18 +290,14 @@ export default {
 
       let currentPeriod = [];
       let currentPeriodData = [];
-      let prevPeriod = [];
-      let prevPeriodData = [];
 
       let relevantData = [];
-      let relativeData = [];
 
       // reset data
       this.relevantData = [];
       this.periodSum = {};
 
       currentPeriod = getPeriodDays('current', this.date, this.activePeriod);
-      prevPeriod = getPeriodDays('prev', this.date, this.activePeriod);
 
       // calculate the current period
       for (let i = 0; i < currentPeriod.length; i++) {
@@ -316,66 +314,8 @@ export default {
       }
 
       this.periodSum = periodSum;
-      relevantData = this.mergeSameWebsitesInPeriod(currentPeriodData);
-
-      // calculate the prev period
-      for (let i = 0; i < prevPeriod.length; i++) {
-        let periodday = moment(prevPeriod[i]).format('YYYY-MM-DD');
-        for (let x = 0; x < entireData.length; x++) {
-          if (entireData[x].date === periodday) {
-            prevPeriodData.push(entireData[x]);
-          }
-        }
-      }
-
-      // bundle same domains inside the currentPeriodData and safe them in relevantData
-      relativeData = this.mergeSameWebsitesInPeriod(prevPeriodData);
-
-      for (let i = 0; i < relativeData.length; i++) {
-        for (let x = 0; x < relevantData.length; x++) {
-          if (relativeData[i].domain === relevantData[x].domain) {
-            let object = {
-              clicks: relativeData[i].clicks,
-              count: relativeData[i].count,
-              innerCount: relativeData[i].innerCount,
-              scroll: relativeData[i].scroll,
-              time: relativeData[i].time,
-            };
-
-            relevantData[x].relativeData = object;
-          }
-        }
-      }
-
+      relevantData = mergeSameWebsitesInPeriod(currentPeriodData);
       this.relevantData = relevantData;
-    },
-
-    mergeSameWebsitesInPeriod: function(periodData) {
-      // bundle same domains inside the currentPeriodData and safe them in relevantData
-      let mergedData = [];
-
-      mergedData = Array.from(
-        periodData.reduce((m, { websites }) => {
-          websites.forEach(o => {
-            var temp = m.get(o.domain);
-            if (!temp) {
-              m.set(o.domain, (temp = {}));
-            }
-            Object.entries(o).forEach(([k, v]) => {
-              if (k === 'website') return;
-              if (typeof v === 'number') {
-                temp[k] = (temp[k] || 0) + v;
-              } else {
-                temp[k] = v;
-              }
-            });
-          });
-          return m;
-        }, new Map()),
-        ([domain, time]) => Object.assign({ domain }, time)
-      );
-
-      return mergedData;
     },
 
     toggleMenu: function() {
