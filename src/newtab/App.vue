@@ -297,7 +297,7 @@ export default {
       this.relevantData = [];
       this.periodSum = {};
 
-      currentPeriod = getPeriodDays('current', this.date, this.activePeriod);
+      currentPeriod = getPeriodDays(this.date, this.activePeriod);
 
       // calculate the current period
       for (let i = 0; i < currentPeriod.length; i++) {
@@ -625,7 +625,6 @@ body {
     min-height: 100vh;
 
     &.detail {
-      position: absolute;
       width: 100%;
       margin: 0;
     }

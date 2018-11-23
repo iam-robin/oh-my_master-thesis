@@ -2,110 +2,122 @@
 <div class="component">
 
   <div class="left" :style="{ 'background-color': data[0].info.dominant_color.hex}">
-    <MainHeader
-      :links="[
-        {name: 'All Websites', to: '/ratio'},]"
-    />
+    <MainHeader/>
   </div>
 
   <div class="right">
 
-    <div class="website">
-      <span v-if="data[0].info.favicon != '' && data[0].info.favicon" :style="{ backgroundImage: 'url(' + data[0].info.favicon + ')' }" class="favicon"></span>
-      <span v-else class="placeholder"></span>
-      <span>{{domain}}</span>
-    </div>
-
-    <ul class="filter">
-      <li v-on:click="setPeriod('day')" :class="{ active: getPeriod('day') }">
-        today
-      </li>
-      <li v-on:click="setPeriod('week')" :class="{ active: getPeriod('week') }">
-        this week
-      </li>
-      <li v-on:click="setPeriod('month')" :class="{ active: getPeriod('month') }">
-        this month
-      </li>
-      <li v-on:click="setPeriod('total')" :class="{ active: getPeriod('total') }">
-        total
-      </li>
-    </ul>
-
-    <div class="stat-overview">
-
-      <div class="box">
-        <h2>time spent</h2>
-        <p v-if="periodSum.time != 0">{{formatMS(periodSum.time, true)}}</p>
-        <p v-else>–</p>
+    <header>
+      <div class="website">
+        <span v-if="data[0].info.favicon != '' && data[0].info.favicon" :style="{ backgroundImage: 'url(' + data[0].info.favicon + ')' }" class="favicon"></span>
+        <span v-else class="placeholder"></span>
+        <span>{{domain}}</span>
       </div>
 
-      <div class="box">
-        <h2>site views</h2>
-        <p v-if="periodSum.views != 0">{{periodSum.views}} views</p>
-        <p v-else>–</p>
+      <router-link to="/ratio">all websites</router-link>
+    </header>
+
+    <main>
+
+      <ul class="filter">
+        <li v-on:click="setPeriod('day')" :class="{ active: getPeriod('day') }">
+          day
+        </li>
+        <li v-on:click="setPeriod('week')" :class="{ active: getPeriod('week') }">
+          week
+        </li>
+        <li v-on:click="setPeriod('month')" :class="{ active: getPeriod('month') }">
+          month
+        </li>
+        <li v-on:click="setPeriod('total')" :class="{ active: getPeriod('total') }">
+          total
+        </li>
+      </ul>
+
+      <ul class="filter">
+        <li v-on:click="setMode('time')" :class="{ active: getMode('time') }">
+          time
+        </li>
+        <li v-on:click="setMode('views')" :class="{ active: getMode('views') }">
+          views
+        </li>
+        <li v-on:click="setMode('clicks')" :class="{ active: getMode('clicks') }">
+          clicks
+        </li>
+        <li v-on:click="setMode('scroll')" :class="{ active: getMode('scroll') }">
+          scroll
+        </li>
+      </ul>
+
+      <div class="stat-overview">
+
+        <div class="box">
+          <h2>time spent</h2>
+          <p v-if="periodSum.time != 0">{{formatMS(periodSum.time, true)}}</p>
+          <p v-else>–</p>
+        </div>
+
+        <div class="box">
+          <h2>site views</h2>
+          <p v-if="periodSum.views != 0">{{periodSum.views}} views</p>
+          <p v-else>–</p>
+        </div>
+
+        <div class="box">
+          <h2>Ø time per site view</h2>
+          <p v-if="periodSum.time != 0 && periodSum.views != 0">{{formatMS(periodSum.time / periodSum.views, true)}}</p>
+          <p v-else>–</p>
+        </div>
+
+        <div class="box">
+          <h2>Ø clicks with site loads</h2>
+          <p v-if="periodSum.innerViews != 0">{{Math.round((periodSum.innerViews/periodSum.views) * 100) / 100}} views</p>
+          <p v-else>–</p>
+        </div>
+
+        <div class="box">
+          <h2>total clicks</h2>
+          <p v-if="periodSum.clicks != 0">{{periodSum.clicks}} clicks</p>
+          <p v-else>–</p>
+        </div>
+
+        <div class="box">
+          <h2>Ø clicks per site view</h2>
+          <p v-if="periodSum.clicks != 0">{{Math.round((periodSum.clicks/periodSum.views) * 100) / 100}} clicks</p>
+          <p v-else>–</p>
+        </div>
+
+        <div class="box">
+          <h2>total scroll distance</h2>
+          <p v-if="periodSum.scroll != 0">{{periodSum.scroll}} px</p>
+          <p v-else>–</p>
+        </div>
+
+        <div class="box">
+          <h2>Ø scroll distance per site view</h2>
+          <p v-if="periodSum.scroll != 0">{{parseInt(Math.round((periodSum.scroll/periodSum.views) * 100) / 100)}} px</p>
+          <p v-else>–</p>
+        </div>
+
+        <div class="box">
+          <h2>Ø scroll speed</h2>
+          <p v-if="periodSum.scroll != 0">{{getScrollSpeed()}} px/sec</p>
+          <p v-else>–</p>
+        </div>
       </div>
 
-      <div class="box">
-        <h2>Ø time per site view</h2>
-        <p v-if="periodSum.time != 0 && periodSum.views != 0">{{formatMS(periodSum.time / periodSum.views, true)}}</p>
-        <p v-else>–</p>
-      </div>
 
-      <div class="box">
-        <h2>Ø clicks with site loads</h2>
-        <p v-if="periodSum.innerViews != 0">{{Math.round((periodSum.innerViews/periodSum.views) * 100) / 100}} views</p>
-        <p v-else>–</p>
-      </div>
+      <!-- CHART -->
+      <canvas id="usage-chart"></canvas>
 
-      <div class="box">
-        <h2>total clicks</h2>
-        <p v-if="periodSum.clicks != 0">{{periodSum.clicks}} clicks</p>
-        <p v-else>–</p>
-      </div>
 
-      <div class="box">
-        <h2>Ø clicks per site view</h2>
-        <p v-if="periodSum.clicks != 0">{{Math.round((periodSum.clicks/periodSum.views) * 100) / 100}} clicks</p>
-        <p v-else>–</p>
-      </div>
+      <!-- HEATMAP -->
+      <calendar-heatmap class="calendar-heatmap" :values="heatMapData"
+                        :endDate="this.date"
+                        :range-color="this.colors" />
 
-      <div class="box">
-        <h2>total scroll distance</h2>
-        <p v-if="periodSum.scroll != 0">{{periodSum.scroll}} px</p>
-        <p v-else>–</p>
-      </div>
 
-      <div class="box">
-        <h2>Ø scroll distance per site view</h2>
-        <p v-if="periodSum.scroll != 0">{{parseInt(Math.round((periodSum.scroll/periodSum.views) * 100) / 100)}} px</p>
-        <p v-else>–</p>
-      </div>
-
-      <div class="box">
-        <h2>Ø scroll speed</h2>
-        <p v-if="periodSum.scroll != 0">{{getScrollSpeed()}} px/sec</p>
-        <p v-else>–</p>
-      </div>
-    </div>
-
-    <ul class="filter">
-      <li v-on:click="setMode('time')" :class="{ active: getMode('time') }">
-        time
-      </li>
-      <li v-on:click="setMode('views')" :class="{ active: getMode('views') }">
-        views
-      </li>
-      <li v-on:click="setMode('clicks')" :class="{ active: getMode('clicks') }">
-        clicks
-      </li>
-      <li v-on:click="setMode('scroll')" :class="{ active: getMode('scroll') }">
-        scroll
-      </li>
-    </ul>
-
-    <calendar-heatmap class="calendar-heatmap" :values="heatMapData"
-                      :endDate="this.date"
-                      :range-color="this.colors" />
+    </main>
 
   </div>
 
@@ -114,9 +126,11 @@
 
 <script>
 import MainHeader from '../../components/MainHeader.vue';
+import getChartData from '../../functions/getChartData.js';
 
 import moment from 'moment';
 import { CalendarHeatmap } from 'vue-calendar-heatmap';
+import Chart from 'chart.js';
 import cloneDeep from 'lodash/cloneDeep';
 import formatMS from '../../functions/formatMS';
 import getPeriodDays from '../../functions/getPeriodDays';
@@ -135,11 +149,11 @@ export default {
       date: moment(),
       data: [],
       periodSum: {},
-      prevPeriodSum: {},
       heatMapData: [],
       activePeriod: 'day',
       activeMode: 'time',
       colors: [],
+      chartData: {},
     };
   },
 
@@ -154,8 +168,14 @@ export default {
     this.getHeatMapData();
     this.getShadeColor();
 
+    this.chartData = getChartData(this.data, this.activeMode, this.activePeriod);
+
     // send data to app.vue
     this.$emit('detailPageActive', true);
+  },
+
+  mounted() {
+    this.createChart('usage-chart', this.chartData);
   },
 
   methods: {
@@ -210,7 +230,7 @@ export default {
         }
         this.periodSum = periodSum;
       } else {
-        currentPeriod = getPeriodDays('current', this.date, this.activePeriod);
+        currentPeriod = getPeriodDays(this.date, this.activePeriod);
 
         for (let i = 0; i < currentPeriod.length; i++) {
           let periodday = moment(currentPeriod[i]).format('YYYY-MM-DD');
@@ -226,6 +246,15 @@ export default {
         }
         this.periodSum = periodSum;
       }
+    },
+
+    createChart: function(chartId, chartData) {
+      const ctx = document.getElementById('usage-chart');
+      const myChart = new Chart(ctx, {
+        type: chartData.type,
+        data: chartData.data,
+        options: chartData.options,
+      });
     },
 
     getHeatMapData: function() {
@@ -312,6 +341,10 @@ export default {
     setPeriod: function(menuItem) {
       this.activePeriod = menuItem;
       this.getPeriodSum();
+
+      // reload chart
+      this.chartData = getChartData(this.data, this.activeMode, this.activePeriod);
+      this.createChart('usage-chart', this.chartData);
     },
 
     getMode: function(menuItem) {
@@ -321,6 +354,10 @@ export default {
     setMode: function(menuItem) {
       this.activeMode = menuItem;
       this.getHeatMapData();
+
+      // reload chart
+      this.chartData = getChartData(this.data, this.activeMode, this.activePeriod);
+      this.createChart('usage-chart', this.chartData);
     },
 
     shadeColor(color, percent) {
@@ -408,8 +445,7 @@ export default {
     list-style: none;
     margin: 0;
     padding: 0;
-    margin-top: 80px;
-    margin-bottom: 40px;
+    margin-top: 32px;
 
     li {
       display: inline-block;
@@ -425,6 +461,7 @@ export default {
   .stat-overview {
     display: flex;
     flex-wrap: wrap;
+    margin: 80px 0;
 
     .box {
       width: 33%;
@@ -447,7 +484,7 @@ export default {
   }
 
   .calendar-heatmap {
-    margin-top: 24px;
+    margin-top: 160px;
   }
 }
 </style>
