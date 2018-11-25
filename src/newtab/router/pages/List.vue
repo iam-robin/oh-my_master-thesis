@@ -26,11 +26,11 @@
           </div>
           <div class="right">
             <span>{{ formatMS(website.time, true) }}</span>
-            <span v-if="period === 'day'"
+            <!-- <span v-if="period === 'day'"
               v-bind:class="{'above':(website.time > website.averageData.time)}"
               class="average">
               | {{formatMS(website.averageData.time, true)}}
-            </span>
+            </span> -->
           </div>
         </router-link>
       </li>
@@ -48,11 +48,11 @@
           </div>
           <div class="right">
             <span class="count">{{ website.count }} views</span>
-            <span v-if="period === 'day'"
+            <!-- <span v-if="period === 'day'"
               v-bind:class="{'above':(website.count > website.averageData.count)}"
               class="average">
               | {{Number((website.averageData.count).toFixed(1))}} views
-            </span>
+            </span> -->
           </div>
         </router-link>
       </li>
@@ -70,11 +70,11 @@
           </div>
           <div class="right">
             <span class="count">{{ website.clicks }} clicks</span>
-            <span v-if="period === 'day'"
+            <!-- <span v-if="period === 'day'"
               v-bind:class="{'above':(website.clicks > website.averageData.clicks)}"
               class="average">
               | {{Number((website.averageData.clicks).toFixed(1))}} clicks
-            </span>
+            </span> -->
           </div>
         </router-link>
       </li>
@@ -92,11 +92,11 @@
           </div>
           <div class="right">
             <span>{{ parseInt(website.scroll)}} px</span>
-            <span v-if="period === 'day'"
+            <!-- <span v-if="period === 'day'"
               v-bind:class="{'above':(website.scroll > website.averageData.scroll)}"
               class="average">
               | {{parseInt(website.averageData.scroll)}} px
-            </span>
+            </span> -->
           </div>
         </router-link>
       </li>
@@ -108,7 +108,7 @@
 
 <script>
 import formatMS from '../../functions/formatMS';
-import mergeSameWebsitesInPeriod from '../../functions/mergeSameWebsitesInPeriod';
+// import mergeSameWebsitesInPeriod from '../../functions/mergeSameWebsitesInPeriod';
 
 export default {
   name: 'list-view',
@@ -120,14 +120,14 @@ export default {
     entireData: Array,
   },
 
-  watch: {
-    data: function() {
-      this.getAverage();
-    },
-  },
+  // watch: {
+  //   data: function() {
+  //     this.getAverage();
+  //   },
+  // },
 
   created: function() {
-    this.getAverage();
+    // this.getAverage();
     // send data to app.vue
     this.$emit('detailPageActive', false);
   },
@@ -135,7 +135,7 @@ export default {
   methods: {
     formatMS,
 
-    getAverage: function() {
+    /* getAverage: function() {
       let data = this.data;
       let entireData = this.entireData;
       let mergedEntireData = mergeSameWebsitesInPeriod(entireData);
@@ -169,7 +169,7 @@ export default {
 
         website.averageData = averageData;
       });
-    },
+    }, */
   },
 };
 </script>
@@ -244,13 +244,13 @@ export default {
         }
 
         .right {
-          .average {
-            color: #3fba9b;
+          // .average {
+          //   color: #3fba9b;
 
-            &.above {
-              color: #d84756;
-            }
-          }
+          //   &.above {
+          //     color: #d84756;
+          //   }
+          // }
         }
       }
     }

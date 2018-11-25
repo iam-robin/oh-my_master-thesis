@@ -13,8 +13,8 @@ export default function getChartData(data, mode, period) {
         {
           label: mode,
           data: [],
-          backgroundColor: [dominantColor],
-          borderColor: ['#000'],
+          backgroundColor: dominantColor,
+          borderColor: '#000',
           borderWidth: 3,
           lineTension: 0,
         },
@@ -22,6 +22,7 @@ export default function getChartData(data, mode, period) {
     },
     options: {
       responsive: true,
+      lineTension: 1,
       scales: {
         yAxes: [
           {
@@ -35,40 +36,48 @@ export default function getChartData(data, mode, period) {
     },
   };
 
-  if (period === 'day') {
-    let days = getPeriodDays(moment(), 'week');
+  let days;
 
-    // set x-Axis label
-    days.forEach(day => {
-      // set x-Axis label
-      let hasData = false;
-      let formatedDay = moment(day).format('dd. DD.MMM');
-      day = moment(day).format('YYYY-MM-DD');
-      chartData.data.labels.push(formatedDay);
-
-      for (let i = 0; i < data.length; i++) {
-        if (data[i].date === day) {
-          if (mode === 'time') {
-            chartData.data.datasets[0].data.push(data[i].info.time);
-          } else if (mode === 'views') {
-            chartData.data.datasets[0].data.push(data[i].info.count);
-          } else if (mode === 'clicks') {
-            chartData.data.datasets[0].data.push(data[i].info.clicks);
-          } else if (mode === 'scroll') {
-            chartData.data.datasets[0].data.push(data[i].info.scroll);
-          }
-          hasData = true;
-        }
-      }
-
-      if (!hasData) {
-        chartData.data.datasets[0].data.push(0);
-      }
-    });
-    console.log(chartData.data.datasets[0].data);
-  } else if (period === 'week') {
-    chartData.data.labels = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+  if (period === 'day' || period === 'week') {
+    days = getPeriodDays(moment(), 'week');
+  } else if (period === 'month') {
+    days = getPeriodDays(moment(), 'month');
   }
+
+  // set x-Axis label
+  days.forEach(day => {
+    // set x-Axis label
+    let hasData = false;
+    let formatedDay;
+
+    if (period === 'day' || period === 'week') {
+      formatedDay = moment(day).format('dd. DD.MMM');
+    } else if (period === 'month') {
+      formatedDay = moment(day).format('DD');
+    }
+
+    day = moment(day).format('YYYY-MM-DD');
+    chartData.data.labels.push(formatedDay);
+
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].date === day) {
+        if (mode === 'time') {
+          chartData.data.datasets[0].data.push(data[i].info.time);
+        } else if (mode === 'views') {
+          chartData.data.datasets[0].data.push(data[i].info.count);
+        } else if (mode === 'clicks') {
+          chartData.data.datasets[0].data.push(data[i].info.clicks);
+        } else if (mode === 'scroll') {
+          chartData.data.datasets[0].data.push(data[i].info.scroll);
+        }
+        hasData = true;
+      }
+    }
+
+    if (!hasData) {
+      chartData.data.datasets[0].data.push(0);
+    }
+  });
 
   return chartData;
 }

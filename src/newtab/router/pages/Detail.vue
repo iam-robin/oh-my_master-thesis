@@ -110,13 +110,6 @@
       <!-- CHART -->
       <canvas id="usage-chart"></canvas>
 
-
-      <!-- HEATMAP -->
-      <calendar-heatmap class="calendar-heatmap" :values="heatMapData"
-                        :endDate="this.date"
-                        :range-color="this.colors" />
-
-
     </main>
 
   </div>
@@ -129,7 +122,6 @@ import MainHeader from '../../components/MainHeader.vue';
 import getChartData from '../../functions/getChartData.js';
 
 import moment from 'moment';
-import { CalendarHeatmap } from 'vue-calendar-heatmap';
 import Chart from 'chart.js';
 import cloneDeep from 'lodash/cloneDeep';
 import formatMS from '../../functions/formatMS';
@@ -140,7 +132,6 @@ export default {
 
   components: {
     MainHeader,
-    CalendarHeatmap,
   },
 
   data: function() {
@@ -149,10 +140,10 @@ export default {
       date: moment(),
       data: [],
       periodSum: {},
-      heatMapData: [],
       activePeriod: 'day',
       activeMode: 'time',
       colors: [],
+      myChart: {},
       chartData: {},
     };
   },
@@ -165,7 +156,6 @@ export default {
     this.domain = this.$route.params.domain;
     this.data = this.getDetailData();
     this.getPeriodSum();
-    this.getHeatMapData();
     this.getShadeColor();
 
     this.chartData = getChartData(this.data, this.activeMode, this.activePeriod);
@@ -250,69 +240,11 @@ export default {
 
     createChart: function(chartId, chartData) {
       const ctx = document.getElementById('usage-chart');
-      const myChart = new Chart(ctx, {
+      this.myChart = new Chart(ctx, {
         type: chartData.type,
         data: chartData.data,
         options: chartData.options,
       });
-    },
-
-    getHeatMapData: function() {
-      let data = cloneDeep(this.data);
-      let dataDays = [];
-
-      let startOfPeriod = cloneDeep(this.date).subtract(1, 'year');
-      let endOfPeriod = cloneDeep(this.date);
-
-      // add the percentage of each top side to the object
-      data.forEach(function(day) {
-        dataDays.push(moment(day.date));
-      });
-
-      let minData = moment.min(dataDays);
-
-      // if min data date is closer to present then present minus 1 year -> use minData
-      if (minData > startOfPeriod) {
-        startOfPeriod = minData;
-      }
-
-      let day = startOfPeriod;
-      let completePeriod = []; // complete period days (moment) in array
-
-      // get the period days
-      while (day <= endOfPeriod) {
-        completePeriod.push(day.toDate());
-        day = day.clone().add(1, 'd');
-      }
-
-      let heatMapData = [];
-
-      for (let i = 0; i < completePeriod.length; i++) {
-        let day = moment(completePeriod[i]).format('YYYY-MM-DD');
-
-        for (let x = 0; x < data.length; x++) {
-          let dataDay = data[x].date;
-          let value;
-          // change value for other data set
-          if (this.activeMode === 'time') {
-            value = data[x].info.time;
-          } else if (this.activeMode === 'views') {
-            value = data[x].info.count;
-          } else if (this.activeMode === 'clicks') {
-            value = data[x].info.clicks;
-          } else if (this.activeMode === 'scroll') {
-            value = data[x].info.scroll;
-          }
-
-          if (dataDay === day) {
-            let object = {};
-            object.date = day;
-            object.count = value;
-            heatMapData.push(object);
-          }
-        }
-      }
-      this.heatMapData = heatMapData;
     },
 
     getScrollSpeed: function() {
@@ -343,6 +275,7 @@ export default {
       this.getPeriodSum();
 
       // reload chart
+      this.myChart.destroy();
       this.chartData = getChartData(this.data, this.activeMode, this.activePeriod);
       this.createChart('usage-chart', this.chartData);
     },
@@ -353,9 +286,9 @@ export default {
 
     setMode: function(menuItem) {
       this.activeMode = menuItem;
-      this.getHeatMapData();
 
       // reload chart
+      this.myChart.destroy();
       this.chartData = getChartData(this.data, this.activeMode, this.activePeriod);
       this.createChart('usage-chart', this.chartData);
     },
@@ -481,10 +414,6 @@ export default {
         font-weight: 800;
       }
     }
-  }
-
-  .calendar-heatmap {
-    margin-top: 160px;
   }
 }
 </style>
