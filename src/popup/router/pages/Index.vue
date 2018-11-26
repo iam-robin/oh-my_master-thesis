@@ -3,15 +3,26 @@
   <div v-if="!hasLimit">
     <p>set time limit for:</p>
     <p class="domain" v-if="tabInfo">{{ tabInfo.domain }}</p>
-    <input type="number" v-model="timeLimit" step="1" />
+    <label for="time">usage time</label>
+    <input type="number" id="time" v-model="timeLimit" step="1" />
+    <br>
+    <label for="views">site views</label>
+    <input type="number" id="views" v-model="viewsLimit" step="1" />
+    <br>
     <button v-on:click="saveLimitToStorage()">set limit</button>
     <p v-if="message !== ''"> {{ message }}</p>
   </div>
   <div v-if="hasLimit">
-    <p>website already has time limit:</p>
+    <p>website already has limits:</p>
     <p>XXX min</p>
+    <p>XXX views</p>
     <p>edit existing time limit:</p>
+    <label for="time">usage time</label>
     <input type="number" v-model="timeLimit" step="1" />
+    <br>
+    <label for="views">site views</label>
+    <input type="number" id="views" v-model="viewsLimit" step="1" />
+    <br>
     <button v-on:click="saveLimitToStorage()">set limit</button>
     <button v-on:click="deleteLimitFromStorage()">delete limit</button>
     <p v-if="message !== ''"> {{ message }}</p>
@@ -27,6 +38,7 @@ export default {
       limits: [],
       tabInfo: null,
       timeLimit: 0,
+      viewsLimit: 0,
       message: '',
     };
   },
@@ -103,6 +115,7 @@ export default {
       let limit = {
         domain: this.tabInfo.domain,
         timeLimit: this.timeLimit,
+        viewsLimit: this.viewsLimit,
       };
 
       // if localStorage has no key 'limits'
@@ -130,6 +143,7 @@ export default {
           for (let i = 0; i < this.limits.length; i++) {
             if (this.tabInfo.domain === this.limits[i].domain) {
               this.limits[i].timeLimit = this.timeLimit;
+              this.limits[i].viewsLimit = this.viewsLimit;
               localStorage.setItem('limits', JSON.stringify(this.limits));
               this.message = 'limit edited';
             }

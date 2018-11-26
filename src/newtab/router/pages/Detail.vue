@@ -2,19 +2,19 @@
 <div class="component">
 
   <div class="left" :style="{ 'background-color': data[0].info.dominant_color.hex}">
-    <MainHeader/>
+    <MainHeader :links="[{name: 'all websites', to: '/ratio'}]"/>
+    <h1>{{ data[0].info.domain }}</h1>
+    <footer></footer>
   </div>
 
   <div class="right">
 
     <header>
-      <div class="website">
+      <!-- <div class="website">
         <span v-if="data[0].info.favicon != '' && data[0].info.favicon" :style="{ backgroundImage: 'url(' + data[0].info.favicon + ')' }" class="favicon"></span>
         <span v-else class="placeholder"></span>
         <span>{{domain}}</span>
-      </div>
-
-      <router-link to="/ratio">all websites</router-link>
+      </div> -->
     </header>
 
     <main>
@@ -66,12 +66,6 @@
         <div class="box">
           <h2>Ø time per site view</h2>
           <p v-if="periodSum.time != 0 && periodSum.views != 0">{{formatMS(periodSum.time / periodSum.views, true)}}</p>
-          <p v-else>–</p>
-        </div>
-
-        <div class="box">
-          <h2>Ø clicks with site loads</h2>
-          <p v-if="periodSum.innerViews != 0">{{Math.round((periodSum.innerViews/periodSum.views) * 100) / 100}} views</p>
           <p v-else>–</p>
         </div>
 
@@ -157,6 +151,7 @@ export default {
     this.data = this.getDetailData();
     this.getPeriodSum();
     this.getShadeColor();
+    console.log(this.data);
 
     this.chartData = getChartData(this.data, this.activeMode, this.activePeriod);
 
@@ -329,11 +324,9 @@ export default {
     justify-content: space-between;
   }
 
-  main {
-    h1 {
-      font-size: 32px;
-      color: $white;
-    }
+  h1 {
+    font-size: 32px;
+    color: $white;
   }
 
   footer {

@@ -174,6 +174,7 @@
         :data='relevantData'
         :entireData='data'
         :period='activePeriod'
+        :date='storageDate'
         @detailPageActive="handleDetailPage">
       </router-view>
     </div>
@@ -196,7 +197,8 @@ export default {
       activeMode: 'time',
       activePeriod: 'day',
       date: null,
-      formatedDate: null,
+      formatedDate: '',
+      storageDate: moment().format('YYYY-MM-DD'),
       data: [],
       relevantData: [],
       periodSum: {},
@@ -343,7 +345,7 @@ export default {
         this.date = this.date.subtract(1, 'months');
       }
 
-      this.nextAvailable = true;
+      this.storageDate = moment(this.date).format('YYYY-MM-DD');
       this.formatDate();
       this.getRelevantData();
     },
@@ -360,6 +362,7 @@ export default {
         this.date = this.date.add(1, 'months');
       }
 
+      this.storageDate = moment(this.date).format('YYYY-MM-DD');
       this.formatDate();
       this.getRelevantData();
     },

@@ -1,16 +1,45 @@
 <template>
 <div class="container">
-  <ul>
-    <li v-for="limit in limits" :key="limit.domain"
-    :style="{ 'order': limit.timeLimit}">
-      <span>{{ limit.domain }}</span>
-      <span class="line"></span>
-      <span>{{ limit.timeLimit }}min</span>
-      <span v-if="limit.percentageLimit <= 100" class="percentage">({{ round(limit.percentageLimit, 2) }}%)</span>
-      <span v-if="limit.percentageLimit > 100" class="limit-reached">(100%)</span>
-      <span v-if="!limit.percentageLimit" class="percentage">(0%)</span>
-    </li>
-  </ul>
+  <div class="domain-container" v-for="domain in limits" :key="domain.domain">
+    <h2>{{domain.domain}}</h2>
+
+    <div v-if="domain.timeLimit" class="limit-container">
+      <p>time limit:</p>
+      <p v-if="domain.timeLimitPercentage > 0">
+        <span>{{domain.timeLimit}}min / {{parseInt(domain.usageTime / (1000 * 60))}}min</span>
+        <span>({{Number((domain.timeLimitPercentage).toFixed(1))}}%)</span>
+      </p>
+      <p v-else>
+        no usage today!
+      </p>
+      <div class="bar-chart">
+        <div class="percentage"
+          v-if="domain.timeLimitPercentage > 0"
+          :style="{ 'width': domain.timeLimitPercentage + '%',
+                'background-color': domain.color}">
+        </div>
+      </div>
+    </div>
+
+    <div v-if="domain.viewsLimit" class="limit-container">
+      <p>views limit:</p>
+      <p v-if="domain.viewsLimitPercentage > 0">
+        <span>{{domain.viewsLimit}} views / {{domain.siteViews}} views</span>
+        <span>({{Number((domain.viewsLimitPercentage).toFixed(1))}} %)</span>
+      </p>
+      <p v-else>
+        no usage today!
+      </p>
+      <div class="bar-chart">
+        <div class="percentage"
+          v-if="domain.viewsLimitPercentage > 0"
+          :style="{ 'width': domain.viewsLimitPercentage + '%',
+                'background-color': domain.color}">
+        </div>
+      </div>
+    </div>
+
+  </div>
 </div>
 </template>
 
@@ -18,40 +47,66 @@
 import moment from 'moment';
 
 export default {
-  name: 'test-route',
+  name: 'limits',
   data: function() {
     return {
       // array with key (dates) and values (websites)
       limits: [],
     };
   },
+
+  props: {
+    date: String,
+  },
+
+  watch: {
+    date: function() {
+      this.calculateLimits();
+    },
+  },
+
   created: function() {
     this.getLimits();
   },
+
   methods: {
     getLimits() {
       let limits = JSON.parse(localStorage.getItem('limits'));
       this.limits = limits;
-      this.getLimitPercentage();
+      this.calculateLimits();
     },
-    getLimitPercentage() {
-      let today = moment().format('YYYY-MM-DD');
-      let websites = JSON.parse(localStorage.getItem(today));
+
+    calculateLimits: function() {
+      // let day = this.date;
+      let day = moment().format('YYYY-MM-DD');
+      let websites = JSON.parse(localStorage.getItem(day));
 
       for (let i = 0; i < websites.length; i++) {
         for (let x = 0; x < this.limits.length; x++) {
           if (websites[i].domain === this.limits[x].domain) {
-            let usageTime = websites[i].time;
-            let limitTime = this.limits[x].timeLimit * 60 * 1000;
-            let limitPercentage = (100 / limitTime) * usageTime;
-            this.limits[x]['percentageLimit'] = limitPercentage;
+            // dominant color
+            this.limits[x].color = websites[i].dominant_color.hex;
+
+            // usage time
+            if (this.limits[x].timeLimit) {
+              let usageTime = websites[i].time;
+              let timeLimit = this.limits[x].timeLimit * 60 * 1000;
+              let timeLimitPercentage = (100 / timeLimit) * usageTime;
+              this.limits[x].usageTime = usageTime;
+              this.limits[x].timeLimitPercentage = timeLimitPercentage;
+            }
+
+            // site views
+            if (this.limits[x].viewsLimit) {
+              let siteViews = websites[i].count;
+              let viewsLimit = this.limits[x].viewsLimit;
+              let viewsLimitPercentage = (100 / viewsLimit) * siteViews;
+              this.limits[x].siteViews = siteViews;
+              this.limits[x].viewsLimitPercentage = viewsLimitPercentage;
+            }
           }
         }
       }
-    },
-
-    round: function(value, decimals) {
-      return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
     },
   },
 };
@@ -60,43 +115,27 @@ export default {
 <style lang="scss" scoped>
 @import '../../scss/_colors.scss';
 .container {
-  margin-top: 240px;
+  padding: 40px 80px;
+  min-height: 100vh;
+  box-sizing: border-box;
 
-  ul {
-    width: 40%;
-    margin-bottom: 160px;
-    display: flex;
-    flex-wrap: wrap;
-    align-content: flex-start;
-    padding: 0;
-    margin: 0 auto;
+  .domain-container {
+    margin-bottom: 80px;
 
-    li {
-      flex: 0 0 100%;
-      display: flex;
-      font-size: 12px;
-      padding: 8px 0;
-      justify-content: space-between;
-      align-items: center;
+    .limit-container {
+      margin-bottom: 32px;
 
-      .limit {
-        text-align: right;
-      }
+      .bar-chart {
+        height: 40px;
+        border: 3px solid $black;
+        background-color: $white;
 
-      .line {
-        height: 1px;
-        background-color: $darkgrey;
-        margin: 0 24px;
-        flex-grow: 99;
-      }
-
-      .percentage {
-        margin-left: 8px;
-      }
-
-      .limit-reached {
-        margin-left: 8px;
-        color: #f53b57;
+        .percentage {
+          width: 60%;
+          height: 100%;
+          background-color: tomato;
+          border-right: 3px solid black;
+        }
       }
     }
   }
