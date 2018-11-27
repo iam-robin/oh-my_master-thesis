@@ -7,7 +7,7 @@
       <rect x="-1.5" y="1.5" width="30" height="17" transform="matrix(-1 0 0 1 47 30)" fill="#E6E9EE" stroke="#333333" stroke-width="3"/>
     </svg>
     <div class="menu">
-      <router-link v-for="(link, index) in links" :key="index" :to="link.to">
+      <router-link :class="state" v-for="(link, index) in links" :key="index" :to="link.to">
         {{ link.name }}
       </router-link>
     </div>
@@ -19,6 +19,7 @@ export default {
   name: 'MainHeader',
   props: {
     links: Array,
+    state: String,
   },
 };
 </script>
@@ -46,6 +47,7 @@ header {
     margin-right: -20px;
 
     a {
+      display: flex;
       font-family: 'Montserrat', sans-serif;
       font-weight: 500;
       text-transform: uppercase;
@@ -56,6 +58,19 @@ header {
 
       &.router-link-active {
         color: $black;
+      }
+
+      &.close {
+        color: $black;
+
+        &:after {
+          content: '';
+          display: inline-block;
+          height: 16px;
+          width: 16px;
+          background-image: url('@~/icons/X.svg');
+          margin-left: 8px;
+        }
       }
     }
   }

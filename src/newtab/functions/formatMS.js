@@ -1,7 +1,7 @@
 export default function formatMS(ms, showSec) {
   let seconds = parseInt((ms / 1000) % 60);
   let minutes = parseInt((ms / (1000 * 60)) % 60);
-  let hours = parseInt((ms / (1000 * 60 * 60)) % 24);
+  let hours = parseInt(ms / (1000 * 60 * 60));
 
   hours = hours < 10 ? '0' + hours : hours;
   minutes = minutes < 10 ? '0' + minutes : minutes;

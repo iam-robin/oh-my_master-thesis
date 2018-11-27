@@ -2,7 +2,9 @@
 <div class="component">
 
   <div class="left" :style="{ 'background-color': data[0].info.dominant_color.hex}">
-    <MainHeader :links="[{name: 'all websites', to: '/ratio'}]"/>
+    <MainHeader 
+      :links="[{name: 'all websites', to: '/ratio'}]"
+      state="close"/>
     <h1>{{ data[0].info.domain }}</h1>
     <footer></footer>
   </div>
@@ -18,36 +20,6 @@
     </header>
 
     <main>
-
-      <ul class="filter">
-        <li v-on:click="setPeriod('day')" :class="{ active: getPeriod('day') }">
-          day
-        </li>
-        <li v-on:click="setPeriod('week')" :class="{ active: getPeriod('week') }">
-          week
-        </li>
-        <li v-on:click="setPeriod('month')" :class="{ active: getPeriod('month') }">
-          month
-        </li>
-        <li v-on:click="setPeriod('total')" :class="{ active: getPeriod('total') }">
-          total
-        </li>
-      </ul>
-
-      <ul class="filter">
-        <li v-on:click="setMode('time')" :class="{ active: getMode('time') }">
-          time
-        </li>
-        <li v-on:click="setMode('views')" :class="{ active: getMode('views') }">
-          views
-        </li>
-        <li v-on:click="setMode('clicks')" :class="{ active: getMode('clicks') }">
-          clicks
-        </li>
-        <li v-on:click="setMode('scroll')" :class="{ active: getMode('scroll') }">
-          scroll
-        </li>
-      </ul>
 
       <div class="stat-overview">
 
@@ -100,8 +72,38 @@
         </div>
       </div>
 
-
       <!-- CHART -->
+
+      <ul class="filter">
+        <li v-on:click="setMode('time')" :class="{ active: getMode('time') }">
+          time
+        </li>
+        <li v-on:click="setMode('views')" :class="{ active: getMode('views') }">
+          views
+        </li>
+        <li v-on:click="setMode('clicks')" :class="{ active: getMode('clicks') }">
+          clicks
+        </li>
+        <li v-on:click="setMode('scroll')" :class="{ active: getMode('scroll') }">
+          scroll
+        </li>
+      </ul>
+
+      <ul class="filter">
+        <li v-on:click="setPeriod('day')" :class="{ active: getPeriod('day') }">
+          day
+        </li>
+        <li v-on:click="setPeriod('week')" :class="{ active: getPeriod('week') }">
+          week
+        </li>
+        <li v-on:click="setPeriod('month')" :class="{ active: getPeriod('month') }">
+          month
+        </li>
+        <li v-on:click="setPeriod('total')" :class="{ active: getPeriod('total') }">
+          total
+        </li>
+      </ul>
+
       <canvas id="usage-chart"></canvas>
 
     </main>
@@ -387,7 +389,7 @@ export default {
   .stat-overview {
     display: flex;
     flex-wrap: wrap;
-    margin: 80px 0;
+    margin: 8px 0;
 
     .box {
       width: 33%;
