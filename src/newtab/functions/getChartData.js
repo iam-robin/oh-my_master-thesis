@@ -2,8 +2,10 @@ import getPeriodDays from './getPeriodDays';
 import moment from 'moment';
 
 export default function getChartData(data, mode, period) {
-  let dominantColor = data[0].info.dominant_color.hex;
-  console.log(data);
+  let dominantColor;
+  for (let i = 0; i < data.length; i++) {
+    dominantColor = data[i].info.dominant_color.hex;
+  }
 
   let chartData = {
     type: 'line',
@@ -13,8 +15,8 @@ export default function getChartData(data, mode, period) {
         {
           label: mode,
           data: [],
-          backgroundColor: dominantColor,
-          borderColor: '#000',
+          backgroundColor: 'transparent',
+          borderColor: dominantColor,
           borderWidth: 3,
           lineTension: 0,
         },
@@ -28,10 +30,21 @@ export default function getChartData(data, mode, period) {
           {
             ticks: {
               beginAtZero: true,
-              padding: 0,
+              padding: 8,
             },
           },
         ],
+        xAxes: [
+          {
+            ticks: {
+              autoSkip: false,
+              padding: 8,
+            },
+          },
+        ],
+      },
+      legend: {
+        display: false,
       },
     },
   };
@@ -62,7 +75,7 @@ export default function getChartData(data, mode, period) {
     for (let i = 0; i < data.length; i++) {
       if (data[i].date === day) {
         if (mode === 'time') {
-          chartData.data.datasets[0].data.push(data[i].info.time);
+          chartData.data.datasets[0].data.push(data[i].info.time / 60000);
         } else if (mode === 'views') {
           chartData.data.datasets[0].data.push(data[i].info.count);
         } else if (mode === 'clicks') {

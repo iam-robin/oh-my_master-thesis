@@ -1,7 +1,7 @@
 <template>
 <div class="component">
 
-  <div class="left" :style="{ 'background-color': data[0].info.dominant_color.hex}">
+  <div class="left" :style="{ 'background-color': getCurrentColor()}">
     <MainHeader 
       :links="[{name: 'all websites', to: '/ratio'}]"
       state="close"/>
@@ -10,67 +10,8 @@
   </div>
 
   <div class="right">
-
-    <header>
-      <!-- <div class="website">
-        <span v-if="data[0].info.favicon != '' && data[0].info.favicon" :style="{ backgroundImage: 'url(' + data[0].info.favicon + ')' }" class="favicon"></span>
-        <span v-else class="placeholder"></span>
-        <span>{{domain}}</span>
-      </div> -->
-    </header>
-
     <main>
 
-      <div class="stat-overview">
-
-        <div class="box">
-          <h2>time spent</h2>
-          <p v-if="periodSum.time != 0">{{formatMS(periodSum.time, true)}}</p>
-          <p v-else>–</p>
-        </div>
-
-        <div class="box">
-          <h2>site views</h2>
-          <p v-if="periodSum.views != 0">{{periodSum.views}} views</p>
-          <p v-else>–</p>
-        </div>
-
-        <div class="box">
-          <h2>Ø time per site view</h2>
-          <p v-if="periodSum.time != 0 && periodSum.views != 0">{{formatMS(periodSum.time / periodSum.views, true)}}</p>
-          <p v-else>–</p>
-        </div>
-
-        <div class="box">
-          <h2>total clicks</h2>
-          <p v-if="periodSum.clicks != 0">{{periodSum.clicks}} clicks</p>
-          <p v-else>–</p>
-        </div>
-
-        <div class="box">
-          <h2>Ø clicks per site view</h2>
-          <p v-if="periodSum.clicks != 0">{{Math.round((periodSum.clicks/periodSum.views) * 100) / 100}} clicks</p>
-          <p v-else>–</p>
-        </div>
-
-        <div class="box">
-          <h2>total scroll distance</h2>
-          <p v-if="periodSum.scroll != 0">{{periodSum.scroll}} px</p>
-          <p v-else>–</p>
-        </div>
-
-        <div class="box">
-          <h2>Ø scroll distance per site view</h2>
-          <p v-if="periodSum.scroll != 0">{{parseInt(Math.round((periodSum.scroll/periodSum.views) * 100) / 100)}} px</p>
-          <p v-else>–</p>
-        </div>
-
-        <div class="box">
-          <h2>Ø scroll speed</h2>
-          <p v-if="periodSum.scroll != 0">{{getScrollSpeed()}} px/sec</p>
-          <p v-else>–</p>
-        </div>
-      </div>
 
       <!-- CHART -->
 
@@ -90,22 +31,109 @@
       </ul>
 
       <ul class="filter">
-        <li v-on:click="setPeriod('day')" :class="{ active: getPeriod('day') }">
-          day
-        </li>
         <li v-on:click="setPeriod('week')" :class="{ active: getPeriod('week') }">
           week
         </li>
         <li v-on:click="setPeriod('month')" :class="{ active: getPeriod('month') }">
           month
         </li>
-        <li v-on:click="setPeriod('total')" :class="{ active: getPeriod('total') }">
-          total
+        <li v-on:click="setPeriod('year')" :class="{ active: getPeriod('year') }">
+          year
         </li>
       </ul>
 
       <canvas id="usage-chart"></canvas>
 
+      <div class="stat-container">
+
+        <h1>total</h1>
+        <div class="stat-overview">
+
+          <div class="box">
+            <h2>time spent</h2>
+            <p v-if="periodSum.time != 0">{{formatMS(periodSum.time, true)}}</p>
+            <p v-else>–</p>
+          </div>
+
+          <div class="box">
+            <h2>site views</h2>
+            <p v-if="periodSum.views != 0">{{periodSum.views}} views</p>
+            <p v-else>–</p>
+          </div>
+
+          <div class="box">
+            <h2>clicks</h2>
+            <p v-if="periodSum.clicks != 0">{{periodSum.clicks}} clicks</p>
+            <p v-else>–</p>
+          </div>
+
+          <div class="box">
+            <h2>scroll distance</h2>
+            <p v-if="periodSum.scroll > 1000000">{{parseInt(periodSum.scroll/ 1000000)}}M px</p>
+            <p v-else-if="periodSum.scroll > 1000">{{parseInt(periodSum.scroll / 1000)}}K px</p>
+            <p v-else-if="periodSum.scroll > 0">{{periodSum.scroll}} px</p>
+            <p v-else>–</p>
+          </div>
+
+        </div>
+
+        <h1>average per day</h1>
+        <div class="stat-overview">
+
+          <div class="box">
+            <h2>Ø time spent</h2>
+            <p v-if="periodSum.time != 0">{{formatMS(periodSum.time / periodSum.dataCount, true)}}</p>
+            <p v-else>–</p>
+          </div>
+
+          <div class="box">
+            <h2>Ø site views</h2>
+            <p v-if="periodSum.views != 0">{{Number((periodSum.views / periodSum.dataCount).toFixed(1))}} views</p>
+            <p v-else>–</p>
+          </div>
+
+          <div class="box">
+            <h2>Ø clicks</h2>
+            <p v-if="periodSum.clicks != 0">{{Number((periodSum.clicks / periodSum.dataCount).toFixed(1))}} clicks</p>
+            <p v-else>–</p>
+          </div>
+
+          <div class="box">
+            <h2>Ø scroll distance</h2>
+            <p v-if="periodSum.scroll != 0">{{Number((periodSum.scroll / periodSum.dataCount).toFixed(1))}} px</p>
+            <p v-else>–</p>
+          </div>
+
+        </div>
+
+        <h1>average per site view</h1>
+        <div class="stat-overview">
+
+          <div class="box">
+            <h2>Ø time per site view</h2>
+            <p v-if="periodSum.time != 0 && periodSum.views != 0">{{formatMS(periodSum.time / periodSum.views, true)}}</p>
+            <p v-else>–</p>
+          </div>
+
+          <div class="box">
+            <h2>Ø clicks per site view</h2>
+            <p v-if="periodSum.clicks != 0">{{Math.round((periodSum.clicks/periodSum.views) * 100) / 100}} clicks</p>
+            <p v-else>–</p>
+          </div>
+
+          <div class="box">
+            <h2>Ø scroll distance per site view</h2>
+            <p v-if="periodSum.scroll != 0">{{parseInt(Math.round((periodSum.scroll/periodSum.views) * 100) / 100)}} px</p>
+            <p v-else>–</p>
+          </div>
+
+          <div class="box">
+            <h2>Ø scroll speed</h2>
+            <p v-if="periodSum.scroll != 0">{{getScrollSpeed()}} px/sec</p>
+            <p v-else>–</p>
+          </div>
+        </div>
+      </div>
     </main>
 
   </div>
@@ -119,9 +147,7 @@ import getChartData from '../../functions/getChartData.js';
 
 import moment from 'moment';
 import Chart from 'chart.js';
-import cloneDeep from 'lodash/cloneDeep';
 import formatMS from '../../functions/formatMS';
-import getPeriodDays from '../../functions/getPeriodDays';
 
 export default {
   name: 'detail-page',
@@ -136,24 +162,17 @@ export default {
       date: moment(),
       data: [],
       periodSum: {},
-      activePeriod: 'day',
+      activePeriod: 'month',
       activeMode: 'time',
-      colors: [],
       myChart: {},
       chartData: {},
     };
-  },
-
-  watch: {
-    period: function() {},
   },
 
   created: function() {
     this.domain = this.$route.params.domain;
     this.data = this.getDetailData();
     this.getPeriodSum();
-    this.getShadeColor();
-    console.log(this.data);
 
     this.chartData = getChartData(this.data, this.activeMode, this.activePeriod);
 
@@ -190,49 +209,30 @@ export default {
     },
 
     getPeriodSum: function() {
-      // get the current time period
-      let entireData = cloneDeep(this.data);
-      let period = this.activePeriod;
-
       let periodSum = {
         time: 0,
         views: 0,
-        innerViews: 0,
         clicks: 0,
         scroll: 0,
+        dataCount: 0,
       };
 
-      let currentPeriod = [];
-
-      // reset data
-      this.periodSum = {};
-
-      if (period === 'total') {
-        for (let i = 0; i < this.data.length; i++) {
-          periodSum.time += this.data[i].info.time;
-          periodSum.views += this.data[i].info.count;
-          periodSum.innerViews += this.data[i].info.innerCount;
-          periodSum.clicks += this.data[i].info.clicks;
-          periodSum.scroll += this.data[i].info.scroll;
-        }
-        this.periodSum = periodSum;
-      } else {
-        currentPeriod = getPeriodDays(this.date, this.activePeriod);
-
-        for (let i = 0; i < currentPeriod.length; i++) {
-          let periodday = moment(currentPeriod[i]).format('YYYY-MM-DD');
-          for (let x = 0; x < entireData.length; x++) {
-            if (entireData[x].date === periodday) {
-              periodSum.time += entireData[x].info.time;
-              periodSum.views += entireData[x].info.count;
-              periodSum.innerViews += entireData[x].info.innerCount;
-              periodSum.clicks += entireData[x].info.clicks;
-              periodSum.scroll += entireData[x].info.scroll;
-            }
-          }
-        }
-        this.periodSum = periodSum;
+      for (let i = 0; i < this.data.length; i++) {
+        periodSum.time += this.data[i].info.time;
+        periodSum.views += this.data[i].info.count;
+        periodSum.clicks += this.data[i].info.clicks;
+        periodSum.scroll += this.data[i].info.scroll;
+        periodSum.dataCount++;
       }
+      this.periodSum = periodSum;
+    },
+
+    getCurrentColor: function() {
+      let color;
+      for (let i = 0; i < this.data.length; i++) {
+        color = this.data[i].info.dominant_color.hex;
+      }
+      return color;
     },
 
     createChart: function(chartId, chartData) {
@@ -251,16 +251,6 @@ export default {
       speed = Math.round(speed * 100) / 100;
 
       return speed;
-    },
-
-    getShadeColor: function() {
-      let baseColor = this.data[0].info.dominant_color.hex;
-      let dark1 = this.shadeColor(baseColor, -0.2);
-      let light1 = this.shadeColor(baseColor, 0.3);
-      let light2 = this.shadeColor(baseColor, 0.7);
-      let neutral = '#fff';
-
-      this.colors = [neutral, light2, light1, baseColor, dark1];
     },
 
     getPeriod: function(menuItem) {
@@ -288,16 +278,6 @@ export default {
       this.myChart.destroy();
       this.chartData = getChartData(this.data, this.activeMode, this.activePeriod);
       this.createChart('usage-chart', this.chartData);
-    },
-
-    shadeColor(color, percent) {
-      let f = parseInt(color.slice(1), 16);
-      let t = percent < 0 ? 0 : 255;
-      let p = percent < 0 ? percent * -1 : percent;
-      let R = f >> 16;
-      let G = (f >> 8) & 0x00ff;
-      let B = f & 0x0000ff;
-      return '#' + (0x1000000 + (Math.round((t - R) * p) + R) * 0x10000 + (Math.round((t - G) * p) + G) * 0x100 + (Math.round((t - B) * p) + B)).toString(16).slice(1);
     },
   },
 };
@@ -330,10 +310,6 @@ export default {
     font-size: 32px;
     color: $white;
   }
-
-  footer {
-    width: 100%;
-  }
 }
 
 .right {
@@ -345,35 +321,10 @@ export default {
   box-sizing: border-box;
   background-color: $lightgrey;
 
-  .website {
-    display: flex;
-    align-items: center;
-
-    .favicon {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      margin-right: 16px;
-      background-size: 16px 16px;
-      background-position: center;
-      background-repeat: no-repeat;
-    }
-
-    .placeholder {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      margin-right: 16px;
-      border-radius: 100%;
-      background-color: $darkgrey;
-    }
-  }
-
   .filter {
     list-style: none;
-    margin: 0;
+    margin: 16px 0;
     padding: 0;
-    margin-top: 32px;
 
     li {
       display: inline-block;
@@ -386,27 +337,38 @@ export default {
     }
   }
 
-  .stat-overview {
-    display: flex;
-    flex-wrap: wrap;
-    margin: 8px 0;
+  main {
+    h1 {
+      font-size: 18px;
+    }
 
-    .box {
-      width: 33%;
-      display: inline-block;
-      margin-bottom: 32px;
+    .stat-container {
+      margin-top: 160px;
+    }
 
-      h2 {
-        font-family: 'Montserrat', sans-serif;
-        font-weight: 500;
-        font-size: 12px;
-        line-height: 1.5;
-        width: 60%;
-      }
+    .stat-overview {
+      display: flex;
+      flex-wrap: wrap;
+      margin: 8px 0 80px;
 
-      p {
-        font-size: 16px;
-        font-weight: 800;
+      .box {
+        width: 25%;
+        display: inline-block;
+        margin-bottom: 32px;
+
+        h2 {
+          font-family: 'Montserrat', sans-serif;
+          font-weight: 500;
+          font-size: 12px;
+          line-height: 1.5;
+          width: 60%;
+        }
+
+        p {
+          font-size: 16px;
+          font-weight: 800;
+          margin: 0;
+        }
       }
     }
   }

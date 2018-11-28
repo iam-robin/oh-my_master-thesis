@@ -317,11 +317,17 @@ export default {
   grid-template-rows: repeat(100, 1fr);
 
   .gridItem {
+    position: relative;
     margin: 12px;
     border: 3px solid $black;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
     overflow: hidden;
+
+    /* &:hover {
+      box-shadow: 8px 8px 0px 0px $black;
+      transform: translate(-8px, -8px);
+    } */
 
     a {
       height: 100%;

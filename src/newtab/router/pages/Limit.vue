@@ -4,14 +4,16 @@
     <h2>{{domain.domain}}</h2>
 
     <div v-if="domain.timeLimit" class="limit-container">
-      <p>time limit:</p>
-      <p v-if="domain.timeLimitPercentage > 0">
-        <span>{{domain.timeLimit}}min / {{parseInt(domain.usageTime / (1000 * 60))}}min</span>
-        <span>({{Number((domain.timeLimitPercentage).toFixed(1))}}%)</span>
-      </p>
-      <p v-else>
-        no usage today!
-      </p>
+      <div class="desc">
+        <p>time limit:</p>
+        <p v-if="domain.timeLimitPercentage > 0">
+          <span>{{parseInt(domain.usageTime / (1000 * 60))}}min / {{domain.timeLimit}}min</span>
+          <span>({{Number((domain.timeLimitPercentage).toFixed(1))}}%)</span>
+        </p>
+        <p v-else>
+          no usage today!
+        </p>
+      </div>
       <div class="bar-chart">
         <div class="percentage"
           v-if="domain.timeLimitPercentage > 0"
@@ -22,14 +24,16 @@
     </div>
 
     <div v-if="domain.viewsLimit" class="limit-container">
-      <p>views limit:</p>
-      <p v-if="domain.viewsLimitPercentage > 0">
-        <span>{{domain.viewsLimit}} views / {{domain.siteViews}} views</span>
-        <span>({{Number((domain.viewsLimitPercentage).toFixed(1))}} %)</span>
-      </p>
-      <p v-else>
-        no usage today!
-      </p>
+      <div class="desc">
+        <p>views limit:</p>
+        <p v-if="domain.viewsLimitPercentage > 0">
+          <span>{{domain.siteViews}} views / {{domain.viewsLimit}} views</span>
+          <span>({{Number((domain.viewsLimitPercentage).toFixed(1))}} %)</span>
+        </p>
+        <p v-else>
+          no usage today!
+        </p>
+      </div>
       <div class="bar-chart">
         <div class="percentage"
           v-if="domain.viewsLimitPercentage > 0"
@@ -125,8 +129,13 @@ export default {
     .limit-container {
       margin-bottom: 32px;
 
+      .desc {
+        display: flex;
+        justify-content: space-between;
+      }
+
       .bar-chart {
-        height: 40px;
+        height: 56px;
         border: 3px solid $black;
         background-color: $white;
 
