@@ -12,8 +12,13 @@
   <div class="right">
     <main>
 
-
       <!-- CHART -->
+
+      <div class="period">
+        <div class="prev" v-on:click="prevDate()"></div>
+        <div class="value">{{ this.getChartDate() }}</div>
+        <div class="next"></div>
+      </div>
 
       <ul class="filter">
         <li v-on:click="setMode('time')" :class="{ active: getMode('time') }">
@@ -244,6 +249,23 @@ export default {
       });
     },
 
+    getChartDate: function() {
+      if (this.activePeriod === 'week') {
+        let startOfWeek = moment(this.date).startOf('isoWeek');
+        let endOfWeek = moment(this.date).endOf('isoWeek');
+
+        return startOfWeek.format('DD.MM') + ' - ' + endOfWeek.format('DD.MM.YYYY');
+      } else if (this.activePeriod === 'month') {
+        let month = moment(this.date).format('MMMM YYYY');
+
+        return month;
+      } else if (this.activePeriod === 'year') {
+        let year = moment(this.date).format('YYYY');
+
+        return year;
+      }
+    },
+
     getScrollSpeed: function() {
       let scroll = this.periodSum.scroll;
       let timeInSec = parseInt(this.periodSum.time / 1000);
@@ -278,6 +300,18 @@ export default {
       this.myChart.destroy();
       this.chartData = getChartData(this.data, this.activeMode, this.activePeriod);
       this.createChart('usage-chart', this.chartData);
+    },
+
+    prevDate: function() {
+      if (this.activePeriod === 'week') {
+        this.date = this.date.subtract(1, 'weeks');
+      } else if (this.activePeriod === 'month') {
+        this.date = this.date.subtract(1, 'months');
+      } else if (this.activePeriod === 'year') {
+        this.date = this.date.subtract(1, 'year');
+      }
+
+      this.getChartDate();
     },
   },
 };
@@ -320,6 +354,20 @@ export default {
   padding: 40px 80px;
   box-sizing: border-box;
   background-color: $lightgrey;
+
+  .period {
+    display: flex;
+    align-items: center;
+
+    .next,
+    .prev {
+      cursor: pointer;
+      height: 16px;
+      width: 16px;
+      background-color: tomato;
+      margin: 0 8px;
+    }
+  }
 
   .filter {
     list-style: none;

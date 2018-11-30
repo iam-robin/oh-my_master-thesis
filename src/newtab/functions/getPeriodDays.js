@@ -16,9 +16,6 @@ export default function getPeriodDays(currentDate, activePeriod) {
   } else if (period === 'month') {
     startOfPeriod = cloneDeep(date).startOf('month');
     endOfPeriod = cloneDeep(date).endOf('month');
-  } else if (period === 'year') {
-    startOfPeriod = cloneDeep(date).startOf('year');
-    endOfPeriod = cloneDeep(date).endOf('year');
   }
 
   let day = startOfPeriod;
