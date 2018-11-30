@@ -286,7 +286,7 @@ export default {
             .bar {
               display: block;
               height: 3px;
-              background-color: $primary;
+              background-color: $darkgrey;
             }
           }
         }
