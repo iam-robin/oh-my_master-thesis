@@ -29,7 +29,7 @@ let colorTable = [
   // { name: 'lightpurple', hex: '#CFBDFC' },
   { name: 'darkpink', hex: '#D672AC' },
   { name: 'pink', hex: '#EA8ABF' },
-  { name: 'lightpink', hex: '#FDA9DA' },
+  // { name: 'lightpink', hex: '#FDA9DA' },
   { name: 'darkred', hex: '#D84756' },
   { name: 'red', hex: '#EB5767' },
   { name: 'lightred', hex: '#FD9BA5' },

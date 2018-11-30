@@ -16,8 +16,8 @@
 
       <div class="period">
         <div class="prev" v-on:click="prevDate()"></div>
-        <div class="value">{{ this.getChartDate() }}</div>
-        <div class="next"></div>
+        <div class="value">{{ formatedDate }}</div>
+        <div class="next" v-on:click="nextDate()"></div>
       </div>
 
       <ul class="filter">
@@ -165,6 +165,7 @@ export default {
     return {
       domain: '',
       date: moment(),
+      formatedDate: '',
       data: [],
       periodSum: {},
       activePeriod: 'month',
@@ -179,7 +180,8 @@ export default {
     this.data = this.getDetailData();
     this.getPeriodSum();
 
-    this.chartData = getChartData(this.data, this.activeMode, this.activePeriod);
+    this.getChartDate();
+    this.chartData = getChartData(this.data, this.activeMode, this.activePeriod, this.date);
 
     // send data to app.vue
     this.$emit('detailPageActive', true);
@@ -253,16 +255,13 @@ export default {
       if (this.activePeriod === 'week') {
         let startOfWeek = moment(this.date).startOf('isoWeek');
         let endOfWeek = moment(this.date).endOf('isoWeek');
-
-        return startOfWeek.format('DD.MM') + ' - ' + endOfWeek.format('DD.MM.YYYY');
+        this.formatedDate = startOfWeek.format('DD.MM') + ' - ' + endOfWeek.format('DD.MM.YYYY');
       } else if (this.activePeriod === 'month') {
         let month = moment(this.date).format('MMMM YYYY');
-
-        return month;
+        this.formatedDate = month;
       } else if (this.activePeriod === 'year') {
         let year = moment(this.date).format('YYYY');
-
-        return year;
+        this.formatedDate = year;
       }
     },
 
@@ -285,7 +284,8 @@ export default {
 
       // reload chart
       this.myChart.destroy();
-      this.chartData = getChartData(this.data, this.activeMode, this.activePeriod);
+      this.getChartDate();
+      this.chartData = getChartData(this.data, this.activeMode, this.activePeriod, this.date);
       this.createChart('usage-chart', this.chartData);
     },
 
@@ -298,7 +298,7 @@ export default {
 
       // reload chart
       this.myChart.destroy();
-      this.chartData = getChartData(this.data, this.activeMode, this.activePeriod);
+      this.chartData = getChartData(this.data, this.activeMode, this.activePeriod, this.date);
       this.createChart('usage-chart', this.chartData);
     },
 
@@ -311,7 +311,27 @@ export default {
         this.date = this.date.subtract(1, 'year');
       }
 
+      // reload chart
+      this.myChart.destroy();
       this.getChartDate();
+      this.chartData = getChartData(this.data, this.activeMode, this.activePeriod, this.date);
+      this.createChart('usage-chart', this.chartData);
+    },
+
+    nextDate: function() {
+      if (this.activePeriod === 'week') {
+        this.date = this.date.add(1, 'weeks');
+      } else if (this.activePeriod === 'month') {
+        this.date = this.date.add(1, 'months');
+      } else if (this.activePeriod === 'year') {
+        this.date = this.date.add(1, 'year');
+      }
+
+      // reload chart
+      this.myChart.destroy();
+      this.getChartDate();
+      this.chartData = getChartData(this.data, this.activeMode, this.activePeriod, this.date);
+      this.createChart('usage-chart', this.chartData);
     },
   },
 };

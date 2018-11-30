@@ -2,7 +2,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import getPeriodDays from './getPeriodDays';
 import moment from 'moment';
 
-export default function getChartData(data, mode, period) {
+export default function getChartData(data, mode, period, date) {
   let dominantColor;
   for (let i = 0; i < data.length; i++) {
     dominantColor = data[i].info.dominant_color.hex;
@@ -33,6 +33,9 @@ export default function getChartData(data, mode, period) {
               beginAtZero: true,
               padding: 8,
             },
+            gridLines: {
+              color: '#D9DDE3',
+            },
           },
         ],
         xAxes: [
@@ -40,6 +43,9 @@ export default function getChartData(data, mode, period) {
             ticks: {
               autoSkip: false,
               padding: 8,
+            },
+            gridLines: {
+              color: '#D9DDE3',
             },
           },
         ],
@@ -50,14 +56,16 @@ export default function getChartData(data, mode, period) {
     },
   };
 
+  let selectedDay = moment(date);
+
   // WEEK AND MONTH
   if (period === 'week' || period === 'month') {
     let days;
 
     if (period === 'week') {
-      days = getPeriodDays(moment(), 'week');
+      days = getPeriodDays(selectedDay, 'week');
     } else if (period === 'month') {
-      days = getPeriodDays(moment(), 'month');
+      days = getPeriodDays(selectedDay, 'month');
     }
 
     // set x-Axis label
@@ -97,7 +105,7 @@ export default function getChartData(data, mode, period) {
 
     return chartData;
   } else if (period === 'year') {
-    let date = moment();
+    let date = selectedDay;
 
     let monthsData = data.reduce((o, { date, info }) => {
       let k = date.slice(0, 7);
