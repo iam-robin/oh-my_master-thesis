@@ -14,38 +14,35 @@
 
       <!-- CHART -->
 
-      <div class="period">
-        <div class="prev" v-on:click="prevDate()"></div>
-        <div class="value">{{ formatedDate }}</div>
-        <div class="next" v-on:click="nextDate()"></div>
+      <div class="settings">
+
+        <div class="period">
+          <div class="prev" v-on:click="prevDate()"></div>
+          <div class="value">{{ formatedDate }}</div>
+          <div class="next" v-on:click="nextDate()"></div>
+        </div>
+
+        <div class="menus">
+          <div class="select-container icon" :class="activeMode">
+            <select v-model="activeMode" v-on:change="setMode(activeMode)">
+              <option value="time">time</option>
+              <option value="views">views</option>
+              <option value="clicks">clicks</option>
+              <option value="scroll">scroll</option>
+            </select>
+          </div>
+
+          <div class="select-container">
+            <select v-model="activePeriod" v-on:change="setPeriod(activePeriod)">
+              <option value="week">week</option>
+              <option value="month">month</option>
+              <option value="year">year</option>
+            </select>
+          </div>
+
+        </div>
+
       </div>
-
-      <ul class="filter">
-        <li v-on:click="setMode('time')" :class="{ active: getMode('time') }">
-          time
-        </li>
-        <li v-on:click="setMode('views')" :class="{ active: getMode('views') }">
-          views
-        </li>
-        <li v-on:click="setMode('clicks')" :class="{ active: getMode('clicks') }">
-          clicks
-        </li>
-        <li v-on:click="setMode('scroll')" :class="{ active: getMode('scroll') }">
-          scroll
-        </li>
-      </ul>
-
-      <ul class="filter">
-        <li v-on:click="setPeriod('week')" :class="{ active: getPeriod('week') }">
-          week
-        </li>
-        <li v-on:click="setPeriod('month')" :class="{ active: getPeriod('month') }">
-          month
-        </li>
-        <li v-on:click="setPeriod('year')" :class="{ active: getPeriod('year') }">
-          year
-        </li>
-      </ul>
 
       <canvas id="usage-chart"></canvas>
 
@@ -257,7 +254,7 @@ export default {
         let endOfWeek = moment(this.date).endOf('isoWeek');
         this.formatedDate = startOfWeek.format('DD.MM') + ' - ' + endOfWeek.format('DD.MM.YYYY');
       } else if (this.activePeriod === 'month') {
-        let month = moment(this.date).format('MMMM YYYY');
+        let month = moment(this.date).format('MMM YYYY');
         this.formatedDate = month;
       } else if (this.activePeriod === 'year') {
         let year = moment(this.date).format('YYYY');
@@ -289,13 +286,7 @@ export default {
       this.createChart('usage-chart', this.chartData);
     },
 
-    getMode: function(menuItem) {
-      return this.activeMode === menuItem;
-    },
-
     setMode: function(menuItem) {
-      this.activeMode = menuItem;
-
       // reload chart
       this.myChart.destroy();
       this.chartData = getChartData(this.data, this.activeMode, this.activePeriod, this.date);
@@ -375,32 +366,122 @@ export default {
   box-sizing: border-box;
   background-color: $lightgrey;
 
-  .period {
+  .settings {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
 
-    .next,
-    .prev {
-      cursor: pointer;
-      height: 16px;
-      width: 16px;
-      background-color: tomato;
-      margin: 0 8px;
+    .period {
+      font-size: 16px;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      margin-left: -8px;
+
+      .next,
+      .prev {
+        cursor: pointer;
+        height: 16px;
+        width: 16px;
+        padding: 8px;
+        background-size: 16px 16px;
+        background-position: center;
+        background-repeat: no-repeat;
+      }
+
+      .next {
+        margin-left: 8px;
+        background-image: url('@~/icons/arrow-right.svg');
+      }
+
+      .prev {
+        margin-right: 8px;
+        background-image: url('@~/icons/arrow-right.svg');
+        transform: rotate(180deg);
+      }
     }
-  }
 
-  .filter {
-    list-style: none;
-    margin: 16px 0;
-    padding: 0;
+    .menus {
+      .select-container {
+        margin-left: 8px;
+        position: relative;
+        display: inline-block;
+        border: 3px solid $black;
 
-    li {
-      display: inline-block;
-      padding-right: 16px;
-      cursor: pointer;
+        /*  &.icon {
+          padding-left: 20px;
+        }
+ */
+        &:after {
+          content: '';
+          position: absolute;
+          display: inline-block;
+          height: 16px;
+          width: 16px;
+          background-image: url('@~/icons/arrow-down.svg');
+          background-size: cover;
+          background-repeat: no-repeat;
+          right: 4px;
+          top: 4px;
+          z-index: 5;
+          pointer-events: none;
+        }
 
-      &.active {
-        font-weight: 800;
+        /*  &:before {
+          content: '';
+          display: inline-block;
+          position: absolute;
+          left: 8px;
+          top: 8px;
+          height: 16px;
+          width: 16px;
+          background-size: 16px 16px;
+          background-position: center;
+          background-repeat: no-repeat;
+        }
+
+        &.time:before {
+          background-image: url('@~/icons/time.svg');
+        }
+        &.views:before {
+          background-image: url('@~/icons/views.svg');
+        }
+        &.clicks:before {
+          background-image: url('@~/icons/clicks.svg');
+        }
+        &.scroll:before {
+          background-image: url('@~/icons/scroll.svg');
+        } */
+
+        /*  &:before {
+          content: '';
+          display: inline-block;
+          position: absolute;
+          top: 0;
+          right: 24px;
+          height: 24px;
+          width: 3px;
+          background-color: $black;
+        } */
+
+        select {
+          background-color: transparent;
+          border: none;
+          padding: 4px 32px 4px 8px;
+          -webkit-appearance: none;
+          -moz-appearance: none;
+          text-indent: 1px;
+          text-overflow: '';
+          font-family: 'Montserrat', sans-serif;
+          font-size: 12px;
+          cursor: pointer;
+          z-index: 10;
+
+          &:focus {
+            outline: none;
+          }
+        }
       }
     }
   }
