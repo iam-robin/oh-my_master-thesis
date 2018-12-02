@@ -148,7 +148,7 @@ export default {
       activeMode: 'time',
       myChart: {},
       chartData: {},
-      dots: 5,
+      dots: 10,
     };
   },
 
@@ -352,7 +352,7 @@ export default {
   .value-container {
     display: flex;
     flex-wrap: wrap;
-    margin: 0 -12px 24px -12px;
+    margin: 0 -12px 32px -12px;
 
     .box-container {
       width: 33.333333%;
@@ -415,7 +415,7 @@ export default {
         .value {
           font-size: 21px;
           font-weight: 800;
-          margin: 32px 32px 8px 24px;
+          margin: 24px 24px 8px 24px;
         }
 
         .bar-container {

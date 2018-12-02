@@ -19,6 +19,9 @@ export default function getChartData(data, mode, period, date) {
           backgroundColor: 'transparent',
           borderColor: dominantColor,
           borderWidth: 3,
+          pointBackgroundColor: dominantColor,
+          pointBorderColor: 'transparent',
+          pointHoverBackgroundColor: dominantColor,
           lineTension: 0,
         },
       ],
@@ -26,6 +29,29 @@ export default function getChartData(data, mode, period, date) {
     options: {
       responsive: true,
       lineTension: 1,
+      elements: {
+        point: {
+          radius: 4,
+          hitRadius: 4,
+          hoverRadius: 8,
+        },
+      },
+      tooltips: {
+        displayColors: false,
+        callbacks: {
+          label: function(tooltipItems, data) {
+            if (mode === 'time') {
+              return parseInt(tooltipItems.yLabel) + 'min';
+            } else if (mode === 'views') {
+              return parseInt(tooltipItems.yLabel) + ' views';
+            } else if (mode === 'clicks') {
+              return parseInt(tooltipItems.yLabel) + ' clicks';
+            } else if (mode === 'scroll') {
+              return parseInt(tooltipItems.yLabel) + ' px';
+            }
+          },
+        },
+      },
       scales: {
         yAxes: [
           {
