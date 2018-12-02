@@ -10,9 +10,61 @@
   </div>
 
   <div class="right">
-    <main>
 
-      <!-- CHART -->
+    <!-- VALUES -->
+    <div class="value-container">
+      <div class="box-container">
+        <div class="box">
+          <h2 class="title time">total time spent</h2>
+          <p class="value" v-if="periodSum.time != 0">{{formatMS(periodSum.time, true)}}</p>
+          <p v-else>–</p>
+        </div>
+      </div>
+
+      <div class="box-container">
+        <div class="box">
+          <h2 class="title time">Ø daily usage time</h2>
+          <p class="value" v-if="periodSum.time != 0">{{formatMS(periodSum.time / periodSum.dataCount, true)}}</p>
+          <p v-else>–</p>
+        </div>
+      </div>
+
+      <div class="box-container">
+        <div class="box">
+          <h2 class="title time">Ø time per site view</h2>
+          <p class="value" v-if="periodSum.time != 0 && periodSum.views != 0">{{formatMS(periodSum.time / periodSum.views, true)}}</p>
+          <p v-else>–</p>
+        </div>
+      </div>
+
+      <div class="box-container">
+        <div class="box">
+          <h2 class="title views">total site views</h2>
+          <p class="value" v-if="periodSum.views != 0">{{periodSum.views}} views</p>
+          <p v-else>–</p>
+        </div>
+      </div>
+
+      <div class="box-container">
+        <div class="box">
+          <h2 class="title clicks">Ø clicks per site view</h2>
+          <p class="value" v-if="periodSum.clicks != 0">{{Math.round((periodSum.clicks/periodSum.views) * 100) / 100}} clicks</p>
+          <p v-else>–</p>
+        </div>
+      </div>
+
+      <div class="box-container">
+        <div class="box">
+          <h2 class="title scroll">Ø scroll speed</h2>
+          <p class="value" v-if="periodSum.scroll != 0">{{getScrollSpeed()}} px/sec</p>
+          <p v-else>–</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- CHART -->
+    <div class="chart-container">
 
       <div class="settings">
 
@@ -46,98 +98,7 @@
 
       <canvas id="usage-chart"></canvas>
 
-      <div class="stat-container">
-
-        <h1>total</h1>
-        <div class="stat-overview">
-
-          <div class="box">
-            <h2>time spent</h2>
-            <p v-if="periodSum.time != 0">{{formatMS(periodSum.time, true)}}</p>
-            <p v-else>–</p>
-          </div>
-
-          <div class="box">
-            <h2>site views</h2>
-            <p v-if="periodSum.views != 0">{{periodSum.views}} views</p>
-            <p v-else>–</p>
-          </div>
-
-          <div class="box">
-            <h2>clicks</h2>
-            <p v-if="periodSum.clicks != 0">{{periodSum.clicks}} clicks</p>
-            <p v-else>–</p>
-          </div>
-
-          <div class="box">
-            <h2>scroll distance</h2>
-            <p v-if="periodSum.scroll > 1000000">{{parseInt(periodSum.scroll/ 1000000)}}M px</p>
-            <p v-else-if="periodSum.scroll > 1000">{{parseInt(periodSum.scroll / 1000)}}K px</p>
-            <p v-else-if="periodSum.scroll > 0">{{periodSum.scroll}} px</p>
-            <p v-else>–</p>
-          </div>
-
-        </div>
-
-        <h1>average per day</h1>
-        <div class="stat-overview">
-
-          <div class="box">
-            <h2>Ø time spent</h2>
-            <p v-if="periodSum.time != 0">{{formatMS(periodSum.time / periodSum.dataCount, true)}}</p>
-            <p v-else>–</p>
-          </div>
-
-          <div class="box">
-            <h2>Ø site views</h2>
-            <p v-if="periodSum.views != 0">{{Number((periodSum.views / periodSum.dataCount).toFixed(1))}} views</p>
-            <p v-else>–</p>
-          </div>
-
-          <div class="box">
-            <h2>Ø clicks</h2>
-            <p v-if="periodSum.clicks != 0">{{Number((periodSum.clicks / periodSum.dataCount).toFixed(1))}} clicks</p>
-            <p v-else>–</p>
-          </div>
-
-          <div class="box">
-            <h2>Ø scroll distance</h2>
-            <p v-if="periodSum.scroll != 0">{{Number((periodSum.scroll / periodSum.dataCount).toFixed(1))}} px</p>
-            <p v-else>–</p>
-          </div>
-
-        </div>
-
-        <h1>average per site view</h1>
-        <div class="stat-overview">
-
-          <div class="box">
-            <h2>Ø time per site view</h2>
-            <p v-if="periodSum.time != 0 && periodSum.views != 0">{{formatMS(periodSum.time / periodSum.views, true)}}</p>
-            <p v-else>–</p>
-          </div>
-
-          <div class="box">
-            <h2>Ø clicks per site view</h2>
-            <p v-if="periodSum.clicks != 0">{{Math.round((periodSum.clicks/periodSum.views) * 100) / 100}} clicks</p>
-            <p v-else>–</p>
-          </div>
-
-          <div class="box">
-            <h2>Ø scroll distance per site view</h2>
-            <p v-if="periodSum.scroll != 0">{{parseInt(Math.round((periodSum.scroll/periodSum.views) * 100) / 100)}} px</p>
-            <p v-else>–</p>
-          </div>
-
-          <div class="box">
-            <h2>Ø scroll speed</h2>
-            <p v-if="periodSum.scroll != 0">{{getScrollSpeed()}} px/sec</p>
-            <p v-else>–</p>
-          </div>
-        </div>
-      </div>
-    </main>
-
+    </div>
   </div>
 
 </div>
@@ -366,157 +327,159 @@ export default {
   box-sizing: border-box;
   background-color: $lightgrey;
 
-  .settings {
+  .value-container {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 32px;
+    flex-wrap: wrap;
+    margin: 0 -12px 12px -12px;
 
-    .period {
-      font-size: 16px;
-      letter-spacing: 1px;
-      display: flex;
-      align-items: center;
-      margin-left: -8px;
+    .box-container {
+      width: 33%;
 
-      .next,
-      .prev {
-        cursor: pointer;
-        height: 16px;
-        width: 16px;
-        padding: 8px;
-        background-size: 16px 16px;
-        background-position: center;
-        background-repeat: no-repeat;
-      }
-
-      .next {
-        margin-left: 8px;
-        background-image: url('@~/icons/arrow-right.svg');
-      }
-
-      .prev {
-        margin-right: 8px;
-        background-image: url('@~/icons/arrow-right.svg');
-        transform: rotate(180deg);
-      }
-    }
-
-    .menus {
-      .select-container {
-        margin-left: 8px;
-        position: relative;
-        display: inline-block;
+      .box {
+        height: 148px;
+        box-sizing: border-box;
+        background-color: $white;
         border: 3px solid $black;
+        margin: 12px;
 
-        /*  &.icon {
-          padding-left: 20px;
-        }
- */
-        &:after {
-          content: '';
-          position: absolute;
-          display: inline-block;
-          height: 16px;
-          width: 16px;
-          background-image: url('@~/icons/arrow-down.svg');
-          background-size: cover;
-          background-repeat: no-repeat;
-          right: 4px;
-          top: 4px;
-          z-index: 5;
-          pointer-events: none;
-        }
-
-        /*  &:before {
-          content: '';
-          display: inline-block;
-          position: absolute;
-          left: 8px;
-          top: 8px;
-          height: 16px;
-          width: 16px;
-          background-size: 16px 16px;
-          background-position: center;
-          background-repeat: no-repeat;
-        }
-
-        &.time:before {
-          background-image: url('@~/icons/time.svg');
-        }
-        &.views:before {
-          background-image: url('@~/icons/views.svg');
-        }
-        &.clicks:before {
-          background-image: url('@~/icons/clicks.svg');
-        }
-        &.scroll:before {
-          background-image: url('@~/icons/scroll.svg');
-        } */
-
-        /*  &:before {
-          content: '';
-          display: inline-block;
-          position: absolute;
-          top: 0;
-          right: 24px;
-          height: 24px;
-          width: 3px;
-          background-color: $black;
-        } */
-
-        select {
-          background-color: transparent;
-          border: none;
-          padding: 4px 32px 4px 8px;
-          -webkit-appearance: none;
-          -moz-appearance: none;
-          text-indent: 1px;
-          text-overflow: '';
-          font-family: 'Montserrat', sans-serif;
+        .title {
+          display: flex;
+          position: relative;
+          align-items: center;
+          padding-left: 59px;
+          height: 40px;
           font-size: 12px;
-          cursor: pointer;
-          z-index: 10;
+          font-weight: 500;
+          font-family: 'Montserrat', sans-serif;
+          letter-spacing: 1px;
+          border-bottom: 3px solid $black;
+          margin: 0;
 
-          &:focus {
-            outline: none;
+          &:before {
+            content: '';
+            left: 12px;
+            top: 12px;
+            position: absolute;
+            display: inline-block;
+            height: 16px;
+            width: 16px;
           }
+
+          &.time:before {
+            background-image: url('@~/icons/time.svg');
+          }
+
+          &.views:before {
+            background-image: url('@~/icons/views.svg');
+          }
+
+          &.clicks:before {
+            background-image: url('@~/icons/clicks.svg');
+          }
+
+          &.scroll:before {
+            background-image: url('@~/icons/scroll.svg');
+          }
+
+          &:after {
+            content: '';
+            position: absolute;
+            left: 40px;
+            height: 40px;
+            width: 3px;
+            background-color: $black;
+          }
+        }
+
+        .value {
+          font-size: 21px;
+          font-weight: 800;
+          margin: 32px 32px 8px 24px;
         }
       }
     }
   }
 
-  main {
-    h1 {
-      font-size: 18px;
-    }
+  .chart-container {
+    background-color: $white;
+    border: 3px solid $black;
+    padding: 32px;
 
-    .stat-container {
-      margin-top: 160px;
-    }
-
-    .stat-overview {
+    .settings {
       display: flex;
-      flex-wrap: wrap;
-      margin: 8px 0 80px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 32px;
 
-      .box {
-        width: 25%;
-        display: inline-block;
-        margin-bottom: 32px;
+      .period {
+        font-size: 16px;
+        letter-spacing: 1px;
+        display: flex;
+        align-items: center;
+        margin-left: -8px;
 
-        h2 {
-          font-family: 'Montserrat', sans-serif;
-          font-weight: 500;
-          font-size: 12px;
-          line-height: 1.5;
-          width: 60%;
+        .next,
+        .prev {
+          cursor: pointer;
+          height: 16px;
+          width: 16px;
+          padding: 8px;
+          background-size: 16px 16px;
+          background-position: center;
+          background-repeat: no-repeat;
         }
 
-        p {
-          font-size: 16px;
-          font-weight: 800;
-          margin: 0;
+        .next {
+          margin-left: 8px;
+          background-image: url('@~/icons/arrow-right.svg');
+        }
+
+        .prev {
+          margin-right: 8px;
+          background-image: url('@~/icons/arrow-right.svg');
+          transform: rotate(180deg);
+        }
+      }
+
+      .menus {
+        .select-container {
+          margin-left: 8px;
+          position: relative;
+          display: inline-block;
+          border: 3px solid $black;
+
+          &:after {
+            content: '';
+            position: absolute;
+            display: inline-block;
+            height: 16px;
+            width: 16px;
+            background-image: url('@~/icons/arrow-down.svg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            right: 4px;
+            top: 4px;
+            z-index: 5;
+            pointer-events: none;
+          }
+
+          select {
+            background-color: transparent;
+            border: none;
+            padding: 4px 32px 4px 8px;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            text-indent: 1px;
+            text-overflow: '';
+            font-family: 'Montserrat', sans-serif;
+            font-size: 12px;
+            cursor: pointer;
+            z-index: 10;
+
+            &:focus {
+              outline: none;
+            }
+          }
         }
       }
     }

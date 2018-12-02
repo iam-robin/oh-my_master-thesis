@@ -16,8 +16,7 @@
 
     <!--mode: time -->
     <ul v-if="mode === 'time'">
-      <li v-for="website in data" :key="website.domain" 
-          :style="{ 'order': website.time *-1 }">
+      <li v-for="website in sortedData" :key="website.domain">
         <router-link :to="{ name: 'detail', params: { domain: website.domain }}">
           <div class="left">
             <span v-if="website.favicon != '' && website.favicon" :style="{ backgroundImage: 'url(' + website.favicon + ')' }" class="favicon"></span>
@@ -26,7 +25,7 @@
           </div>
           <div class="right">
             <div class="bar-container">
-              <span class="bar" :style="{width: getBarWidth(website.time) + '%' }"></span>
+              <span class="dott" v-for="index in dots" :key="index" :class="{ active: index <= getDottState(website.time) }"></span>
             </div>
             <span class="value time">{{ formatMS(website.time, true) }}</span>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -43,8 +42,7 @@
 
     <!--mode: views -->
     <ul v-if="mode === 'views'">
-      <li v-for="website in data" :key="website.domain" 
-          :style="{ 'order': website.count *-1 }">
+      <li v-for="website in sortedData" :key="website.domain">
         <router-link :to="{ name: 'detail', params: { domain: website.domain }}">
           <div class="left">
             <span v-if="website.favicon != '' && website.favicon" :style="{ backgroundImage: 'url(' + website.favicon + ')' }" class="favicon"></span>
@@ -53,7 +51,7 @@
           </div>
           <div class="right">
             <div class="bar-container">
-              <span class="bar" :style="{width: getBarWidth(website.count) + '%' }"></span>
+              <span class="dott" v-for="index in dots" :key="index" :class="{ active: index <= getDottState(website.count) }"></span>
             </div>
             <span class="value views">{{ website.count }}</span>
             <svg width="18" height="16" viewBox="0 0 18 16">
@@ -69,8 +67,7 @@
 
     <!--mode: clicks -->
     <ul v-if="mode === 'clicks'">
-      <li v-for="website in data" :key="website.domain" 
-          :style="{ 'order': website.clicks *-1 }">
+      <li v-for="website in sortedData" :key="website.domain">
         <router-link :to="{ name: 'detail', params: { domain: website.domain }}">
           <div class="left">
             <span v-if="website.favicon != '' && website.favicon" :style="{ backgroundImage: 'url(' + website.favicon + ')' }" class="favicon"></span>
@@ -79,7 +76,7 @@
           </div>
           <div class="right">
             <div class="bar-container">
-              <span class="bar" :style="{width: getBarWidth(website.clicks) + '%' }"></span>
+              <span class="dott" v-for="index in dots" :key="index" :class="{ active: index <= getDottState(website.clicks) }"></span>
             </div>
             <span class="value clicks">{{ website.clicks }}</span>
             <svg width="16" height="16" version="1.1" viewBox="0 0 16 16">
@@ -95,8 +92,7 @@
 
     <!--mode: scroll -->
     <ul v-if="mode === 'scroll'">
-      <li v-for="website in data" :key="website.domain" 
-          :style="{ 'order': website.scroll *-1 }">
+      <li v-for="website in sortedData" :key="website.domain">
         <router-link :to="{ name: 'detail', params: { domain: website.domain }}">
           <div class="left">
             <span v-if="website.favicon != '' && website.favicon" :style="{ backgroundImage: 'url(' + website.favicon + ')' }" class="favicon"></span>
@@ -105,7 +101,7 @@
           </div>
           <div class="right">
             <div class="bar-container">
-              <span class="bar" :style="{width: getBarWidth(website.scroll) + '%' }"></span>
+              <span class="dott" v-for="index in dots" :key="index" :class="{ active: index <= getDottState(website.scroll) }"></span>
             </div>
             <span class="value scroll">{{ parseInt(website.scroll)}} px</span>
             <svg width="16" height="16" version="1.1" viewBox="0 0 16 16" >
@@ -125,6 +121,7 @@
 </template>
 
 <script>
+import cloneDeep from 'lodash/cloneDeep';
 import formatMS from '../../functions/formatMS';
 
 export default {
@@ -136,22 +133,56 @@ export default {
     data: Array,
   },
 
+  data: function() {
+    return {
+      dots: 16,
+      sortedData: [],
+    };
+  },
+
+  watch: {
+    mode: function() {
+      this.sortData();
+    },
+    data: function() {
+      this.sortData();
+    },
+  },
+
   created: function() {
-    this.getBarWidth();
+    this.sortData();
     this.$emit('detailPageActive', false);
   },
 
   methods: {
     formatMS,
 
-    getBarWidth: function(websiteData) {
-      let maxValue = this.getMaxValue();
-      let percentage = (100 / maxValue) * websiteData;
+    sortData: function() {
+      let sortedData = cloneDeep(this.data);
 
-      if (percentage === 0) {
-        percentage = 1;
+      if (this.mode === 'time') {
+        sortedData.sort((a, b) => parseFloat(b.time) - parseFloat(a.time));
+      } else if (this.mode === 'views') {
+        sortedData.sort((a, b) => parseFloat(b.count) - parseFloat(a.count));
+      } else if (this.mode === 'clicks') {
+        sortedData.sort((a, b) => parseFloat(b.clicks) - parseFloat(a.clicks));
+      } else if (this.mode === 'scroll') {
+        sortedData.sort((a, b) => parseFloat(b.scroll) - parseFloat(a.scroll));
       }
 
+      this.sortedData = sortedData;
+    },
+
+    getDottState: function(websiteData) {
+      let maxValue = this.getMaxValue();
+
+      if (this.mode === 'time') {
+        maxValue = parseInt(maxValue / 60000);
+        websiteData = parseInt(websiteData / 60000);
+      }
+
+      let percentage = (this.dots / maxValue) * websiteData;
+      percentage = parseInt(percentage);
       return percentage;
     },
 
@@ -181,12 +212,13 @@ export default {
   .list-header {
     display: flex;
     justify-content: space-between;
-    height: 32px;
+    margin-top: 10px;
+    padding-bottom: 16px;
     border-bottom: 3px solid $black;
 
     span {
       text-transform: uppercase;
-      font-weight: 600;
+      font-size: 12px;
       letter-spacing: 2px;
     }
   }
@@ -196,20 +228,33 @@ export default {
     flex-wrap: wrap;
     padding: 0;
     margin: 0;
-    max-height: 100%;
+    max-height: 98%;
     align-content: flex-start;
     overflow: scroll;
 
     li {
       flex: 0 0 100%;
       height: 80px;
-      border-bottom: 1px solid $darkgrey;
+      box-sizing: border-box;
+      margin-top: 24px;
+      background-color: $white;
+      border: 3px solid $black;
+
+      &:first-child {
+        margin-top: 34px;
+      }
+
+      &:last-child {
+        margin-bottom: 40px;
+      }
 
       a {
         height: 100%;
         width: 100%;
         display: flex;
         font-size: 16px;
+        padding: 0 24px;
+        box-sizing: border-box;
         justify-content: space-between;
         align-items: center;
         color: $black;
@@ -278,15 +323,18 @@ export default {
           .bar-container {
             display: flex;
             align-items: center;
-            justify-content: flex-end;
-            position: relative;
-            height: 3px;
-            width: 100%;
+            flex-direction: row-reverse;
 
-            .bar {
-              display: block;
-              height: 3px;
-              background-color: $darkgrey;
+            .dott {
+              height: 8px;
+              width: 8px;
+              background-color: $lightgrey;
+              border-radius: 100%;
+              margin-left: 4px;
+
+              &.active {
+                background-color: $black;
+              }
             }
           }
         }
