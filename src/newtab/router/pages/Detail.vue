@@ -5,7 +5,7 @@
     <MainHeader 
       :links="[{name: 'all websites', to: '/ratio'}]"
       state="close"/>
-    <h1>{{ data[0].info.domain }}</h1>
+    <a :href="'https://' + data[0].info.domain" target="_blank">{{ data[0].info.domain }}</a>
     <footer></footer>
   </div>
 
@@ -312,8 +312,11 @@ export default {
     justify-content: space-between;
   }
 
-  h1 {
+  a {
     font-size: 32px;
+    font-weight: 800;
+    text-decoration: none;
+    padding: 40px;
     color: $white;
   }
 }
