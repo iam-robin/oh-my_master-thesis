@@ -18,6 +18,9 @@
           <h2 class="title time">total time spent</h2>
           <p class="value" v-if="periodSum.time != 0">{{formatMS(periodSum.time, true)}}</p>
           <p v-else>–</p>
+          <div class="bar-container">
+            <span class="dott" v-for="index in dots" :key="index"></span>
+          </div>
         </div>
       </div>
 
@@ -26,6 +29,9 @@
           <h2 class="title time">Ø daily usage time</h2>
           <p class="value" v-if="periodSum.time != 0">{{formatMS(periodSum.time / periodSum.dataCount, true)}}</p>
           <p v-else>–</p>
+          <div class="bar-container">
+            <span class="dott" v-for="index in dots" :key="index"></span>
+          </div>
         </div>
       </div>
 
@@ -34,6 +40,9 @@
           <h2 class="title time">Ø time per site view</h2>
           <p class="value" v-if="periodSum.time != 0 && periodSum.views != 0">{{formatMS(periodSum.time / periodSum.views, true)}}</p>
           <p v-else>–</p>
+          <div class="bar-container">
+            <span class="dott" v-for="index in dots" :key="index"></span>
+          </div>
         </div>
       </div>
 
@@ -42,6 +51,9 @@
           <h2 class="title views">total site views</h2>
           <p class="value" v-if="periodSum.views != 0">{{periodSum.views}} views</p>
           <p v-else>–</p>
+          <div class="bar-container">
+            <span class="dott" v-for="index in dots" :key="index"></span>
+          </div>
         </div>
       </div>
 
@@ -50,6 +62,9 @@
           <h2 class="title clicks">Ø clicks per site view</h2>
           <p class="value" v-if="periodSum.clicks != 0">{{Math.round((periodSum.clicks/periodSum.views) * 100) / 100}} clicks</p>
           <p v-else>–</p>
+          <div class="bar-container">
+            <span class="dott" v-for="index in dots" :key="index"></span>
+          </div>
         </div>
       </div>
 
@@ -58,6 +73,9 @@
           <h2 class="title scroll">Ø scroll speed</h2>
           <p class="value" v-if="periodSum.scroll != 0">{{getScrollSpeed()}} px/sec</p>
           <p v-else>–</p>
+          <div class="bar-container">
+            <span class="dott" v-for="index in dots" :key="index"></span>
+          </div>
         </div>
       </div>
 
@@ -130,6 +148,7 @@ export default {
       activeMode: 'time',
       myChart: {},
       chartData: {},
+      dots: 5,
     };
   },
 
@@ -333,13 +352,12 @@ export default {
   .value-container {
     display: flex;
     flex-wrap: wrap;
-    margin: 0 -12px 12px -12px;
+    margin: 0 -12px 24px -12px;
 
     .box-container {
-      width: 33%;
+      width: 33.333333%;
 
       .box {
-        height: 148px;
         box-sizing: border-box;
         background-color: $white;
         border: 3px solid $black;
@@ -398,6 +416,20 @@ export default {
           font-size: 21px;
           font-weight: 800;
           margin: 32px 32px 8px 24px;
+        }
+
+        .bar-container {
+          display: flex;
+          margin-left: 24px;
+          margin-bottom: 24px;
+
+          .dott {
+            height: 8px;
+            width: 8px;
+            background-color: $lightgrey;
+            border-radius: 100%;
+            margin-right: 4px;
+          }
         }
       }
     }
