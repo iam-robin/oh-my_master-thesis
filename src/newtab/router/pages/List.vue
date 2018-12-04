@@ -176,13 +176,9 @@ export default {
     getDottState: function(websiteData) {
       let maxValue = this.getMaxValue();
 
-      if (this.mode === 'time') {
-        maxValue = parseInt(maxValue / 60000);
-        websiteData = parseInt(websiteData / 60000);
-      }
-
       let percentage = (this.dots / maxValue) * websiteData;
       percentage = parseInt(percentage);
+
       return percentage;
     },
 
@@ -329,7 +325,6 @@ export default {
               height: 8px;
               width: 8px;
               background-color: $lightgrey;
-              border-radius: 100%;
               margin-left: 4px;
 
               &.active {

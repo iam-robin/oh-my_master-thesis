@@ -659,7 +659,7 @@ body {
 
           &.date {
             h2 {
-              font-size: 21px;
+              font-size: 16px;
               font-weight: 400;
               margin: 0;
             }

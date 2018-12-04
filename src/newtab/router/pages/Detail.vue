@@ -17,9 +17,11 @@
         <div class="box">
           <h2 class="title time">total time spent</h2>
           <p class="value" v-if="periodSum.time != 0">{{formatMS(periodSum.time, true)}}</p>
-          <p v-else>–</p>
+          <p class="value" v-else>–</p>
           <div class="bar-container">
-            <span class="dott" v-for="index in dots" :key="index"></span>
+            <span class="dot"
+            v-for="index in dots" :key="index"
+            :class="{ active: index <= dotValueTotalTime }"></span>
           </div>
         </div>
       </div>
@@ -28,9 +30,9 @@
         <div class="box">
           <h2 class="title time">Ø daily usage time</h2>
           <p class="value" v-if="periodSum.time != 0">{{formatMS(periodSum.time / periodSum.dataCount, true)}}</p>
-          <p v-else>–</p>
+          <p class="value" v-else>–</p>
           <div class="bar-container">
-            <span class="dott" v-for="index in dots" :key="index"></span>
+            <span class="dot" v-for="index in dots" :key="index"></span>
           </div>
         </div>
       </div>
@@ -39,9 +41,10 @@
         <div class="box">
           <h2 class="title time">Ø time per site view</h2>
           <p class="value" v-if="periodSum.time != 0 && periodSum.views != 0">{{formatMS(periodSum.time / periodSum.views, true)}}</p>
-          <p v-else>–</p>
+          <p class="value" v-else>–</p>
           <div class="bar-container">
-            <span class="dott" v-for="index in dots" :key="index"></span>
+            <span class="dot" v-for="index in dots" :key="index"
+            :class="{ active: index <= dotValueTimePerView }"></span>
           </div>
         </div>
       </div>
@@ -50,9 +53,11 @@
         <div class="box">
           <h2 class="title views">total site views</h2>
           <p class="value" v-if="periodSum.views != 0">{{periodSum.views}} views</p>
-          <p v-else>–</p>
+          <p class="value" v-else>–</p>
           <div class="bar-container">
-            <span class="dott" v-for="index in dots" :key="index"></span>
+            <span class="dot"
+            v-for="index in dots" :key="index"
+            :class="{ active: index <= dotValueTotalViews }"></span>
           </div>
         </div>
       </div>
@@ -61,9 +66,11 @@
         <div class="box">
           <h2 class="title clicks">Ø clicks per site view</h2>
           <p class="value" v-if="periodSum.clicks != 0">{{Math.round((periodSum.clicks/periodSum.views) * 100) / 100}} clicks</p>
-          <p v-else>–</p>
+          <p class="value" v-else>–</p>
           <div class="bar-container">
-            <span class="dott" v-for="index in dots" :key="index"></span>
+            <span class="dot"
+            v-for="index in dots" :key="index"
+            :class="{ active: index <= dotValueClicksPerView }"></span>
           </div>
         </div>
       </div>
@@ -72,9 +79,11 @@
         <div class="box">
           <h2 class="title scroll">Ø scroll speed</h2>
           <p class="value" v-if="periodSum.scroll != 0">{{getScrollSpeed()}} px/sec</p>
-          <p v-else>–</p>
+          <p class="value" v-else>–</p>
           <div class="bar-container">
-            <span class="dott" v-for="index in dots" :key="index"></span>
+            <span class="dot"
+            v-for="index in dots" :key="index"
+            :class="{ active: index <= dotValueScrollSpeed }"></span>
           </div>
         </div>
       </div>
@@ -123,8 +132,11 @@
 </template>
 
 <script>
+import cloneDeep from 'lodash/cloneDeep';
+
 import MainHeader from '../../components/MainHeader.vue';
 import getChartData from '../../functions/getChartData.js';
+import mergeSameWebsitesInPeriod from '../../functions/mergeSameWebsitesInPeriod.js';
 
 import moment from 'moment';
 import Chart from 'chart.js';
@@ -142,13 +154,18 @@ export default {
       domain: '',
       date: moment(),
       formatedDate: '',
+      overAllData: this.getOverAllData(),
       data: [],
       periodSum: {},
       activePeriod: 'month',
       activeMode: 'time',
       myChart: {},
       chartData: {},
-      dots: 10,
+      dots: 5,
+      dotValueTotalTime: 0,
+      dotValueTotalViews: 0,
+      dotValueClicksPerView: 0,
+      dotValueScrollSpeed: 0,
     };
   },
 
@@ -160,6 +177,8 @@ export default {
     this.getChartDate();
     this.chartData = getChartData(this.data, this.activeMode, this.activePeriod, this.date);
 
+    this.getDotState();
+
     // send data to app.vue
     this.$emit('detailPageActive', true);
   },
@@ -170,6 +189,25 @@ export default {
 
   methods: {
     formatMS,
+
+    getOverAllData: function() {
+      let storageKeys = Object.keys(localStorage);
+      let overAllData = [];
+      for (let i = 0; i < storageKeys.length; i++) {
+        let key = storageKeys[i];
+        let websites;
+        if (key !== 'limits') {
+          websites = JSON.parse(localStorage.getItem(key));
+          let object = {
+            date: key,
+            websites: websites,
+          };
+          overAllData.push(object);
+        }
+      }
+
+      return overAllData;
+    },
 
     getDetailData: function() {
       let storageKeys = Object.keys(localStorage);
@@ -250,6 +288,106 @@ export default {
 
       return speed;
     },
+
+    getDotState: function() {
+      // combine all storage data days to websites and sum up the attributes
+      let mergedData = mergeSameWebsitesInPeriod(this.overAllData);
+
+      // TOTAL TIME
+      let sortedDataTime = cloneDeep(mergedData);
+      sortedDataTime.sort((a, b) => parseFloat(b.time) - parseFloat(a.time));
+      let maxTime = sortedDataTime[3].time;
+      let thisTime = this.periodSum.time;
+      let percentageTime = parseInt((this.dots / maxTime) * thisTime);
+      this.dotValueTotalTime = percentageTime;
+
+      // TOTAL SITE VIEWS
+      let sortedDataViews = cloneDeep(mergedData);
+      sortedDataViews.sort((a, b) => parseFloat(b.count) - parseFloat(a.count));
+      let maxViews = sortedDataViews[3].count;
+      let thisViews = this.periodSum.views;
+      let percentageViews = parseInt((this.dots / maxViews) * thisViews);
+      this.dotValueTotalViews = percentageViews;
+
+      // RATIO CALCULATIONS
+      let calculatedData = [];
+
+      for (let i = 0; i < mergedData.length; i++) {
+        let websiteData = {
+          website: mergedData[i].domain,
+          timePerView: parseInt(mergedData[i].time / mergedData[i].count),
+          clicksPerView: mergedData[i].clicks / mergedData[i].count,
+          scrollSpeed: mergedData[i].scroll / mergedData[i].time,
+          views: mergedData[i].count,
+          time: mergedData[i].time,
+        };
+        calculatedData.push(websiteData);
+      }
+
+      // DAILY USAGE TIME
+      // get count of each website in the local storage
+      // let allDomains = [];
+      // for (let i = 0; i < this.overAllData.length; i++) {
+      //   let websites = this.overAllData[i].websites;
+      //   for (let x = 0; x < websites.length; x++) {
+      //     let object = {
+      //       domain: websites[x].domain,
+      //     };
+      //     allDomains.push(object);
+      //   }
+      // }
+
+      // let websiteCounts = this.getWebsiteCount(allDomains);
+      // console.log(websiteCounts);
+
+      // TIME PER VIEW
+      let sortedDataTimePerView = cloneDeep(calculatedData);
+      sortedDataTimePerView.sort((a, b) => parseFloat(b.timePerView) - parseFloat(a.timePerView));
+
+      let maxTimePerView = sortedDataTimePerView[5].timePerView;
+      let thisTimePerView = parseInt(thisTime / thisViews);
+
+      let percentageTimePerView = parseInt((this.dots / maxTimePerView) * thisTimePerView);
+      this.dotValueTimePerView = percentageTimePerView;
+
+      // CLICKS PER SITE VIEW
+      let sortedDataClicksPerView = cloneDeep(calculatedData);
+      sortedDataClicksPerView.sort((a, b) => parseFloat(b.clicksPerView) - parseFloat(a.clicksPerView));
+
+      let maxClicksPerView = sortedDataClicksPerView[10].clicksPerView;
+      let thisClicksPerView = this.periodSum.clicks / thisViews;
+
+      let percentageClicksPerView = parseFloat((this.dots / maxClicksPerView) * thisClicksPerView).toFixed(0);
+      this.dotValueClicksPerView = percentageClicksPerView;
+
+      // SCROLL SPEED
+      let sortedDataScrollSpeed = cloneDeep(calculatedData);
+      sortedDataScrollSpeed.sort((a, b) => parseFloat(b.scrollSpeed) - parseFloat(a.scrollSpeed));
+
+      let maxScrollSpeed;
+
+      // use max scroll value of website with at least 5min usage time
+      for (let x = 0; x < sortedDataScrollSpeed.length; x++) {
+        if (sortedDataScrollSpeed[x].time > 300000) {
+          maxScrollSpeed = sortedDataScrollSpeed[x].scrollSpeed;
+          break;
+        }
+      }
+
+      let thisScrollSpeed = this.periodSum.scroll / thisTime;
+      let percentageScrollSpeed = parseFloat((this.dots / maxScrollSpeed) * thisScrollSpeed).toFixed(0);
+      this.dotValueScrollSpeed = percentageScrollSpeed;
+    },
+
+    // getWebsiteCount: function(data) {
+    //   let res = Object.values(data.reduce((a, {domain}) => {
+    //     a[domain] = a[domain] || {domain, count: 0};
+    //     a[domain].count++;
+    //     return a;
+    //   }, {}));
+
+    //   return res;
+    // },
 
     getPeriod: function(menuItem) {
       return this.activePeriod === menuItem;
@@ -368,6 +506,7 @@ export default {
           position: relative;
           align-items: center;
           padding-left: 59px;
+          padding-right: 24px;
           height: 40px;
           font-size: 12px;
           font-weight: 500;
@@ -413,9 +552,9 @@ export default {
         }
 
         .value {
-          font-size: 21px;
+          font-size: 16px;
           font-weight: 800;
-          margin: 24px 24px 8px 24px;
+          margin: 24px 24px 16px 24px;
         }
 
         .bar-container {
@@ -423,12 +562,15 @@ export default {
           margin-left: 24px;
           margin-bottom: 24px;
 
-          .dott {
+          .dot {
             height: 8px;
             width: 8px;
             background-color: $lightgrey;
-            border-radius: 100%;
             margin-right: 4px;
+
+            &.active {
+              background-color: $black;
+            }
           }
         }
       }
