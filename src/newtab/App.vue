@@ -35,7 +35,7 @@
           <h1 v-else class="sum">–</h1>
         </div>
 
-        <div class="date">
+        <div class="date" :class="{ active: !this.menuActive }">
           <svg v-if="activeMode === 'time'" width="16" height="16" viewBox="0 0 16 16" fill="none">
             <g>
               <path d="M8.00002 16C3.60001 16 0 12.4 0 8.00002C0 3.60001 3.60001 0 8.00002 0C12.4 0 16 3.60001 16 8.00002C16 12.4 12.4 16 8.00002 16ZM8.00002 1.33334C4.33334 1.33334 1.33334 4.33334 1.33334 8.00002C1.33334 11.6667 4.33334 14.6667 8.00002 14.6667C11.6667 14.6667 14.6667 11.6667 14.6667 8.00002C14.6667 4.33334 11.6667 1.33334 8.00002 1.33334Z" fill="black"/>
@@ -544,12 +544,18 @@ body {
         align-items: center;
         font-size: 16px;
         margin-top: 16px;
+        opacity: 0;
+        transition: opacity 0.2s ease-out;
+
+        &.active {
+          opacity: 1;
+        }
 
         svg {
           margin-right: 8px;
 
           path {
-            fill: $darkgrey;
+            fill: $black;
           }
         }
       }

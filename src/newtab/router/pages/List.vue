@@ -202,7 +202,7 @@ export default {
 
 .container {
   padding: 40px 80px;
-  height: 100vh;
+  min-height: 100vh;
   box-sizing: border-box;
 
   .list-header {
@@ -224,9 +224,8 @@ export default {
     flex-wrap: wrap;
     padding: 0;
     margin: 0;
-    max-height: 98%;
     align-content: flex-start;
-    overflow: scroll;
+    list-style: none;
 
     li {
       flex: 0 0 100%;
@@ -235,6 +234,14 @@ export default {
       margin-top: 24px;
       background-color: $white;
       border: 3px solid $black;
+      box-shadow: 4px 4px 0px 0px $black;
+      transform: translate(-4px, -4px);
+      transition: all 0.2s ease-in-out;
+
+      &:hover {
+        box-shadow: none;
+        transform: translate(0px, 0px);
+      }
 
       &:first-child {
         margin-top: 34px;
@@ -312,7 +319,7 @@ export default {
             flex-shrink: 0;
 
             path {
-              fill: $darkgrey;
+              fill: $black;
             }
           }
 

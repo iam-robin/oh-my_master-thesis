@@ -11,6 +11,43 @@
 
   <div class="right">
 
+    <!-- CHART -->
+    <div class="chart-container">
+
+      <div class="settings">
+
+        <div class="period">
+          <div class="prev" v-on:click="prevDate()"></div>
+          <div class="value">{{ formatedDate }}</div>
+          <div class="next" v-on:click="nextDate()"></div>
+        </div>
+
+        <div class="menus">
+          <div class="select-container icon" :class="activeMode">
+            <select v-model="activeMode" v-on:change="setMode(activeMode)">
+              <option value="time">time</option>
+              <option value="views">views</option>
+              <option value="clicks">clicks</option>
+              <option value="scroll">scroll</option>
+            </select>
+          </div>
+
+          <div class="select-container">
+            <select v-model="activePeriod" v-on:change="setPeriod(activePeriod)">
+              <option value="week">week</option>
+              <option value="month">month</option>
+              <option value="year">year</option>
+            </select>
+          </div>
+
+        </div>
+
+      </div>
+
+      <canvas id="usage-chart"></canvas>
+
+    </div>
+
     <!-- VALUES -->
     <div class="value-container">
       <div class="box-container">
@@ -87,43 +124,6 @@
           </div>
         </div>
       </div>
-
-    </div>
-
-    <!-- CHART -->
-    <div class="chart-container">
-
-      <div class="settings">
-
-        <div class="period">
-          <div class="prev" v-on:click="prevDate()"></div>
-          <div class="value">{{ formatedDate }}</div>
-          <div class="next" v-on:click="nextDate()"></div>
-        </div>
-
-        <div class="menus">
-          <div class="select-container icon" :class="activeMode">
-            <select v-model="activeMode" v-on:change="setMode(activeMode)">
-              <option value="time">time</option>
-              <option value="views">views</option>
-              <option value="clicks">clicks</option>
-              <option value="scroll">scroll</option>
-            </select>
-          </div>
-
-          <div class="select-container">
-            <select v-model="activePeriod" v-on:change="setPeriod(activePeriod)">
-              <option value="week">week</option>
-              <option value="month">month</option>
-              <option value="year">year</option>
-            </select>
-          </div>
-
-        </div>
-
-      </div>
-
-      <canvas id="usage-chart"></canvas>
 
     </div>
   </div>
@@ -490,7 +490,7 @@ export default {
   .value-container {
     display: flex;
     flex-wrap: wrap;
-    margin: 0 -12px 32px -12px;
+    margin: 32px -12px 0px -12px;
 
     .box-container {
       width: 33.333333%;
@@ -499,7 +499,7 @@ export default {
         box-sizing: border-box;
         background-color: $white;
         border: 3px solid $black;
-        margin: 12px;
+        margin: 16px;
 
         .title {
           display: flex;

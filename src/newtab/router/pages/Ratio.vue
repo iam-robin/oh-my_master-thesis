@@ -359,13 +359,15 @@ export default {
     margin: 12px;
     border: 3px solid $black;
     cursor: pointer;
+    box-shadow: 4px 4px 0px 0px $black;
+    transform: translate(-4px, -4px);
     transition: all 0.2s ease-in-out;
     overflow: hidden;
 
-    /* &:hover {
-      box-shadow: 8px 8px 0px 0px $black;
-      transform: translate(-8px, -8px);
-    } */
+    &:hover {
+      box-shadow: none;
+      transform: translate(0px, 0px);
+    }
 
     a {
       height: 100%;
@@ -433,7 +435,7 @@ export default {
               width: 12px;
 
               path {
-                fill: $darkgrey;
+                fill: $black;
               }
             }
           }

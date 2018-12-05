@@ -9,15 +9,16 @@ export default function getChartData(data, mode, period, date) {
   }
 
   let chartData = {
-    type: 'line',
+    type: 'bar',
     data: {
       labels: [],
       datasets: [
         {
           label: mode,
           data: [],
-          backgroundColor: 'transparent',
-          borderColor: dominantColor,
+          backgroundColor: dominantColor,
+          hoverBackgroundColor: dominantColor,
+          borderColor: '#000',
           borderWidth: 3,
           pointBackgroundColor: dominantColor,
           pointBorderColor: 'transparent',
