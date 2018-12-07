@@ -18,7 +18,7 @@ export default function getChartData(data, mode, period, date) {
           data: [],
           backgroundColor: dominantColor,
           hoverBackgroundColor: dominantColor,
-          borderColor: '#000',
+          borderColor: 'transparent',
           borderWidth: 3,
           pointBackgroundColor: dominantColor,
           pointBorderColor: 'transparent',

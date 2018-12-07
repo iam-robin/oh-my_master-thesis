@@ -88,7 +88,6 @@ export default {
         };
         limits.push(limit);
       }
-      console.log(limits);
       this.limits = limits;
       this.calculateLimits();
     },
@@ -137,7 +136,7 @@ export default {
 
   .website-container {
     width: 100%;
-    margin-bottom: 40px;
+    margin-bottom: 48px;
 
     &:last-child {
       margin-bottom: 0;
@@ -147,7 +146,7 @@ export default {
       display: flex;
       align-items: center;
       padding-left: 24px;
-      height: 64px;
+      height: 54px;
       background-color: $white;
       border: 3px solid $black;
       font-size: 16px;

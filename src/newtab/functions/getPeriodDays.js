@@ -15,12 +15,9 @@ export default function getPeriodDays(currentDate, activePeriod, firstDay) {
     endOfPeriod = cloneDeep(date).endOf('isoWeek');
   } else if (period === 'month') {
     startOfPeriod = cloneDeep(date).startOf('month');
-    console.log(startOfPeriod);
     endOfPeriod = cloneDeep(date).endOf('month');
-    console.log(endOfPeriod);
   } else if (period === 'total') {
     startOfPeriod = firstDay;
-    console.log(startOfPeriod);
     endOfPeriod = cloneDeep(date).endOf('month');
   }
 
