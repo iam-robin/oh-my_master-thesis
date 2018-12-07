@@ -234,13 +234,11 @@ export default {
       margin-top: 24px;
       background-color: $white;
       border: 3px solid $black;
-      box-shadow: 4px 4px 0px 0px $black;
-      transform: translate(-4px, -4px);
       transition: all 0.2s ease-in-out;
 
       &:hover {
-        box-shadow: none;
-        transform: translate(0px, 0px);
+        // box-shadow: 4px 4px 0px 0px $black;
+        transform: scale(1.0125);
       }
 
       &:first-child {

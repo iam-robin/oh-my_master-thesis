@@ -40,7 +40,7 @@ let colorTable = [
   { name: 'yellow', hex: '#FECE60' },
   // { name: 'lightyellow', hex: '#FEDE91' },
   // { name: 'darkgreen', hex: '#8EC059' },
-  { name: 'green', hex: '#A1D36E' },
+  // { name: 'green', hex: '#A1D36E' },
   // { name: 'lightgreen', hex: '#C2E699' },
   { name: 'darkmint', hex: '#3FBA9B' },
   { name: 'mint', hex: '#4FCEAE' },

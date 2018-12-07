@@ -359,14 +359,11 @@ export default {
     margin: 12px;
     border: 3px solid $black;
     cursor: pointer;
-    box-shadow: 4px 4px 0px 0px $black;
-    transform: translate(-4px, -4px);
     transition: all 0.2s ease-in-out;
     overflow: hidden;
 
     &:hover {
-      box-shadow: none;
-      transform: translate(0px, 0px);
+      transform: scale(1.0125);
     }
 
     a {
@@ -417,6 +414,7 @@ export default {
         .domain {
           margin-right: 16px;
           padding-bottom: 4px;
+          font-weight: 800;
         }
 
         .value-container {

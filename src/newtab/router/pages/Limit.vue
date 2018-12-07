@@ -13,12 +13,12 @@
             </g>
           </svg>
       </div>
-      <div class="bar-container">
-        <div class="bar"
-          v-if="website.timeLimitPercentage > 0"
+      <div class="bar-container"
+        :class="{ filled: website.timeLimitPercentage <= 0 }">
+        <div class="value">{{website.timeLimit - website.usageTime}}min / {{website.timeLimit}}min</div>
+        <div class="bar" v-if="website.timeLimitPercentage < 100"
           :style="{ 'width': 100 - website.timeLimitPercentage + '%',
                 'background-color': website.color}">
-          {{website.timeLimit - parseInt(website.usageTime / (1000 * 60))}}min / {{website.timeLimit}}min
         </div>
       </div>
     </div>
@@ -32,72 +32,27 @@
             </g>
           </svg>
       </div>
-      <div class="bar-container">
-        <div class="bar"
-          v-if="website.viewsLimitPercentage > 0"
+      <div class="bar-container"
+      :class="{ filled: website.viewsLimitPercentage <= 0 }">
+        <div class="value">{{website.viewsLimit - parseInt(website.siteViews)}} views / {{website.viewsLimit}} views</div>
+        <div class="bar" v-if="website.viewsLimitPercentage < 100"
           :style="{ 'width': 100 - parseInt(website.viewsLimitPercentage) + '%',
               'background-color': website.color}">
-          {{website.viewsLimit - parseInt(website.siteViews)}} views / {{website.viewsLimit}} views
         </div>
       </div>
     </div>
   </div>
-
-  <!-- <div class="domain-container" v-for="domain in limits" :key="domain.domain">
-    <h2>{{domain.domain}}</h2>
-
-    <div v-if="domain.timeLimit" class="limit-container">
-      <div class="desc">
-        <p>time limit:</p>
-        <p v-if="domain.timeLimitPercentage > 0">
-          <span>{{parseInt(domain.usageTime / (1000 * 60))}}min / {{domain.timeLimit}}min</span>
-          <span>({{Number((domain.timeLimitPercentage).toFixed(1))}}%)</span>
-        </p>
-        <p v-else>
-          no usage today!
-        </p>
-      </div>
-      <div class="bar-chart">
-        <div class="percentage"
-          v-if="domain.timeLimitPercentage > 0"
-          :style="{ 'width': domain.timeLimitPercentage + '%',
-                'background-color': domain.color}">
-        </div>
-      </div>
-    </div>
-
-    <div v-if="domain.viewsLimit" class="limit-container">
-      <div class="desc">
-        <p>views limit:</p>
-        <p v-if="domain.viewsLimitPercentage > 0">
-          <span>{{domain.siteViews}} views / {{domain.viewsLimit}} views</span>
-          <span>({{Number((domain.viewsLimitPercentage).toFixed(1))}} %)</span>
-        </p>
-        <p v-else>
-          no usage today!
-        </p>
-      </div>
-      <div class="bar-chart">
-        <div class="percentage"
-          v-if="domain.viewsLimitPercentage > 0"
-          :style="{ 'width': domain.viewsLimitPercentage + '%',
-                'background-color': domain.color}">
-        </div>
-      </div>
-    </div>
-
-  </div> -->
 </div>
 </template>
 
 <script>
-import moment from 'moment';
+// import moment from 'moment';
 
 export default {
   name: 'limits',
   data: function() {
     return {
-      // array with key (dates) and values (websites)
+      // array with objects: key (dates) and values (websites)
       limits: [],
     };
   },
@@ -108,7 +63,7 @@ export default {
 
   watch: {
     date: function() {
-      this.calculateLimits();
+      this.getLimits();
     },
   },
 
@@ -118,14 +73,28 @@ export default {
 
   methods: {
     getLimits() {
-      let limits = JSON.parse(localStorage.getItem('limits'));
+      let storageLimits = JSON.parse(localStorage.getItem('limits'));
+      let limits = [];
+      for (let i = 0; i < storageLimits.length; i++) {
+        let limit = {
+          domain: storageLimits[i].domain,
+          timeLimit: storageLimits[i].timeLimit,
+          usageTime: 0,
+          timeLimitPercentage: 0,
+          viewsLimit: storageLimits[i].viewsLimit,
+          siteViews: 0,
+          viewsLimitPercentage: 0,
+          color: '#FECE60',
+        };
+        limits.push(limit);
+      }
+      console.log(limits);
       this.limits = limits;
       this.calculateLimits();
     },
 
     calculateLimits: function() {
-      // let day = this.date;
-      let day = moment().format('YYYY-MM-DD');
+      let day = this.date;
       let websites = JSON.parse(localStorage.getItem(day));
 
       for (let i = 0; i < websites.length; i++) {
@@ -136,8 +105,8 @@ export default {
 
             // usage time
             if (this.limits[x].timeLimit) {
-              let usageTime = websites[i].time;
-              let timeLimit = this.limits[x].timeLimit * 60 * 1000;
+              let usageTime = parseInt(websites[i].time / 60000);
+              let timeLimit = this.limits[x].timeLimit;
               let timeLimitPercentage = (100 / timeLimit) * usageTime;
               this.limits[x].usageTime = usageTime;
               this.limits[x].timeLimitPercentage = timeLimitPercentage;
@@ -169,18 +138,9 @@ export default {
   .website-container {
     width: 100%;
     margin-bottom: 40px;
-    cursor: pointer;
-    box-shadow: 4px 4px 0px 0px $black;
-    transform: translate(-4px, -4px);
-    transition: all 0.2s ease-in-out;
 
     &:last-child {
       margin-bottom: 0;
-    }
-
-    &:hover {
-      box-shadow: none;
-      transform: translate(0px, 0px);
     }
 
     header {
@@ -221,15 +181,28 @@ export default {
       }
 
       .bar-container {
+        position: relative;
         width: 100%;
         height: 100%;
 
+        .value {
+          position: absolute;
+          top: 20px;
+          left: 40px;
+          font-weight: 800;
+        }
+
         .bar {
-          display: flex;
-          align-items: center;
           box-sizing: border-box;
-          border-right: 3px solid $black;
           height: 100%;
+          width: 100%;
+          border-right: 3px solid $black;
+        }
+
+        &.filled {
+          .bar {
+            border-right: none;
+          }
         }
       }
     }
