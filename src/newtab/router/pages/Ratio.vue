@@ -360,10 +360,11 @@ export default {
     border: 3px solid $black;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
+    backface-visibility: hidden;
     overflow: hidden;
 
     &:hover {
-      transform: scale(1.0125);
+      transform: scale(1.0125) translateZ(0);
     }
 
     a {
@@ -408,13 +409,14 @@ export default {
       .content {
         display: flex;
         justify-content: space-between;
+        align-items: center;
         flex-wrap: wrap;
         margin-left: 40px;
 
         .domain {
           margin-right: 16px;
           padding-bottom: 4px;
-          font-weight: 800;
+          font-size: 16px;
         }
 
         .value-container {
@@ -428,6 +430,7 @@ export default {
             align-items: center;
 
             svg {
+              display: none;
               margin-right: 8px;
               height: 12px;
               width: 12px;

@@ -47,6 +47,7 @@
 
 <script>
 // import moment from 'moment';
+import TweenLite from 'gsap/TweenLite';
 
 export default {
   name: 'limits',
@@ -61,9 +62,18 @@ export default {
     date: String,
   },
 
+  computed: {
+    animatedNumber: function() {
+      return this.tweenedNumber.toFixed(0);
+    },
+  },
+
   watch: {
     date: function() {
       this.getLimits();
+    },
+    limits: function(newValue) {
+      TweenLite.to(this.$data, 0.5, { tweenedNumber: newValue });
     },
   },
 

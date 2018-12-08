@@ -397,7 +397,6 @@ export default {
 
     getActiveRoute: function() {
       this.activeRoute = this.$router.currentRoute.name;
-      console.log(this.activeRoute);
     },
 
     toggleMenu: function() {
@@ -555,6 +554,7 @@ body {
   font-weight: 400;
   font-size: 12px;
   border: 3px solid $black;
+  -webkit-font-smoothing: subpixel-antialiased;
 
   .info-container {
     width: 40%;

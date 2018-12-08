@@ -55,22 +55,20 @@
           <h2 class="title time">total time spent</h2>
           <p class="value" v-if="periodSum.time != 0">{{formatMS(periodSum.time, true)}}</p>
           <p class="value" v-else>–</p>
-          <div class="bar-container">
-            <span class="dot"
-            v-for="index in dots" :key="index"
-            :class="{ active: index <= dotValueTotalTime }"></span>
-          </div>
+          <p class="value">{{formatMS(allWebsitesSum.totalTime)}}</p>
+          <p class="value" v-if="places.totalTime <= 100">{{places.totalTime}}</p>
+          <p class="value" v-else>> 100</p>
         </div>
       </div>
 
       <div class="box-container">
         <div class="box">
           <h2 class="title time">Ø daily usage time</h2>
-          <p class="value" v-if="periodSum.time != 0">{{formatMS(periodSum.time / periodSum.dataCount, true)}}</p>
+          <p class="value" v-if="periodSum.time != 0">{{formatMS(periodSum.time / this.getDayAmount(), true)}}</p>
           <p class="value" v-else>–</p>
-          <div class="bar-container">
-            <span class="dot" v-for="index in dots" :key="index"></span>
-          </div>
+          <p class="value">{{formatMS(allWebsitesSum.dailyUsageTime, true)}}</p>
+          <p class="value" v-if="places.dailyTime <= 100">{{places.dailyTime}}</p>
+          <p class="value" v-else>> 100</p>
         </div>
       </div>
 
@@ -79,10 +77,9 @@
           <h2 class="title time">Ø time per site view</h2>
           <p class="value" v-if="periodSum.time != 0 && periodSum.views != 0">{{formatMS(periodSum.time / periodSum.views, true)}}</p>
           <p class="value" v-else>–</p>
-          <div class="bar-container">
-            <span class="dot" v-for="index in dots" :key="index"
-            :class="{ active: index <= dotValueTimePerView }"></span>
-          </div>
+          <p class="value">{{formatMS(allWebsitesSum.timePerView, true)}}</p>
+          <p class="value" v-if="places.timePerView <= 100">{{places.timePerView}}</p>
+          <p class="value" v-else>> 100</p>
         </div>
       </div>
 
@@ -91,11 +88,9 @@
           <h2 class="title views">total site views</h2>
           <p class="value" v-if="periodSum.views != 0">{{periodSum.views}} views</p>
           <p class="value" v-else>–</p>
-          <div class="bar-container">
-            <span class="dot"
-            v-for="index in dots" :key="index"
-            :class="{ active: index <= dotValueTotalViews }"></span>
-          </div>
+          <p class="value">{{allWebsitesSum.totalViews}} views</p>
+          <p class="value" v-if="places.totalViews <= 100">{{places.totalViews}}</p>
+          <p class="value" v-else>> 100</p>
         </div>
       </div>
 
@@ -104,11 +99,9 @@
           <h2 class="title clicks">Ø clicks per site view</h2>
           <p class="value" v-if="periodSum.clicks != 0">{{Math.round((periodSum.clicks/periodSum.views) * 100) / 100}} clicks</p>
           <p class="value" v-else>–</p>
-          <div class="bar-container">
-            <span class="dot"
-            v-for="index in dots" :key="index"
-            :class="{ active: index <= dotValueClicksPerView }"></span>
-          </div>
+          <p class="value">{{allWebsitesSum.clicksPerView.toFixed(2)}} clicks</p>
+          <p class="value" v-if="places.clicksPerView <= 100">{{places.clicksPerView}}</p>
+          <p class="value" v-else>> 100</p>
         </div>
       </div>
 
@@ -117,11 +110,9 @@
           <h2 class="title scroll">Ø scroll speed</h2>
           <p class="value" v-if="periodSum.scroll != 0">{{getScrollSpeed()}} px/sec</p>
           <p class="value" v-else>–</p>
-          <div class="bar-container">
-            <span class="dot"
-            v-for="index in dots" :key="index"
-            :class="{ active: index <= dotValueScrollSpeed }"></span>
-          </div>
+          <p class="value">{{allWebsitesSum.scrollSpeed.toFixed(2)}} px/sec</p>
+          <p class="value" v-if="places.scrollSpeed <= 100">{{places.scrollSpeed}}</p>
+          <p class="value" v-else>> 100</p>
         </div>
       </div>
 
@@ -134,13 +125,12 @@
 <script>
 import cloneDeep from 'lodash/cloneDeep';
 
-import MainHeader from '../../components/MainHeader.vue';
-import getChartData from '../../functions/getChartData.js';
-import mergeSameWebsitesInPeriod from '../../functions/mergeSameWebsitesInPeriod.js';
-
 import moment from 'moment';
 import Chart from 'chart.js';
 import formatMS from '../../functions/formatMS';
+import MainHeader from '../../components/MainHeader.vue';
+import getChartData from '../../functions/getChartData.js';
+import mergeSameWebsitesInPeriod from '../../functions/mergeSameWebsitesInPeriod.js';
 
 export default {
   name: 'detail-page',
@@ -161,11 +151,8 @@ export default {
       activeMode: 'time',
       myChart: {},
       chartData: {},
-      dots: 5,
-      dotValueTotalTime: 0,
-      dotValueTotalViews: 0,
-      dotValueClicksPerView: 0,
-      dotValueScrollSpeed: 0,
+      allWebsitesSum: {},
+      places: {},
     };
   },
 
@@ -177,7 +164,9 @@ export default {
     this.getChartDate();
     this.chartData = getChartData(this.data, this.activeMode, this.activePeriod, this.date);
 
-    this.getDotState();
+    // this.getDotState();
+    this.getTotalValues();
+    this.getPlace();
 
     // send data to app.vue
     this.$emit('detailPageActive', true);
@@ -249,6 +238,12 @@ export default {
       this.periodSum = periodSum;
     },
 
+    getDayAmount: function() {
+      let storageKeys = Object.keys(localStorage);
+      // length -1 because of limits
+      return storageKeys.length - 1;
+    },
+
     getCurrentColor: function() {
       let color;
       for (let i = 0; i < this.data.length; i++) {
@@ -289,7 +284,141 @@ export default {
       return speed;
     },
 
-    getDotState: function() {
+    getTotalValues: function() {
+      // combine all storage data days to websites and sum up the attributes
+      let mergedData = mergeSameWebsitesInPeriod(this.overAllData);
+      let allWebsitesSum = {};
+
+      allWebsitesSum.totalTime = 0;
+      allWebsitesSum.totalViews = 0;
+      allWebsitesSum.totalClicks = 0;
+      allWebsitesSum.totalScroll = 0;
+
+      mergedData.forEach(element => {
+        allWebsitesSum.totalTime += element.time;
+        allWebsitesSum.totalViews += element.count;
+        allWebsitesSum.totalClicks += element.clicks;
+        allWebsitesSum.totalScroll += element.scroll;
+      });
+
+      allWebsitesSum.timePerView = allWebsitesSum.totalTime / allWebsitesSum.totalViews;
+      allWebsitesSum.clicksPerView = allWebsitesSum.totalClicks / allWebsitesSum.totalViews;
+      allWebsitesSum.scrollSpeed = allWebsitesSum.totalScroll / (allWebsitesSum.totalTime / 1000);
+      allWebsitesSum.dailyUsageTime = allWebsitesSum.totalTime / this.getDayAmount() / mergedData.length;
+      this.allWebsitesSum = allWebsitesSum;
+    },
+
+    getPlace: function() {
+      let mergedData = mergeSameWebsitesInPeriod(this.overAllData);
+      let places = {};
+
+      // TOTAL TIME
+      let placeTotalTime = 1;
+      let sortedDataTime = cloneDeep(mergedData);
+      sortedDataTime.sort((a, b) => parseFloat(b.time) - parseFloat(a.time));
+      for (let i = 0; i < sortedDataTime.length; i++) {
+        if (sortedDataTime[i].domain === this.data[0].info.domain || placeTotalTime > 100) {
+          break;
+        } else {
+          placeTotalTime++;
+        }
+      }
+
+      places.totalTime = placeTotalTime;
+
+      // TOTAL SITE VIEWS
+      let placeTotalViews = 1;
+      let sortedDataViews = cloneDeep(mergedData);
+      sortedDataViews.sort((a, b) => parseFloat(b.count) - parseFloat(a.count));
+      for (let i = 0; i < sortedDataViews.length; i++) {
+        if (sortedDataViews[i].domain === this.data[0].info.domain) {
+          break;
+        } else {
+          placeTotalViews++;
+        }
+      }
+
+      places.totalViews = placeTotalViews;
+
+      // RATIO CALCULATIONS
+      let calculatedData = [];
+
+      for (let i = 0; i < mergedData.length; i++) {
+        let websiteData = {
+          domain: mergedData[i].domain,
+          timePerView: parseInt(mergedData[i].time / mergedData[i].count),
+          clicksPerView: mergedData[i].clicks / mergedData[i].count,
+          scrollSpeed: mergedData[i].scroll / mergedData[i].time,
+          dailyTime: parseInt(mergedData[i].time / this.getDayAmount()),
+          views: mergedData[i].count,
+          time: mergedData[i].time,
+        };
+        calculatedData.push(websiteData);
+      }
+
+      // TIME PER VIEW
+      let placeTimePerView = 1;
+      let sortedDataTimePerView = cloneDeep(calculatedData);
+      sortedDataTimePerView.sort((a, b) => parseFloat(b.timePerView) - parseFloat(a.timePerView));
+
+      for (let i = 0; i < sortedDataTimePerView.length; i++) {
+        if (sortedDataTimePerView[i].domain === this.data[0].info.domain) {
+          break;
+        } else {
+          placeTimePerView++;
+        }
+      }
+      places.timePerView = placeTimePerView;
+
+      // CLICKS PER VIEW
+      let placeClicksPerView = 1;
+      let sortedDataClicksPerView = cloneDeep(calculatedData);
+      sortedDataClicksPerView.sort((a, b) => parseFloat(b.clicksPerView) - parseFloat(a.clicksPerView));
+
+      for (let i = 0; i < sortedDataClicksPerView.length; i++) {
+        if (sortedDataClicksPerView[i].domain === this.data[0].info.domain) {
+          break;
+        } else {
+          placeClicksPerView++;
+        }
+      }
+      places.clicksPerView = placeClicksPerView;
+
+      // DAILY USAGE TIME
+      let placeDailyTime = 1;
+      let sortedDataDailyTime = cloneDeep(calculatedData);
+      sortedDataDailyTime.sort((a, b) => parseFloat(b.dailyTime) - parseFloat(a.dailyTime));
+
+      for (let i = 0; i < sortedDataDailyTime.length; i++) {
+        if (sortedDataDailyTime[i].domain === this.data[0].info.domain) {
+          break;
+        } else {
+          placeDailyTime++;
+        }
+      }
+      places.dailyTime = placeDailyTime;
+
+      // DAILY USAGE TIME
+      let placeScrollSpeed = 1;
+      let sortedDataScrollSpeed = cloneDeep(calculatedData);
+      sortedDataScrollSpeed.sort((a, b) => parseFloat(b.scrollSpeed) - parseFloat(a.scrollSpeed));
+
+      for (let i = 0; i < sortedDataScrollSpeed.length; i++) {
+        if (sortedDataScrollSpeed[i].domain === this.data[0].info.domain) {
+          break;
+        } else {
+          placeScrollSpeed++;
+        }
+      }
+      places.scrollSpeed = placeScrollSpeed;
+
+
+      console.log(calculatedData);
+      console.log(places);
+      this.places = places;
+    },
+
+    /* getDotState: function() {
       // combine all storage data days to websites and sum up the attributes
       let mergedData = mergeSameWebsitesInPeriod(this.overAllData);
 
@@ -377,7 +506,7 @@ export default {
       let thisScrollSpeed = this.periodSum.scroll / thisTime;
       let percentageScrollSpeed = parseFloat((this.dots / maxScrollSpeed) * thisScrollSpeed).toFixed(0);
       this.dotValueScrollSpeed = percentageScrollSpeed;
-    },
+    }, */
 
     // getWebsiteCount: function(data) {
     //   let res = Object.values(data.reduce((a, {domain}) => {

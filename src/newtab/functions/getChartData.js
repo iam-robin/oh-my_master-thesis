@@ -9,20 +9,22 @@ export default function getChartData(data, mode, period, date) {
   }
 
   let chartData = {
-    type: 'bar',
+    type: 'line',
     data: {
       labels: [],
       datasets: [
         {
           label: mode,
           data: [],
-          backgroundColor: dominantColor,
-          hoverBackgroundColor: dominantColor,
-          borderColor: 'transparent',
+          backgroundColor: 'transparent',
+          hoverBackgroundColor: 'transparent',
+          borderColor: dominantColor,
           borderWidth: 3,
-          pointBackgroundColor: dominantColor,
-          pointBorderColor: 'transparent',
+          pointBackgroundColor: '#fff',
+          pointBorderColor: dominantColor,
           pointHoverBackgroundColor: dominantColor,
+          pointStyle: 'rect',
+          radius: 6,
           lineTension: 0,
         },
       ],
@@ -30,13 +32,6 @@ export default function getChartData(data, mode, period, date) {
     options: {
       responsive: true,
       lineTension: 1,
-      elements: {
-        point: {
-          radius: 4,
-          hitRadius: 4,
-          hoverRadius: 8,
-        },
-      },
       tooltips: {
         displayColors: false,
         callbacks: {
@@ -58,10 +53,10 @@ export default function getChartData(data, mode, period, date) {
           {
             ticks: {
               beginAtZero: true,
-              padding: 8,
+              padding: 12,
             },
             gridLines: {
-              color: '#D9DDE3',
+              color: '#EDEFF3',
             },
           },
         ],
@@ -69,11 +64,13 @@ export default function getChartData(data, mode, period, date) {
           {
             ticks: {
               autoSkip: false,
-              padding: 8,
+              padding: 4,
             },
             gridLines: {
-              color: '#D9DDE3',
+              color: 'transparent',
             },
+            categoryPercentage: 0.9,
+            barPercentage: 1.0,
           },
         ],
       },
