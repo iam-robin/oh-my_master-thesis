@@ -77,7 +77,7 @@ export default {
   data: function() {
     return {
       columnWidthLimitation: 27,
-      count: 5,
+      count: 4,
       rows: [],
       columns: [],
       xLeft: 100,
@@ -360,12 +360,7 @@ export default {
     border: 3px solid $black;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
-    backface-visibility: hidden;
     overflow: hidden;
-
-    &:hover {
-      transform: scale(1.0125) translateZ(0);
-    }
 
     a {
       height: 100%;
@@ -379,7 +374,7 @@ export default {
       position: relative;
       background-color: $white;
       color: $black;
-      padding: 10px 16px 6px 8px;
+      padding: 10px 16px 7px 8px;
       border-bottom: 3px solid $black;
       overflow: hidden;
 

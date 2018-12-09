@@ -34,7 +34,7 @@ let colorTable = [
   { name: 'red', hex: '#EB5767' },
   // { name: 'lightred', hex: '#FD9BA5' },
   // { name: 'darkorange', hex: '#E75844' },
-  { name: 'orange', hex: '#F96F57' },
+  // { name: 'orange', hex: '#F96F57' },
   // { name: 'lightorange', hex: '#FDA695' },
   { name: 'darkyellow', hex: '#F5BA4F' },
   { name: 'yellow', hex: '#FECE60' },

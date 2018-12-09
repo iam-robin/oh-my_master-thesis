@@ -4,7 +4,7 @@
       <MainHeader
         v-on:click.native="getActiveRoute()"
         :links="[
-          {name: 'Top Five', to: '/ratio'},
+          {name: 'Top Four', to: '/ratio'},
           {name: 'List', to: '/list'},
           {name: 'Limits', to: '/limit'}]"
       />
