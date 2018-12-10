@@ -553,7 +553,7 @@ body {
   font-family: 'Fira Mono', monospace;
   font-weight: 400;
   font-size: 12px;
-  border: 3px solid $black;
+  border-top: 3px solid $black;
   -webkit-font-smoothing: subpixel-antialiased;
 
   .info-container {

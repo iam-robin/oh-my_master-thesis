@@ -157,6 +157,7 @@ export default {
   },
 
   created: function() {
+    console.log(this.$router.currentRoute);
     this.domain = this.$route.params.domain;
     this.data = this.getDetailData();
     this.getPeriodSum();
