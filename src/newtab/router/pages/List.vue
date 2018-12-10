@@ -7,10 +7,10 @@
         <span>Domain</span> 
       </div>
       <div>
-        <span v-if="mode === 'time'">usage time</span>
-        <span v-if="mode === 'views'">site views</span>
-        <span v-if="mode === 'clicks'">clicks on website</span>
-        <span v-if="mode === 'scroll'">scroll distance</span>
+        <span v-if="mode === 'time'">Usage time</span>
+        <span v-if="mode === 'views'">Site views</span>
+        <span v-if="mode === 'clicks'">Clicks on website</span>
+        <span v-if="mode === 'scroll'">Scroll distance</span>
       </div>
     </div>
 
@@ -25,7 +25,7 @@
           </div>
           <div class="right">
             <div class="bar-container">
-              <span class="dott" v-for="index in dots" :key="index" :class="{ active: index <= getDottState(website.time) }"></span>
+              <span class="dot" v-for="index in dots" :key="index" :class="{ active: index <= getDotState(website.time) }"></span>
             </div>
             <span class="value time">{{ formatMS(website.time, true) }}</span>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -51,7 +51,7 @@
           </div>
           <div class="right">
             <div class="bar-container">
-              <span class="dott" v-for="index in dots" :key="index" :class="{ active: index <= getDottState(website.count) }"></span>
+              <span class="dot" v-for="index in dots" :key="index" :class="{ active: index <= getDotState(website.count) }"></span>
             </div>
             <span class="value views">{{ website.count }}</span>
             <svg width="18" height="16" viewBox="0 0 18 16">
@@ -76,7 +76,7 @@
           </div>
           <div class="right">
             <div class="bar-container">
-              <span class="dott" v-for="index in dots" :key="index" :class="{ active: index <= getDottState(website.clicks) }"></span>
+              <span class="dot" v-for="index in dots" :key="index" :class="{ active: index <= getDotState(website.clicks) }"></span>
             </div>
             <span class="value clicks">{{ website.clicks }}</span>
             <svg width="16" height="16" version="1.1" viewBox="0 0 16 16">
@@ -101,7 +101,7 @@
           </div>
           <div class="right">
             <div class="bar-container">
-              <span class="dott" v-for="index in dots" :key="index" :class="{ active: index <= getDottState(website.scroll) }"></span>
+              <span class="dot" v-for="index in dots" :key="index" :class="{ active: index <= getDotState(website.scroll) }"></span>
             </div>
             <span class="value scroll">{{ parseInt(website.scroll)}} px</span>
             <svg width="16" height="16" version="1.1" viewBox="0 0 16 16" >
@@ -173,7 +173,7 @@ export default {
       this.sortedData = sortedData;
     },
 
-    getDottState: function(websiteData) {
+    getDotState: function(websiteData) {
       let maxValue = this.getMaxValue();
 
       let percentage = (this.dots / maxValue) * websiteData;
@@ -213,7 +213,7 @@ export default {
     border-bottom: 3px solid $black;
 
     span {
-      text-transform: uppercase;
+      font-family: 'Montserrat', sans-serif;
       font-size: 12px;
       letter-spacing: 2px;
     }
@@ -237,8 +237,8 @@ export default {
       transition: all 0.2s ease-in-out;
 
       &:hover {
-        // box-shadow: 4px 4px 0px 0px $black;
-        transform: scale(1.0125);
+        transform: translateY(-4px);
+        box-shadow: 0 12px 0 -8px $black;
       }
 
       &:first-child {
@@ -326,7 +326,7 @@ export default {
             align-items: center;
             flex-direction: row-reverse;
 
-            .dott {
+            .dot {
               height: 8px;
               width: 8px;
               background-color: $lightgrey;

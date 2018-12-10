@@ -362,6 +362,11 @@ export default {
     transition: all 0.2s ease-in-out;
     overflow: hidden;
 
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 0 -8px $black;
+    }
+
     a {
       height: 100%;
       width: 100%;
