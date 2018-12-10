@@ -1,6 +1,6 @@
 <template>
   <header>
-    <svg class="logo" viewBox="0 0 50 50" fill="none">
+    <svg class="logo" viewBox="0 0 50 50" fill="none" v-on:click="restart()">
       <rect x="1.5" y="1.5" width="47" height="47" stroke="#333333" stroke-width="3"/>
       <rect x="1.5" y="1.5" width="17" height="47" stroke="#333333" stroke-width="3"/>
       <rect x="-1.5" y="1.5" width="17" height="18" transform="matrix(-1 0 0 1 17 0)" fill="#FECE60" stroke="#333333" stroke-width="3"/>
@@ -20,6 +20,10 @@ export default {
   props: {
     links: Array,
     state: String,
+  },
+
+  methods: {
+    restart: function() {},
   },
 };
 </script>

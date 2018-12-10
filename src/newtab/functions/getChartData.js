@@ -25,6 +25,7 @@ export default function getChartData(data, mode, period, date) {
           pointHoverBackgroundColor: dominantColor,
           pointStyle: 'rect',
           radius: 6,
+          pointHoverRadius: 6,
           lineTension: 0,
         },
       ],
@@ -33,6 +34,13 @@ export default function getChartData(data, mode, period, date) {
       responsive: true,
       lineTension: 1,
       tooltips: {
+        backgroundColor: '#fff',
+        borderWidth: 3,
+        titleFontColor: '#000',
+        bodyFontColor: '#000',
+        borderColor: '#000',
+        caretPadding: 4,
+        cornerRadius: 0,
         displayColors: false,
         callbacks: {
           label: function(tooltipItems, data) {

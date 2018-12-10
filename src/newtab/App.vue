@@ -11,25 +11,25 @@
 
       <main>
         <!-- time mode -->
-        <div class="value" v-if="activeMode === 'time'">
+        <div class="value" v-if="activeMode === 'time' && this.activeRoute !== 'limit'">
           <h1 v-if="periodSum.time > 0" class="sum">{{formatMS(periodSum.time, true)}}</h1>
           <h1 v-else class="sum">–</h1>
         </div>
 
         <!-- views mode -->
-        <div class="value" v-if="activeMode === 'views'">
+        <div class="value" v-if="activeMode === 'views' && this.activeRoute !== 'limit'">
           <h1 v-if="periodSum.views > 0" class="sum">{{periodSum.views}} views</h1>
           <h1 v-else class="sum">–</h1>
         </div>
 
         <!-- clicks mode -->
-        <div class="value" v-if="activeMode === 'clicks'">
+        <div class="value" v-if="activeMode === 'clicks' && this.activeRoute !== 'limit'">
           <h1 v-if="periodSum.clicks > 0" class="sum">{{periodSum.clicks}} clicks</h1>
           <h1 v-else class="sum">–</h1>
         </div>
 
         <!-- scroll mode -->
-        <div class="value" v-if="activeMode === 'scroll'">
+        <div class="value" v-if="activeMode === 'scroll' && this.activeRoute !== 'limit'">
           <h1 v-if="periodSum.scroll > 0" class="sum">{{parseInt(periodSum.scroll/100)}}K px</h1>
           <h1 v-else-if="periodSum.scroll > 1000" class="sum">{{parseInt(periodSum.scroll/1000)}}K px</h1>
           <h1 v-else-if="periodSum.scroll > 1000000" class="sum">{{parseInt(periodSum.scroll/1000000)}}M px</h1>
@@ -210,8 +210,8 @@
       
         </div>
         <button class="settings"
-                v-on:click="toggleMenu()"
-                :style="[menuActive ? { 'background-color' : '#CCD0D8' } : { 'background-color' : '#fff' }]">
+                :class="{ open: menuActive }"
+                v-on:click="toggleMenu()">
           <span v-if="menuActive">Close</span>
           <span v-else>Settings</span>
         </button>
@@ -737,6 +737,14 @@ body {
         text-transform: uppercase;
         letter-spacing: 2px;
         z-index: 999;
+
+        &.open {
+          background-color: #ccd0d8;
+
+          &:hover {
+            background-color: $darkgrey;
+          }
+        }
 
         &:hover {
           background-color: $primary;

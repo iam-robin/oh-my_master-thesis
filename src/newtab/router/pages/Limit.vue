@@ -10,7 +10,9 @@
     </div>
   </div>
   <div class="website-container" v-for="website in limits" :key="website.domain">
-    <header>{{website.domain}}</header>
+    <router-link :to="{ name: 'detail', params: { domain: website.domain }}">
+      <header>{{website.domain}}</header>
+    </router-link>
     <!-- TIME LIMIT-->
     <div v-if="website.timeLimit" class="limit-container time">
       <div class="icon">
@@ -121,7 +123,6 @@ export default {
           if (websites[i].domain === this.limits[x].domain) {
             // dominant color
             this.limits[x].color = websites[i].dominant_color.hex;
-            this.limits[x].favicon = websites[i].favicon;
 
             // usage time
             if (this.limits[x].timeLimit) {
@@ -156,6 +157,11 @@ export default {
   min-height: 100vh;
   box-sizing: border-box;
 
+  a {
+    color: $black;
+    text-decoration: none;
+  }
+
   .header {
     position: relative;
     display: flex;
@@ -165,7 +171,7 @@ export default {
     margin-bottom: 29px;
     padding-bottom: 16px;
     font-family: 'Montserrat', sans-serif;
-    font-size: 12px;
+    font-size: 16px;
     letter-spacing: 1px;
 
     .icon {
@@ -194,6 +200,7 @@ export default {
       border: 3px solid black;
       z-index: 9999;
       padding: 16px;
+      font-size: 12px;
 
       &:after,
       &:before {
@@ -277,8 +284,7 @@ export default {
         .value {
           position: absolute;
           top: 20px;
-          left: 40px;
-          font-weight: 800;
+          left: 24px;
         }
 
         .bar {
