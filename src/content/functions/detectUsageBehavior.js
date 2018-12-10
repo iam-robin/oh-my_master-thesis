@@ -10,7 +10,6 @@ export default function detectUsageBehavior() {
   // detect click event
   document.onclick = function() {
     usageBehavior.clicks++;
-    console.log(usageBehavior.clicks);
     sendBehaviorToBackground();
   };
 
@@ -22,7 +21,6 @@ export default function detectUsageBehavior() {
       totalScrollOffset += addedOffset;
       currScrollOffset = window.pageYOffset;
       usageBehavior.scroll = totalScrollOffset;
-      console.log(usageBehavior.scroll);
       sendBehaviorToBackground();
     },
     false
@@ -49,15 +47,12 @@ function debounce(func, wait, immediate) {
 // send each xxx ms a new message to background
 let sendBehaviorToBackground = debounce(function() {
   chrome.runtime.sendMessage({ usageBehavior: usageBehavior }, function(response) {
-    console.log('sent usage behavior to background');
     // resetData();
   });
   resetData();
 }, 250);
 
 function resetData() {
-  // reset variables:
-  console.log('reset');
   usageBehavior.scroll = 0;
   usageBehavior.clicks = 0;
   totalScrollOffset = 0;
