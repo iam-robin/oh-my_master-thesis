@@ -100,9 +100,11 @@ export default {
 body {
   position: relative;
   width: 240px;
-  margin: 0;
+  margin: 0px !important;
   padding: 24px;
   font-family: 'Fira Mono', monospace;
+  border: 3px solid $black;
+  border-radius: 5px;
 
   h2 {
     font-family: 'Montserrat', sans-serif;

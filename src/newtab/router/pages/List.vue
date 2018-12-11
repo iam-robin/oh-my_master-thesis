@@ -217,7 +217,6 @@ export default {
 
     enter: function(el, done) {
       let delay = el.dataset.index * 50;
-      console.log(el.dataset);
       setTimeout(function() {
         el.style.transform = 'translateY(0px)';
         el.style.opacity = 1;
