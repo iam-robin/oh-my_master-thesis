@@ -61,7 +61,7 @@ header {
       padding: 20px;
 
       &:hover {
-        color: darken($darkgrey, 15%);
+        color: darken($darkgrey, 10%);
       }
 
       &.router-link-active {

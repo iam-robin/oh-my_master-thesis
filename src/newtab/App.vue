@@ -705,16 +705,17 @@ body {
                   }
 
                   span {
+                    font-weight: 800;
                     color: $black;
                   }
                 }
 
                 &:hover {
                   span {
-                    color: darken($darkgrey, 15%);
+                    color: darken($darkgrey, 10%);
                   }
                   svg path {
-                    fill: darken($darkgrey, 15%);
+                    fill: darken($darkgrey, 10%);
                   }
 
                   &.active {
