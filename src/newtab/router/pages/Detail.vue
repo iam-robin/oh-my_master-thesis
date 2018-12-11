@@ -5,7 +5,9 @@
     <MainHeader 
       :links="[{name: 'all websites', to: '/ratio'}]"
       state="close"/>
+
     <a :href="'https://' + data[0].info.domain" target="_blank">{{ data[0].info.domain }}</a>
+
     <footer></footer>
   </div>
 
@@ -50,71 +52,66 @@
 
     <!-- VALUES -->
     <div class="value-container">
-      <div class="box-container">
-        <div class="box">
-          <h2 class="title time">total time spent</h2>
-          <p class="value" v-if="periodSum.time != 0">{{formatMS(periodSum.time, true)}}</p>
-          <p class="value" v-else>–</p>
-          <p class="value">{{formatMS(allWebsitesSum.totalTime)}}</p>
-          <p class="value" v-if="places.totalTime <= 100">{{places.totalTime}}</p>
-          <p class="value" v-else>> 100</p>
-        </div>
-      </div>
 
-      <div class="box-container">
-        <div class="box">
-          <h2 class="title time">Ø daily usage time</h2>
-          <p class="value" v-if="periodSum.time != 0">{{formatMS(periodSum.time / this.getDayAmount(), true)}}</p>
-          <p class="value" v-else>–</p>
-          <p class="value">{{formatMS(allWebsitesSum.dailyUsageTime, true)}}</p>
-          <p class="value" v-if="places.dailyTime <= 100">{{places.dailyTime}}</p>
-          <p class="value" v-else>> 100</p>
-        </div>
-      </div>
+      <DetailValueBox
+        icon="time"
+        title="total time spent"
+        :dependency="periodSum.time != 0"
+        :value="formatMS(periodSum.time, true)"
+        :allWebsites="formatMS(allWebsitesSum.totalTime)"
+        :place="places.totalTime"
+        unit="min"
+      />
 
-      <div class="box-container">
-        <div class="box">
-          <h2 class="title time">Ø time per site view</h2>
-          <p class="value" v-if="periodSum.time != 0 && periodSum.views != 0">{{formatMS(periodSum.time / periodSum.views, true)}}</p>
-          <p class="value" v-else>–</p>
-          <p class="value">{{formatMS(allWebsitesSum.timePerView, true)}}</p>
-          <p class="value" v-if="places.timePerView <= 100">{{places.timePerView}}</p>
-          <p class="value" v-else>> 100</p>
-        </div>
-      </div>
+      <DetailValueBox
+        icon="time"
+        title="daily usage time"
+        :dependency="periodSum.time != 0"
+        :value="formatMS(periodSum.time / this.getDayAmount(), true)"
+        :allWebsites="formatMS(allWebsitesSum.dailyUsageTime, true)"
+        :place="places.dailyTime"
+        unit="min"
+      />
 
-      <div class="box-container">
-        <div class="box">
-          <h2 class="title views">total site views</h2>
-          <p class="value" v-if="periodSum.views != 0">{{periodSum.views}} views</p>
-          <p class="value" v-else>–</p>
-          <p class="value">{{allWebsitesSum.totalViews}} views</p>
-          <p class="value" v-if="places.totalViews <= 100">{{places.totalViews}}</p>
-          <p class="value" v-else>> 100</p>
-        </div>
-      </div>
+      <DetailValueBox
+        icon="time"
+        title="time per site view"
+        :dependency="periodSum.time != 0 && periodSum.views != 0"
+        :value="formatMS(periodSum.time / periodSum.views, true)"
+        :allWebsites="formatMS(allWebsitesSum.timePerView, true)"
+        :place="places.timePerView"
+        unit="min"
+      />
 
-      <div class="box-container">
-        <div class="box">
-          <h2 class="title clicks">Ø clicks per site view</h2>
-          <p class="value" v-if="periodSum.clicks != 0">{{Math.round((periodSum.clicks/periodSum.views) * 100) / 100}} clicks</p>
-          <p class="value" v-else>–</p>
-          <p class="value">{{allWebsitesSum.clicksPerView.toFixed(2)}} clicks</p>
-          <p class="value" v-if="places.clicksPerView <= 100">{{places.clicksPerView}}</p>
-          <p class="value" v-else>> 100</p>
-        </div>
-      </div>
+      <DetailValueBox
+        icon="views"
+        title="total site views"
+        :dependency="periodSum.views != 0"
+        :value="periodSum.views +  ' views'"
+        :allWebsites="allWebsitesSum.totalViews + ' views'"
+        :place="places.totalViews"
+        unit="views"
+      />
 
-      <div class="box-container">
-        <div class="box">
-          <h2 class="title scroll">Ø scroll speed</h2>
-          <p class="value" v-if="periodSum.scroll != 0">{{getScrollSpeed()}} px/sec</p>
-          <p class="value" v-else>–</p>
-          <p class="value">{{allWebsitesSum.scrollSpeed.toFixed(2)}} px/sec</p>
-          <p class="value" v-if="places.scrollSpeed <= 100">{{places.scrollSpeed}}</p>
-          <p class="value" v-else>> 100</p>
-        </div>
-      </div>
+      <DetailValueBox
+        icon="clicks"
+        title="clicks per site view"
+        :dependency="periodSum.clicks != 0"
+        :value="Math.round((periodSum.clicks/periodSum.views) * 100) / 100 +  ' clicks'"
+        :allWebsites="allWebsitesSum.clicksPerView.toFixed(2) + ' clicks'"
+        :place="places.clicksPerView"
+        unit="clicks"
+      />
+
+      <DetailValueBox
+        icon="scroll"
+        title="scroll speed"
+        :dependency="periodSum.scroll != 0"
+        :value="getScrollSpeed() +  ' px/sec'"
+        :allWebsites="allWebsitesSum.scrollSpeed.toFixed(2) + ' px/sec'"
+        :place="places.scrollSpeed"
+        unit="px/sec"
+      />
 
     </div>
   </div>
@@ -128,15 +125,18 @@ import cloneDeep from 'lodash/cloneDeep';
 import moment from 'moment';
 import Chart from 'chart.js';
 import formatMS from '../../functions/formatMS';
-import MainHeader from '../../components/MainHeader.vue';
 import getChartData from '../../functions/getChartData.js';
 import mergeSameWebsitesInPeriod from '../../functions/mergeSameWebsitesInPeriod.js';
+
+import MainHeader from '../../components/MainHeader.vue';
+import DetailValueBox from '../../components/DetailValueBox.vue';
 
 export default {
   name: 'detail-page',
 
   components: {
     MainHeader,
+    DetailValueBox,
   },
 
   data: function() {
@@ -157,7 +157,6 @@ export default {
   },
 
   created: function() {
-    console.log(this.$router.currentRoute);
     this.domain = this.$route.params.domain;
     this.data = this.getDetailData();
     this.getPeriodSum();
@@ -518,90 +517,6 @@ export default {
     display: flex;
     flex-wrap: wrap;
     margin: 32px -12px 0px -12px;
-
-    .box-container {
-      width: 33.333333%;
-
-      .box {
-        box-sizing: border-box;
-        background-color: $white;
-        border: 3px solid $black;
-        margin: 16px;
-
-        .title {
-          display: flex;
-          position: relative;
-          align-items: center;
-          padding-left: 59px;
-          padding-right: 24px;
-          height: 40px;
-          font-size: 12px;
-          font-weight: 500;
-          font-family: 'Montserrat', sans-serif;
-          letter-spacing: 1px;
-          border-bottom: 3px solid $black;
-          margin: 0;
-
-          &:before {
-            content: '';
-            left: 12px;
-            top: 12px;
-            position: absolute;
-            display: inline-block;
-            height: 16px;
-            width: 16px;
-          }
-
-          &.time:before {
-            background-image: url('@~/icons/time.svg');
-          }
-
-          &.views:before {
-            background-image: url('@~/icons/views.svg');
-          }
-
-          &.clicks:before {
-            background-image: url('@~/icons/clicks.svg');
-          }
-
-          &.scroll:before {
-            background-image: url('@~/icons/scroll.svg');
-          }
-
-          &:after {
-            content: '';
-            position: absolute;
-            left: 40px;
-            height: 40px;
-            width: 3px;
-            background-color: $black;
-          }
-        }
-
-        .value {
-          font-size: 16px;
-          font-weight: 800;
-          margin: 24px 24px 16px 24px;
-        }
-
-        .bar-container {
-          display: flex;
-          margin-left: 24px;
-          margin-bottom: 24px;
-
-          .dot {
-            height: 8px;
-            width: 8px;
-            background-color: $lightgrey;
-            margin-right: 4px;
-
-            &.active {
-              background-color: $black;
-            }
-          }
-        }
-      }
-    }
   }
 
   .chart-container {

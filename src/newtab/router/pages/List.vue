@@ -15,8 +15,17 @@
     </div>
 
     <!--mode: time -->
-    <ul v-if="mode === 'time'">
-      <li v-for="website in sortedData" :key="website.domain">
+    <transition-group appear
+      name="staggered-fade"
+      tag="ul"
+      v-bind:css="false"
+      v-on:before-enter="beforeEnter"
+      v-on:enter="enter"
+      v-if="mode === 'time'"
+    >
+      <li v-for="(website, index) in sortedData"
+          :key="website.domain"
+          v-bind:data-index="index">
         <router-link :to="{ name: 'detail', params: { domain: website.domain }}">
           <div class="left">
             <span v-if="website.favicon != '' && website.favicon" :style="{ backgroundImage: 'url(' + website.favicon + ')' }" class="favicon"></span>
@@ -38,10 +47,17 @@
           </div>
         </router-link>
       </li>
-    </ul>
+    </transition-group>
 
     <!--mode: views -->
-    <ul v-if="mode === 'views'">
+    <transition-group appear
+      name="staggered-fade"
+      tag="ul"
+      v-bind:css="false"
+      v-on:before-enter="beforeEnter"
+      v-on:enter="enter"
+      v-if="mode === 'views'"
+    >
       <li v-for="website in sortedData" :key="website.domain">
         <router-link :to="{ name: 'detail', params: { domain: website.domain }}">
           <div class="left">
@@ -63,7 +79,7 @@
           </div>
         </router-link>
       </li>
-    </ul>
+    </transition-group>
 
     <!--mode: clicks -->
     <ul v-if="mode === 'clicks'">
@@ -193,6 +209,20 @@ export default {
         return this.data.reduce((max, p) => (p.scroll > max ? p.scroll : max), this.data[0].scroll);
       }
     },
+
+    beforeEnter: function(el) {
+      el.style.transform = 'translateY(40px)';
+      el.style.opacity = 0;
+    },
+
+    enter: function(el, done) {
+      let delay = el.dataset.index * 50;
+      console.log(el.dataset);
+      setTimeout(function() {
+        el.style.transform = 'translateY(0px)';
+        el.style.opacity = 1;
+      }, delay);
+    },
   },
 };
 </script>
@@ -234,10 +264,10 @@ export default {
       margin-top: 24px;
       background-color: $white;
       border: 3px solid $black;
-      transition: all 0.2s ease-in-out;
+      transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out, opacity 0.4s ease-in-out;
 
       &:hover {
-        transform: translateY(-4px);
+        transform: translateY(-4px) !important;
         box-shadow: 0 12px 0 -8px $black;
       }
 
