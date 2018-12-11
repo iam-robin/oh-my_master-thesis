@@ -708,6 +708,24 @@ body {
                     color: $black;
                   }
                 }
+
+                &:hover {
+                  span {
+                    color: darken($darkgrey, 15%);
+                  }
+                  svg path {
+                    fill: darken($darkgrey, 15%);
+                  }
+
+                  &.active {
+                    span {
+                      color: $black;
+                    }
+                    svg path {
+                      fill: $black;
+                    }
+                  }
+                }
               }
             }
           }

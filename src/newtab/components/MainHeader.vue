@@ -60,8 +60,16 @@ header {
       text-decoration: none;
       padding: 20px;
 
+      &:hover {
+        color: darken($darkgrey, 15%);
+      }
+
       &.router-link-active {
         color: $black;
+
+        &:hover {
+          color: $black;
+        }
       }
 
       &.close {
