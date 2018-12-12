@@ -80,7 +80,7 @@
         <div class="menu" :class="{ active: this.menuActive, limit: this.activeRoute === 'limit' }">
 
           <div class="menu-container date">
-            <span v-on:click="prevDate()" class="arrow prev">
+            <span v-on:click="prevDate()" class="arrow prev" :class="{ disabled: prevButtonDisabled || getPeriod('total') }">
               <svg viewBox="0 0 16 16" fill="none">
                 <path d="M13.3334 8H2.66669" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M6.66669 12L2.66669 8L6.66669 4" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -89,7 +89,7 @@
 
               <h2>{{formatedDate}}</h2>
 
-            <span v-on:click="nextDate()" class="arrow next">
+            <span v-on:click="nextDate()" class="arrow next" :class="{ disabled: nextButtonDisabled || getPeriod('total') }">
               <svg viewBox="0 0 16 16" fill="none">
                 <path d="M13.3334 8H2.66669" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M6.66669 12L2.66669 8L6.66669 4" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -220,6 +220,7 @@
           <span v-else>Settings</span>
         </button>
       </footer>
+
     </div>
     <div class="content-container" v-bind:class="{detail: detailPageActive}">
       <router-view :mode="activeMode"
@@ -248,7 +249,7 @@ export default {
     return {
       activeMode: 'time',
       activePeriod: 'day',
-      date: null,
+      date: moment(),
       formatedDate: '',
       storageDate: moment().format('YYYY-MM-DD'),
       data: [],
@@ -256,6 +257,8 @@ export default {
       periodSum: {},
       detailPageActive: false,
       menuActive: false,
+      nextButtonDisabled: true,
+      prevButtonDisabled: false,
       activeRoute: this.$router.currentRoute.name,
     };
   },
@@ -426,35 +429,64 @@ export default {
       }
     },
 
-    prevDate: function() {
+    isSamePeriod: function(date, otherDate) {
       if (this.activePeriod === 'day') {
-        this.date = this.date.subtract(1, 'days');
+        return date.format('YY-MM-DD') === otherDate.format('YY-MM-DD');
       } else if (this.activePeriod === 'week') {
-        this.date = this.date.subtract(1, 'weeks');
+        return date.startOf('isoWeek').format('DD/MM') === otherDate.startOf('isoWeek').format('DD/MM');
       } else if (this.activePeriod === 'month') {
-        this.date = this.date.subtract(1, 'months');
+        return date.format('MMM YYYY') === otherDate.format('MMM YYYY');
       }
+      return false;
+    },
+
+    nextDate: function() {
+      if (!this.isSamePeriod(this.date, moment())) {
+        if (this.activePeriod === 'day') {
+          this.date.add(1, 'days');
+        } else if (this.activePeriod === 'week') {
+          this.date.add(1, 'weeks');
+        } else if (this.activePeriod === 'month') {
+          this.date.add(1, 'months');
+        }
+      }
+
+      this.checkButtons();
 
       this.storageDate = moment(this.date).format('YYYY-MM-DD');
       this.formatDate();
       this.getRelevantData();
     },
 
-    nextDate: function() {
-      if (this.activePeriod === 'day') {
-        // if mode = day
-        this.date = this.date.add(1, 'days');
-      } else if (this.activePeriod === 'week') {
-        // if mode = week
-        this.date = this.date.add(1, 'weeks');
-      } else if (this.activePeriod === 'month') {
-        // if mode = year
-        this.date = this.date.add(1, 'months');
+    prevDate: function() {
+      if (!this.isSamePeriod(this.date, this.getFirstDate())) {
+        if (this.activePeriod === 'day') {
+          this.date = this.date.subtract(1, 'days');
+        } else if (this.activePeriod === 'week') {
+          this.date = this.date.subtract(1, 'weeks');
+        } else if (this.activePeriod === 'month') {
+          this.date = this.date.subtract(1, 'months');
+        }
       }
+
+      this.checkButtons();
 
       this.storageDate = moment(this.date).format('YYYY-MM-DD');
       this.formatDate();
       this.getRelevantData();
+    },
+
+    checkButtons: function() {
+      if (this.isSamePeriod(this.date, this.getFirstDate())) {
+        this.prevButtonDisabled = true;
+      } else {
+        this.prevButtonDisabled = false;
+      }
+      if (this.isSamePeriod(this.date, moment())) {
+        this.nextButtonDisabled = true;
+      } else {
+        this.nextButtonDisabled = false;
+      }
     },
 
     nextPeriod: function() {
@@ -467,6 +499,8 @@ export default {
       } else if (this.activePeriod === 'total') {
         this.setPeriod('day');
       }
+
+      this.checkButtons();
     },
 
     prevPeriod: function() {
@@ -479,6 +513,8 @@ export default {
       } else if (this.activePeriod === 'total') {
         this.setPeriod('month');
       }
+
+      this.checkButtons();
     },
 
     nextMode: function() {
@@ -522,6 +558,7 @@ export default {
       this.activePeriod = menuItem;
       this.formatDate();
       this.getRelevantData();
+      this.checkButtons();
     },
 
     handleDetailPage: function(isActive) {
@@ -644,6 +681,15 @@ body {
             width: 80px;
             height: 117px;
             cursor: pointer;
+
+            &.disabled {
+              background-color: $darkgrey;
+              cursor: auto;
+
+              &:hover {
+                background-color: $darkgrey;
+              }
+            }
 
             &.prev {
               border-right: 3px solid $black;
