@@ -51,7 +51,7 @@ export default {
   },
 
   methods: {
-    getLimits() {
+    getLimits: function() {
       let storageLimits = JSON.parse(localStorage.getItem('limits'));
       let limits = [];
       for (let i = 0; i < storageLimits.length; i++) {
@@ -78,9 +78,6 @@ export default {
       for (let i = 0; i < websites.length; i++) {
         for (let x = 0; x < this.limits.length; x++) {
           if (websites[i].domain === this.limits[x].domain) {
-            // dominant color
-            this.limits[x].color = websites[i].dominant_color.hex;
-
             // usage time
             if (this.limits[x].timeLimit) {
               let usageTime = parseInt(websites[i].time / 60000);
@@ -101,7 +98,6 @@ export default {
           }
         }
       }
-      console.log(this.limits);
     },
   },
 };

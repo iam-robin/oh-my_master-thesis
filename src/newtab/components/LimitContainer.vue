@@ -19,7 +19,7 @@
         <div class="value">{{limit.timeLimit - limit.usageTime}}min / {{limit.timeLimit}}min</div>
         <div class="bar" v-if="limit.timeLimitPercentage < 100"
           :style="{ 'width': 100 - timeLimit + '%',
-                'background-color': limit.color}">
+                'background-color': getColor()}">
         </div>
       </div>
     </div>
@@ -38,7 +38,7 @@
         <div class="value">{{limit.viewsLimit - parseInt(limit.siteViews)}} views / {{limit.viewsLimit}} views</div>
         <div class="bar" v-if="limit.viewsLimitPercentage < 100"
           :style="{ 'width': 100 - parseInt(viewsLimit) + '%',
-              'background-color': limit.color}">
+              'background-color': getColor()}">
         </div>
       </div>
     </div>
@@ -47,6 +47,8 @@
 
 <script>
 import TweenLite from 'gsap/TweenLite';
+import getOverAllData from '../functions/getOverAllData.js';
+import mergeSameWebsitesInPeriod from '../functions/mergeSameWebsitesInPeriod.js';
 
 export default {
   name: 'limit-container',
@@ -59,6 +61,7 @@ export default {
     return {
       timeLimit: 0,
       viewsLimit: 0,
+      overAllData: getOverAllData(),
     };
   },
 
@@ -73,6 +76,19 @@ export default {
   created: function() {
     this.timeLimit = this.limit.timeLimitPercentage;
     this.viewsLimit = this.limit.viewsLimitPercentage;
+
+    this.getColor();
+  },
+
+  methods: {
+    getColor: function() {
+      let mergedData = mergeSameWebsitesInPeriod(this.overAllData);
+      for (let i = 0; i < mergedData.length; i++) {
+        if (mergedData[i].domain === this.domain) {
+          return mergedData[i].dominant_color.hex;
+        }
+      }
+    },
   },
 };
 </script>

@@ -128,6 +128,7 @@ import 'chartjs-plugin-annotation';
 import formatMS from '../../functions/formatMS';
 import getChartData from '../../functions/getChartData.js';
 import mergeSameWebsitesInPeriod from '../../functions/mergeSameWebsitesInPeriod.js';
+import getOverAllData from '../../functions/getOverAllData.js';
 
 import MainHeader from '../../components/MainHeader.vue';
 import DetailValueBox from '../../components/DetailValueBox.vue';
@@ -145,7 +146,7 @@ export default {
       domain: '',
       date: moment(),
       formatedDate: '',
-      overAllData: this.getOverAllData(),
+      overAllData: getOverAllData(),
       data: [],
       periodSum: {},
       activePeriod: 'month',
@@ -178,25 +179,6 @@ export default {
 
   methods: {
     formatMS,
-
-    getOverAllData: function() {
-      let storageKeys = Object.keys(localStorage);
-      let overAllData = [];
-      for (let i = 0; i < storageKeys.length; i++) {
-        let key = storageKeys[i];
-        let websites;
-        if (key !== 'limits') {
-          websites = JSON.parse(localStorage.getItem(key));
-          let object = {
-            date: key,
-            websites: websites,
-          };
-          overAllData.push(object);
-        }
-      }
-
-      return overAllData;
-    },
 
     getDetailData: function() {
       let storageKeys = Object.keys(localStorage);
