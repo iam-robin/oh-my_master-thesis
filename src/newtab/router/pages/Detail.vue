@@ -254,8 +254,45 @@ export default {
 
     createChart: function(chartId, chartData) {
       const ctx = document.getElementById('usage-chart');
+      let color = this.getCurrentColor();
+
+      // plugin for value = 0 bars
+      const zeroCompensation = {
+        renderZeroCompensation: function(chartInstance, d) {
+          // get postion info from _view
+          const view = d._view;
+          const context = chartInstance.chart.ctx;
+
+          // the view.x is the centeral point of the bar, so we need minus half width of the bar.
+          const startX = view.x - view.width / 2;
+          context.beginPath();
+
+          // line styles
+          context.strokeStyle = color;
+          context.lineWidth = 2;
+
+          context.moveTo(startX, view.y - 1);
+          context.lineTo(startX + view.width, view.y - 1);
+          context.stroke();
+        },
+
+        afterDatasetsDraw: function(chart, easing) {
+          // get data meta, we need the location info in _view property.
+          const meta = chart.getDatasetMeta(0);
+          // also you need get datasets to find which item is 0.
+          const dataSet = chart.config.data.datasets[0].data;
+          meta.data.forEach((d, index) => {
+            // for the item which value is 0, reander a line.
+            if (dataSet[index] === 0) {
+              this.renderZeroCompensation(chart, d);
+            }
+          });
+        },
+      };
+
       this.myChart = new Chart(ctx, {
         type: chartData.type,
+        plugins: [zeroCompensation],
         data: chartData.data,
         options: chartData.options,
       });
@@ -473,6 +510,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import url('https://fonts.googleapis.com/css?family=Fira+Mono:400,700');
 @import '../../scss/_colors.scss';
 
 .left {

@@ -9,16 +9,16 @@ export default function getChartData(data, mode, period, date) {
   }
 
   let chartData = {
-    type: 'line',
+    type: 'bar',
     data: {
       labels: [],
       datasets: [
         {
           label: mode,
           data: [],
-          backgroundColor: 'transparent',
-          hoverBackgroundColor: 'transparent',
-          borderColor: dominantColor,
+          backgroundColor: dominantColor,
+          hoverBackgroundColor: dominantColor,
+          borderColor: 'transparent',
           borderWidth: 3,
           pointBackgroundColor: '#fff',
           pointBorderColor: dominantColor,
@@ -78,7 +78,7 @@ export default function getChartData(data, mode, period, date) {
               color: 'transparent',
             },
             categoryPercentage: 0.9,
-            barPercentage: 1.0,
+            barPercentage: 0.5,
           },
         ],
       },
