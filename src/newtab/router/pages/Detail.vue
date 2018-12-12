@@ -124,6 +124,7 @@ import cloneDeep from 'lodash/cloneDeep';
 
 import moment from 'moment';
 import Chart from 'chart.js';
+import 'chartjs-plugin-annotation';
 import formatMS from '../../functions/formatMS';
 import getChartData from '../../functions/getChartData.js';
 import mergeSameWebsitesInPeriod from '../../functions/mergeSameWebsitesInPeriod.js';
@@ -162,9 +163,8 @@ export default {
     this.getPeriodSum();
 
     this.getChartDate();
-    this.chartData = getChartData(this.data, this.activeMode, this.activePeriod, this.date);
+    this.chartData = getChartData(this.data, this.activeMode, this.activePeriod, this.date, this.getLimit());
 
-    // this.getDotState();
     this.getTotalValues();
     this.getPlace();
 
@@ -463,14 +463,14 @@ export default {
       // reload chart
       this.myChart.destroy();
       this.getChartDate();
-      this.chartData = getChartData(this.data, this.activeMode, this.activePeriod, this.date);
+      this.chartData = getChartData(this.data, this.activeMode, this.activePeriod, this.date, this.getLimit());
       this.createChart('usage-chart', this.chartData);
     },
 
     setMode: function(menuItem) {
       // reload chart
       this.myChart.destroy();
-      this.chartData = getChartData(this.data, this.activeMode, this.activePeriod, this.date);
+      this.chartData = getChartData(this.data, this.activeMode, this.activePeriod, this.date, this.getLimit());
       this.createChart('usage-chart', this.chartData);
     },
 
@@ -486,7 +486,7 @@ export default {
       // reload chart
       this.myChart.destroy();
       this.getChartDate();
-      this.chartData = getChartData(this.data, this.activeMode, this.activePeriod, this.date);
+      this.chartData = getChartData(this.data, this.activeMode, this.activePeriod, this.date, this.getLimit());
       this.createChart('usage-chart', this.chartData);
     },
 
@@ -502,8 +502,22 @@ export default {
       // reload chart
       this.myChart.destroy();
       this.getChartDate();
-      this.chartData = getChartData(this.data, this.activeMode, this.activePeriod, this.date);
+      this.chartData = getChartData(this.data, this.activeMode, this.activePeriod, this.date, this.getLimit());
       this.createChart('usage-chart', this.chartData);
+    },
+
+    getLimit: function() {
+      let domain = this.data[0].info.domain;
+      let storageLimits = JSON.parse(localStorage.getItem('limits'));
+      let thisLimit = {};
+
+      storageLimits.forEach(limit => {
+        if (limit.domain === domain) {
+          thisLimit = limit;
+        }
+      });
+
+      return thisLimit;
     },
   },
 };
