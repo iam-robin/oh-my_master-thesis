@@ -36,6 +36,10 @@
           <h1 v-else class="sum">–</h1>
         </div>
 
+        <div class="value" v-if="this.activeRoute === 'limit'">
+          <h1 class="sum">00 limits exeeded</h1>
+        </div>
+
         <div class="date" :class="{ active: !this.menuActive }">
           <svg v-if="activeMode === 'time' && activeRoute !== 'limit'" width="16" height="16" viewBox="0 0 16 16" fill="none">
             <g>
