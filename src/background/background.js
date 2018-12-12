@@ -49,7 +49,7 @@ let colorTable = [
   { name: 'cyan', hex: '#54CBD1' },
   // { name: 'black', hex: '#2C3135' },
   { name: 'darkgrey', hex: '#434A54' },
-  { name: 'grey', hex: '#CCD0D9' },
+  { name: 'grey', hex: '#AAB2BD' },
   // { name: 'lightgrey', hex: '#EDEFF3' },
   // { name: 'white', hex: '#FAFBFD' },
 ];

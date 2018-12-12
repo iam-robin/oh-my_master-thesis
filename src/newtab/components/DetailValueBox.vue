@@ -30,8 +30,11 @@
           </g>
         </svg>
       </div>
-      <span v-if="place <= 100">rank {{ place }}</span>
-      <span v-else>> 100</span>
+      <span v-if="place === 1">{{ place }}st rank</span>
+      <span v-else-if="place === 2">{{ place }}nd rank</span>
+      <span v-else-if="place === 3">{{ place }}rd rank</span>
+      <span v-else-if="place >= 4">{{ place }}th rank</span>
+      <span v-else>rank > 100</span>
     </div>
 
   </div>
