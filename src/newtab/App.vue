@@ -36,8 +36,9 @@
           <h1 v-else class="sum">–</h1>
         </div>
 
+        <!-- limits -->
         <div class="value" v-if="this.activeRoute === 'limit'">
-          <h1 class="sum">00 limits exeeded</h1>
+          <h1 class="exceeded">{{ exceededLimits }}</h1>
         </div>
 
         <div class="date" :class="{ active: !this.menuActive }">
@@ -260,6 +261,7 @@ export default {
       nextButtonDisabled: true,
       prevButtonDisabled: false,
       activeRoute: this.$router.currentRoute.name,
+      exceededLimits: 0,
     };
   },
 
@@ -683,11 +685,15 @@ body {
             cursor: pointer;
 
             &.disabled {
-              background-color: $darkgrey;
+              background-color: $lightgrey;
               cursor: auto;
 
+              svg path {
+                stroke: $darkgrey;
+              }
+
               &:hover {
-                background-color: $darkgrey;
+                background-color: $lightgrey;
               }
             }
 
@@ -808,10 +814,10 @@ body {
         z-index: 999;
 
         &.open {
-          background-color: #ccd0d8;
+          background-color: $white;
 
           &:hover {
-            background-color: $darkgrey;
+            background-color: $primary;
           }
         }
 

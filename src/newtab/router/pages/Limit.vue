@@ -32,6 +32,7 @@ export default {
     return {
       // array with objects: key (dates) and values (websites)
       limits: [],
+      exceededLimits: 0,
       showHelp: false,
     };
   },
