@@ -19,6 +19,7 @@
 </template>
 
 <script>
+// import moment from 'moment';
 import LimitContainer from '../../components/LimitContainer.vue';
 
 export default {
@@ -41,14 +42,14 @@ export default {
     date: String,
   },
 
+  created: function() {
+    this.getLimits();
+  },
+
   watch: {
     date: function() {
       this.getLimits();
     },
-  },
-
-  created: function() {
-    this.getLimits();
   },
 
   methods: {

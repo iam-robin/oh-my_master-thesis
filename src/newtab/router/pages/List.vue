@@ -15,14 +15,15 @@
     </div>
 
     <!--mode: time -->
-    <transition-group appear
+    <!-- <transition-group appear
       name="staggered-fade"
       tag="ul"
       v-bind:css="false"
       v-on:before-enter="beforeEnter"
       v-on:enter="enter"
       v-if="mode === 'time'"
-    >
+    > -->
+    <ul v-if="mode === 'time'">
       <li v-for="(website, index) in sortedData"
           :key="website.domain"
           v-bind:data-index="index">
@@ -47,17 +48,19 @@
           </div>
         </router-link>
       </li>
-    </transition-group>
+    </ul>
+    <!-- </transition-group> -->
 
     <!--mode: views -->
-    <transition-group appear
+    <!-- <transition-group appear
       name="staggered-fade"
       tag="ul"
       v-bind:css="false"
       v-on:before-enter="beforeEnter"
       v-on:enter="enter"
       v-if="mode === 'views'"
-    >
+    > -->
+    <ul v-if="mode === 'views'">
       <li v-for="website in sortedData" :key="website.domain">
         <router-link :to="{ name: 'detail', params: { domain: website.domain }}">
           <div class="left">
@@ -79,7 +82,8 @@
           </div>
         </router-link>
       </li>
-    </transition-group>
+    </ul>
+    <!-- </transition-group> -->
 
     <!--mode: clicks -->
     <ul v-if="mode === 'clicks'">
