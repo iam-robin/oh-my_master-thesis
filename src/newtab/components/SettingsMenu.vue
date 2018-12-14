@@ -31,6 +31,12 @@
 
         <li v-on:click="setPeriod('day')" :class="{ active: getPeriod('day') }">
           <Data1
+            v-if="getPeriod('day')"
+            color="#000"
+            :size=22
+          />
+          <Data1
+            v-else
             color="#AAB2BD"
             :size=22
           />
@@ -39,6 +45,12 @@
 
         <li v-on:click="setPeriod('week')" :class="{ active: getPeriod('week') }">
           <Data2
+            v-if="getPeriod('week')"
+            color="#000"
+            :size=22
+          />
+          <Data2
+            v-else
             color="#AAB2BD"
             :size=22
           />
@@ -47,6 +59,12 @@
 
         <li v-on:click="setPeriod('month')" :class="{ active: getPeriod('month') }">
           <Data3
+            v-if="getPeriod('month')"
+            color="#000"
+            :size=22
+          />
+          <Data3
+            v-else
             color="#AAB2BD"
             :size=22
           />
@@ -55,6 +73,12 @@
 
         <li v-on:click="setPeriod('total')" :class="{ active: getPeriod('total') }">
           <Data4
+            v-if="getPeriod('total')"
+            color="#000"
+            :size=22
+          />
+          <Data4
+            v-else
             color="#AAB2BD"
             :size=22
           />
@@ -79,7 +103,13 @@
       </span>
       <ul>
         <li v-on:click="setMode('time')" :class="{ active: getMode('time') }">
-          <timeIcon
+          <TimeIcon
+            v-if="getMode('time')"
+            color="#000"
+            :size=20
+          />
+          <TimeIcon
+            v-else
             color="#AAB2BD"
             :size=20
           />
@@ -87,7 +117,13 @@
         </li>
 
         <li v-on:click="setMode('views')" :class="{ active: getMode('views') }">
-          <viewsIcon
+          <ViewsIcon
+            v-if="getMode('views')"
+            color="#000"
+            :size=20
+          />
+          <ViewsIcon
+            v-else
             color="#AAB2BD"
             :size=20
           />
@@ -95,7 +131,13 @@
         </li>
 
         <li v-on:click="setMode('clicks')" :class="{ active: getMode('clicks') }">
-          <clicksIcon
+          <ClicksIcon
+            v-if="getMode('clicks')"
+            color="#000"
+            :size=20
+          />
+          <ClicksIcon
+            v-else
             color="#AAB2BD"
             :size=20
           />
@@ -103,7 +145,13 @@
         </li>
 
         <li v-on:click="setMode('scroll')" :class="{ active: getMode('scroll') }">
-          <scrollIcon
+          <ScrollIcon
+            v-if="getMode('scroll')"
+            color="#000"
+            :size=20
+          />
+          <ScrollIcon
+            v-else
             color="#AAB2BD"
             :size=20
           />
