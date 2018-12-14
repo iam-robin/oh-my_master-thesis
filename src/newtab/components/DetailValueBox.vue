@@ -1,7 +1,32 @@
 <template>
 <div class="value-box">
   <div class="box">
-    <h2 class="title" :class="icon">{{ title }}</h2>
+    <div class="header">
+      <span class="icon">
+        <TimeIcon
+          v-if="icon === 'time'"
+          color="#000"
+          :size=20
+        />
+        <ViewsIcon
+          v-if="icon === 'views'"
+          color="#000"
+          :size=20
+        />
+        <ClicksIcon
+          v-if="icon === 'clicks'"
+          color="#000"
+          :size=20
+        />
+        <ScrollIcon
+          v-if="icon === 'scroll'"
+          color="#000"
+          :size=20
+        />
+      </span>
+      <h2 class="title">{{ title }}</h2>
+    </div>
+
     <p class="value" v-if="dependency">{{ value }}</p>
     <p class="value" v-else>0 {{ unit }}</p>
 
@@ -42,6 +67,11 @@
 </template>
 
 <script>
+import TimeIcon from './icons/TimeIcon.vue';
+import ViewsIcon from './icons/ViewsIcon.vue';
+import ClicksIcon from './icons/ClicksIcon.vue';
+import ScrollIcon from './icons/ScrollIcon.vue';
+
 export default {
   name: 'detail-value-box',
   props: {
@@ -52,6 +82,13 @@ export default {
     allWebsites: String,
     place: Number,
     unit: String,
+  },
+
+  components: {
+    TimeIcon,
+    ViewsIcon,
+    ClicksIcon,
+    ScrollIcon,
   },
 };
 </script>
@@ -69,53 +106,36 @@ export default {
     margin: 16px;
     padding-bottom: 16px;
 
-    .title {
-      display: flex;
+    .header {
       position: relative;
-      align-items: center;
-      padding-left: 59px;
-      padding-right: 24px;
       height: 40px;
-      font-size: 12px;
-      font-weight: 500;
-      font-family: 'Montserrat', sans-serif;
-      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
       border-bottom: 3px solid $black;
-      margin: 0;
 
-      &:before {
-        content: '';
-        left: 12px;
-        top: 12px;
-        position: absolute;
-        display: inline-block;
-        height: 16px;
-        width: 16px;
+      .icon {
+        margin-left: 8px;
+        margin-right: 24px;
+
+        &:after {
+          content: '';
+          position: absolute;
+          left: 36px;
+          top: 0;
+          display: inline-block;
+          height: 40px;
+          width: 3px;
+          background-color: $black;
+        }
       }
 
-      &.time:before {
-        background-image: url('@~/icons/time.svg');
-      }
-
-      &.views:before {
-        background-image: url('@~/icons/views.svg');
-      }
-
-      &.clicks:before {
-        background-image: url('@~/icons/clicks.svg');
-      }
-
-      &.scroll:before {
-        background-image: url('@~/icons/scroll.svg');
-      }
-
-      &:after {
-        content: '';
-        position: absolute;
-        left: 40px;
-        height: 40px;
-        width: 3px;
-        background-color: $black;
+      .title {
+        padding-right: 24px;
+        margin: 0;
+        font-size: 12px;
+        font-weight: 500;
+        font-family: 'Montserrat', sans-serif;
+        letter-spacing: 1px;
       }
     }
 
