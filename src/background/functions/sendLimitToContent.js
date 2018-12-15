@@ -12,13 +12,25 @@ export default function sendLimitToContent(result) {
         if (websites[i].domain === limits[x].domain && limits[x].domain === result.domain) {
           let usageTime = websites[i].time;
           let limitTime = limits[x].timeLimit * 60 * 1000;
-          let percentage = (100 / limitTime) * usageTime;
+          let timePercentage = (100 / limitTime) * usageTime;
 
-          if (percentage >= 100) {
+          if (timePercentage >= 100) {
             // send message
-            console.log('limit reached for: ' + websites[i].domain);
+            console.log('time limit reached for: ' + websites[i].domain);
             chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-              chrome.tabs.sendMessage(tabs[0].id, { limitReached: 'true' });
+              chrome.tabs.sendMessage(tabs[0].id, { timeLimitReached: 'true' });
+            });
+          }
+
+          let siteViews = websites[i].count;
+          let limitViews = limits[x].viewsLimit;
+          let viewsPercentage = (100 / limitViews) * siteViews;
+
+          if (viewsPercentage >= 100) {
+            // send message
+            console.log('views limit reached for: ' + websites[i].domain);
+            chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+              chrome.tabs.sendMessage(tabs[0].id, { viewsLimitReached: 'true' });
             });
           }
         }

@@ -71,7 +71,7 @@ export default {
   watch: {
     limit: {
       handler: function(newValue) {
-        TweenLite.to(this.$data, 0.3, { timeLimit: newValue.timeLimitPercentage, viewsLimit: newValue.viewsLimitPercentage });
+        TweenLite.to(this.$data, 0.2, { timeLimit: newValue.timeLimitPercentage, viewsLimit: newValue.viewsLimitPercentage });
       },
     },
   },

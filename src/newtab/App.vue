@@ -38,7 +38,17 @@
 
         <!-- limits -->
         <div class="value" v-if="this.activeRoute === 'limit'">
-          <h1 class="exceeded">{{ exceededLimits }}</h1>
+          <TrophyIcon
+            color="#000"
+            :size=72
+          />
+          <h1 class="exceeded">
+            <span v-if="exceededLimits > 0">{{ exceededLimits }} </span>
+            <span v-else>no </span>
+            <span v-if="exceededLimits === 1 || exceededLimits === 0">limit </span>
+            <span v-else>limits </span>
+            exceeded
+          </h1>
         </div>
 
         <div class="date" :class="{ active: !this.menuActive }">
@@ -101,6 +111,7 @@ import TimeIcon from './components/icons/TimeIcon.vue';
 import ViewsIcon from './components/icons/ViewsIcon.vue';
 import ClicksIcon from './components/icons/ClicksIcon.vue';
 import ScrollIcon from './components/icons/ScrollIcon.vue';
+import TrophyIcon from './components/icons/TrophyIcon.vue';
 
 import moment from 'moment';
 import formatMS from './functions/formatMS';
@@ -135,11 +146,13 @@ export default {
     ViewsIcon,
     ClicksIcon,
     ScrollIcon,
+    TrophyIcon,
   },
 
   created: function() {
     this.getData();
     this.getRelevantData();
+    this.getExceededLimits();
   },
 
   methods: {
@@ -149,6 +162,7 @@ export default {
       this.date = newDate;
       this.storageDate = moment(newDate).format('YYYY-MM-DD');
       this.getRelevantData();
+      this.getExceededLimits();
     },
 
     getPeriod: function(newPeriod) {
@@ -233,6 +247,33 @@ export default {
       this.relevantData = relevantData;
     },
 
+    getExceededLimits: function() {
+      let storageLimits = JSON.parse(localStorage.getItem('limits'));
+      let data = this.relevantData;
+      let exceededLimits = 0;
+      for (let x = 0; x < storageLimits.length; x++) {
+        for (let i = 0; i < data.length; i++) {
+          // check time limits
+          if (storageLimits[x].domain === data[i].domain && storageLimits[x].timeLimit) {
+            let usageTime = parseInt(data[i].time / 60000);
+            let timeLimit = storageLimits[x].timeLimit;
+            if (usageTime > timeLimit) {
+              exceededLimits++;
+            }
+          }
+          // check views limits
+          if (storageLimits[x].domain === data[i].domain && storageLimits[x].viewsLimit) {
+            let siteViews = data[i].count;
+            let viewsLimit = storageLimits[x].viewsLimit;
+            if (siteViews > viewsLimit) {
+              exceededLimits++;
+            }
+          }
+        }
+      }
+      this.exceededLimits = exceededLimits;
+    },
+
     getActiveRoute: function() {
       this.activeRoute = this.$router.currentRoute.name;
     },
@@ -290,6 +331,7 @@ body {
 
       .value {
         display: flex;
+        flex-wrap: wrap;
         align-items: center;
         justify-content: center;
         flex: 0 0 100%;
@@ -298,6 +340,16 @@ body {
           font-size: 67px;
           margin: 0;
           text-align: center;
+        }
+
+        h1.exceeded {
+          font-size: 21px;
+          margin: 0;
+        }
+
+        svg {
+          flex: 0 0 100%;
+          margin-bottom: 16px;
         }
       }
 

@@ -65,7 +65,6 @@ export default {
           viewsLimit: storageLimits[i].viewsLimit,
           siteViews: 0,
           viewsLimitPercentage: 0,
-          color: '#FECE60',
         };
         limits.push(limit);
       }
@@ -85,6 +84,9 @@ export default {
               let usageTime = parseInt(websites[i].time / 60000);
               let timeLimit = this.limits[x].timeLimit;
               let timeLimitPercentage = (100 / timeLimit) * usageTime;
+              if (timeLimitPercentage > 100) {
+                timeLimitPercentage = 100;
+              }
               this.limits[x].usageTime = usageTime;
               this.limits[x].timeLimitPercentage = timeLimitPercentage;
             }
@@ -94,6 +96,9 @@ export default {
               let siteViews = websites[i].count;
               let viewsLimit = this.limits[x].viewsLimit;
               let viewsLimitPercentage = (100 / viewsLimit) * siteViews;
+              if (viewsLimitPercentage > 100) {
+                viewsLimitPercentage = 100;
+              }
               this.limits[x].siteViews = siteViews;
               this.limits[x].viewsLimitPercentage = viewsLimitPercentage;
             }

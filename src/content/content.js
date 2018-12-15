@@ -52,32 +52,37 @@ document.onmousemove = function() {
 
 // get limit reached message from background.js
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  if (request.limitReached === 'true') {
+  if (request.timeLimitReached === 'true' || request.viewsLimitReached === 'true') {
+    let html = document.getElementsByTagName('html')[0];
     let body = document.getElementsByTagName('body')[0];
 
-    // overlay
-    let overlay = document.createElement('div');
-    overlay.className = 'overlay';
-    body.appendChild(overlay);
-    Object.assign(overlay.style, {
+    Object.assign(html.style, {
+      filter: 'grayscale(100%)',
+    });
+
+    // popup
+    let popup = document.createElement('div');
+    body.appendChild(popup);
+    Object.assign(popup.style, {
       position: 'fixed',
-      top: '0',
-      left: '0',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      height: '10vh',
+      bottom: '0',
+      left: '0',
+      height: '64px',
       width: '100vw',
-      backgroundColor: '#EF5777',
+      backgroundColor: '#fff',
+      borderTop: '3px solid #000',
       zIndex: '99999',
     });
 
     // headline
-    let headline = document.createElement('h1');
-    headline.innerHTML = 'Zeitlimit erreicht';
-    overlay.appendChild(headline);
-    Object.assign(overlay.style, {
-      color: '#fff',
+    let message = document.createElement('h1');
+    message.innerHTML = 'limit reached';
+    popup.appendChild(message);
+    Object.assign(popup.style, {
+      color: '#000',
     });
   }
 });
