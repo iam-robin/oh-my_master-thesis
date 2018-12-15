@@ -13,7 +13,8 @@
       </div>
       <div class="bar-container"
         :class="{ filled: limit.timeLimitPercentage <= 0 }">
-        <div class="value">{{limit.timeLimit - limit.usageTime}}min / {{limit.timeLimit}}min</div>
+        <div v-if="limit.timeLimit - limit.usageTime >= 0" class="value">{{limit.timeLimit - limit.usageTime}}min / {{limit.timeLimit}}min</div>
+        <div v-else class="value exceeded">{{-1*(limit.timeLimit - limit.usageTime)}}min above your limit</div>
         <div class="bar" v-if="limit.timeLimitPercentage < 100"
           :style="{ 'width': 100 - timeLimit + '%',
                 'background-color': getColor()}">
@@ -30,7 +31,8 @@
       </div>
       <div class="bar-container"
       :class="{ filled: limit.viewsLimitPercentage <= 0 }">
-        <div class="value">{{limit.viewsLimit - parseInt(limit.siteViews)}} views / {{limit.viewsLimit}} views</div>
+        <div v-if="limit.viewsLimit - limit.siteViews >= 0" class="value">{{limit.viewsLimit - parseInt(limit.siteViews)}} views / {{limit.viewsLimit}} views</div>
+        <div v-else class="value exceeded">{{-1*(limit.viewsLimit - parseInt(limit.siteViews))}} views above your limit</div>
         <div class="bar" v-if="limit.viewsLimitPercentage < 100"
           :style="{ 'width': 100 - parseInt(viewsLimit) + '%',
               'background-color': getColor()}">
@@ -158,6 +160,10 @@ a {
         position: absolute;
         top: 20px;
         left: 24px;
+
+        &.exceeded {
+          font-weight: 800;
+        }
       }
 
       .bar {
