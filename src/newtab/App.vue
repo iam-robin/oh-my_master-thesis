@@ -39,6 +39,12 @@
         <!-- limits -->
         <div class="value" v-if="this.activeRoute === 'limit'">
           <TrophyIcon
+            v-if="exceededLimits === 0"
+            color="#000"
+            :size=72
+          />
+          <ExceededIcon
+            v-else
             color="#000"
             :size=72
           />
@@ -112,6 +118,7 @@ import ViewsIcon from './components/icons/ViewsIcon.vue';
 import ClicksIcon from './components/icons/ClicksIcon.vue';
 import ScrollIcon from './components/icons/ScrollIcon.vue';
 import TrophyIcon from './components/icons/TrophyIcon.vue';
+import ExceededIcon from './components/icons/ExceededIcon.vue';
 
 import moment from 'moment';
 import formatMS from './functions/formatMS';
@@ -147,6 +154,7 @@ export default {
     ClicksIcon,
     ScrollIcon,
     TrophyIcon,
+    ExceededIcon,
   },
 
   created: function() {
