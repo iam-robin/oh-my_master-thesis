@@ -506,7 +506,7 @@ footer {
               flex: 0 0 100%;
               margin-top: 8px;
               font-family: 'Montserrat', sans-serif;
-              font-weight: 500;
+              font-weight: 400;
               font-size: 10px;
               text-transform: uppercase;
               text-align: center;
@@ -567,7 +567,7 @@ footer {
     border-top: 3px solid $black;
     font-family: 'Montserrat', sans-serif;
     font-size: 12px;
-    font-weight: 500;
+    font-weight: 400;
     text-transform: uppercase;
     letter-spacing: 2px;
     z-index: 999;

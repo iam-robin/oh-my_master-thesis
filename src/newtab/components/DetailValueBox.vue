@@ -133,7 +133,7 @@ export default {
         padding-right: 24px;
         margin: 0;
         font-size: 12px;
-        font-weight: 500;
+        font-weight: 400;
         font-family: 'Montserrat', sans-serif;
         letter-spacing: 1px;
       }

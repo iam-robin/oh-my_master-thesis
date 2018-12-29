@@ -392,7 +392,7 @@ export default {
         width: 32px;
         top: 0;
         left: 0;
-        font-weight: 700;
+        font-weight: 800;
 
         &:after {
           content: '';

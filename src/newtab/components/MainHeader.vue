@@ -53,7 +53,7 @@ header {
     a {
       display: flex;
       font-family: 'Montserrat', sans-serif;
-      font-weight: 500;
+      font-weight: 400;
       text-transform: uppercase;
       letter-spacing: 2px;
       color: $darkgrey;

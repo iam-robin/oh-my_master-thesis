@@ -70,7 +70,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       justifyContent: 'center',
       bottom: '0',
       left: '0',
-      height: '64px',
+      height: '80px',
       width: '100vw',
       backgroundColor: '#fff',
       borderTop: '3px solid #000',
@@ -81,8 +81,33 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     let message = document.createElement('h1');
     message.innerHTML = 'limit reached';
     popup.appendChild(message);
-    Object.assign(popup.style, {
+    Object.assign(message.style, {
       color: '#000',
+      fontFamily: 'monospace',
+      fontSize: '16px',
+    });
+
+    let closeButton = document.createElement('div');
+    popup.appendChild(closeButton);
+    closeButton.innerHTML = 'x';
+    Object.assign(closeButton.style, {
+      position: 'absolute',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      right: '40px',
+      top: '32px',
+      height: '16px',
+      width: '16px',
+      fontSize: '16px',
+      fontWeight: '800',
+      cursor: 'pointer',
+    });
+
+    closeButton.addEventListener('click', function() {
+      Object.assign(popup.style, {
+        display: 'none',
+      });
     });
   }
 });
